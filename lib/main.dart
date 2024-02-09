@@ -340,6 +340,8 @@ class _NavBarPageState extends State<NavBarPage> {
                         : FlutterFlowTheme.of(context).secondaryText,
                     size: 35.0,
                   ),
+                  //nfjnewf
+                  Text('data'),
                   Text(
                     '個人資料',
                     overflow: TextOverflow.ellipsis,
