@@ -179,14 +179,14 @@ class _OrderDetailWidgetState extends State<OrderDetailWidget>
               Text(
                 'Title',
                 style: GoogleFonts.acme(
-                  textStyle: TextStyle(
+                  textStyle: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               Text('${widget.title}'),
-              Divider(),
+              const Divider(),
               Text(
                 'Price',
                 style: GoogleFonts.acme(

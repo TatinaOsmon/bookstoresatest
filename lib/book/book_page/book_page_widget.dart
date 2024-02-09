@@ -243,223 +243,223 @@ class _BookPageWidgetState extends State<BookPageWidget>
                                             ),
                                       ),
                                     ),
-                                    if (widget.bookCategoryPurchased == false)
-                                      Padding(
-                                        padding: const EdgeInsetsDirectional
-                                            .fromSTEB(0.0, 0.0, 22.0, 0.0),
-                                        child: Text(
-                                          '\$${valueOrDefault<String>(
-                                            widget.bookCategoryPrice
-                                                ?.toString(),
-                                            'Price',
-                                          )}',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily: 'Readex Pro',
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primary,
-                                                fontSize: 16.0,
-                                              ),
-                                        ),
-                                      ),
-                                    if (widget.bookCategoryPurchased == false)
-                                      FFButtonWidget(
-                                        onPressed: () async {
-                                          _model.bookCategoryAddItem =
-                                              await BookCartAddItemCall.call(
-                                            userId: currentUserData?.userId,
-                                            productId: widget.bookCategoryId,
-                                            tableName: 'bookCategory',
-                                            jwtToken:
-                                                currentAuthenticationToken,
-                                            refreshToken:
-                                                currentUserData?.refreshToken,
-                                          );
-                                          if ((_model.bookCategoryAddItem
-                                                  ?.succeeded ??
-                                              true)) {
-                                            // 有沒有success
-                                            // 如果有success代表他的登入有狀況
-                                            if (getJsonField(
-                                                  (_model.bookCategoryAddItem
-                                                          ?.jsonBody ??
-                                                      ''),
-                                                  r'''$.success''',
-                                                ) !=
-                                                null) {
-                                              FFAppState().success =
-                                                  getJsonField(
-                                                (_model.bookCategoryAddItem
-                                                        ?.jsonBody ??
-                                                    ''),
-                                                r'''$.success''',
-                                              );
-                                              if (FFAppState().success ==
-                                                  false) {
-                                                await showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (alertDialogContext) {
-                                                    return AlertDialog(
-                                                      title:
-                                                          const Text('Message'),
-                                                      content: Text(
-                                                          BookCartAddItemCall
-                                                              .message(
-                                                        (_model.bookCategoryAddItem
-                                                                ?.jsonBody ??
-                                                            ''),
-                                                      ).toString()),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () =>
-                                                              Navigator.pop(
-                                                                  alertDialogContext),
-                                                          child:
-                                                              const Text('Ok'),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                                GoRouter.of(context)
-                                                    .prepareAuthEvent();
-                                                await authManager.signOut();
-                                                GoRouter.of(context)
-                                                    .clearRedirectLocation();
+                                    // if (widget.bookCategoryPurchased == false)
+                                    //   Padding(
+                                    //     padding: const EdgeInsetsDirectional
+                                    //         .fromSTEB(0.0, 0.0, 22.0, 0.0),
+                                    //     child: Text(
+                                    //       '\$${valueOrDefault<String>(
+                                    //         widget.bookCategoryPrice
+                                    //             ?.toString(),
+                                    //         'Price',
+                                    //       )}',
+                                    //       style: FlutterFlowTheme.of(context)
+                                    //           .bodyMedium
+                                    //           .override(
+                                    //             fontFamily: 'Readex Pro',
+                                    //             color:
+                                    //                 FlutterFlowTheme.of(context)
+                                    //                     .primary,
+                                    //             fontSize: 16.0,
+                                    //           ),
+                                    //     ),
+                                    //   ),
+                                    // if (widget.bookCategoryPurchased == false)
+                                    // FFButtonWidget(
+                                    //   onPressed: () async {
+                                    //     _model.bookCategoryAddItem =
+                                    //         await BookCartAddItemCall.call(
+                                    //       userId: currentUserData?.userId,
+                                    //       productId: widget.bookCategoryId,
+                                    //       tableName: 'bookCategory',
+                                    //       jwtToken:
+                                    //           currentAuthenticationToken,
+                                    //       refreshToken:
+                                    //           currentUserData?.refreshToken,
+                                    //     );
+                                    //     if ((_model.bookCategoryAddItem
+                                    //             ?.succeeded ??
+                                    //         true)) {
+                                    //       // 有沒有success
+                                    //       // 如果有success代表他的登入有狀況
+                                    //       if (getJsonField(
+                                    //             (_model.bookCategoryAddItem
+                                    //                     ?.jsonBody ??
+                                    //                 ''),
+                                    //             r'''$.success''',
+                                    //           ) !=
+                                    //           null) {
+                                    //         FFAppState().success =
+                                    //             getJsonField(
+                                    //           (_model.bookCategoryAddItem
+                                    //                   ?.jsonBody ??
+                                    //               ''),
+                                    //           r'''$.success''',
+                                    //         );
+                                    //         if (FFAppState().success ==
+                                    //             false) {
+                                    //           await showDialog(
+                                    //             context: context,
+                                    //             builder:
+                                    //                 (alertDialogContext) {
+                                    //               return AlertDialog(
+                                    //                 title:
+                                    //                     const Text('Message'),
+                                    //                 content: Text(
+                                    //                     BookCartAddItemCall
+                                    //                         .message(
+                                    //                   (_model.bookCategoryAddItem
+                                    //                           ?.jsonBody ??
+                                    //                       ''),
+                                    //                 ).toString()),
+                                    //                 actions: [
+                                    //                   TextButton(
+                                    //                     onPressed: () =>
+                                    //                         Navigator.pop(
+                                    //                             alertDialogContext),
+                                    //                     child:
+                                    //                         const Text('Ok'),
+                                    //                   ),
+                                    //                 ],
+                                    //               );
+                                    //             },
+                                    //           );
+                                    //           GoRouter.of(context)
+                                    //               .prepareAuthEvent();
+                                    //           await authManager.signOut();
+                                    //           GoRouter.of(context)
+                                    //               .clearRedirectLocation();
 
-                                                context.pushNamedAuth(
-                                                    'login', context.mounted);
-                                              } else {
-                                                await showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (alertDialogContext) {
-                                                    return AlertDialog(
-                                                      title:
-                                                          const Text('Message'),
-                                                      content: Text(
-                                                          BookCartAddItemCall
-                                                              .message(
-                                                        (_model.bookCategoryAddItem
-                                                                ?.jsonBody ??
-                                                            ''),
-                                                      ).toString()),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () =>
-                                                              Navigator.pop(
-                                                                  alertDialogContext),
-                                                          child:
-                                                              const Text('Ok'),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                                setState(() {
-                                                  FFAppState().token =
-                                                      getJsonField(
-                                                    (_model.bookCategoryAddItem
-                                                            ?.jsonBody ??
-                                                        ''),
-                                                    r'''$.jwtToken''',
-                                                  ).toString();
-                                                });
-                                              }
-                                            } else {
-                                              await showDialog(
-                                                context: context,
-                                                builder: (alertDialogContext) {
-                                                  return AlertDialog(
-                                                    title:
-                                                        const Text('Message'),
-                                                    content: Text(
-                                                        BookCartAddItemCall
-                                                            .message(
-                                                      (_model.bookCategoryAddItem
-                                                              ?.jsonBody ??
-                                                          ''),
-                                                    ).toString()),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () =>
-                                                            Navigator.pop(
-                                                                alertDialogContext),
-                                                        child: const Text('Ok'),
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                              setState(() {
-                                                FFAppState().token =
-                                                    getJsonField(
-                                                  (_model.bookCategoryAddItem
-                                                          ?.jsonBody ??
-                                                      ''),
-                                                  r'''$.jwtToken''',
-                                                ).toString();
-                                              });
-                                            }
-                                          } else {
-                                            await showDialog(
-                                              context: context,
-                                              builder: (alertDialogContext) {
-                                                return AlertDialog(
-                                                  title: const Text('Error'),
-                                                  content:
-                                                      const Text('請稍後再試一次'),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              alertDialogContext),
-                                                      child: const Text('Ok'),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          }
+                                    //           context.pushNamedAuth(
+                                    //               'login', context.mounted);
+                                    //         } else {
+                                    //           await showDialog(
+                                    //             context: context,
+                                    //             builder:
+                                    //                 (alertDialogContext) {
+                                    //               return AlertDialog(
+                                    //                 title:
+                                    //                     const Text('Message'),
+                                    //                 content: Text(
+                                    //                     BookCartAddItemCall
+                                    //                         .message(
+                                    //                   (_model.bookCategoryAddItem
+                                    //                           ?.jsonBody ??
+                                    //                       ''),
+                                    //                 ).toString()),
+                                    //                 actions: [
+                                    //                   TextButton(
+                                    //                     onPressed: () =>
+                                    //                         Navigator.pop(
+                                    //                             alertDialogContext),
+                                    //                     child:
+                                    //                         const Text('Ok'),
+                                    //                   ),
+                                    //                 ],
+                                    //               );
+                                    //             },
+                                    //           );
+                                    //           setState(() {
+                                    //             FFAppState().token =
+                                    //                 getJsonField(
+                                    //               (_model.bookCategoryAddItem
+                                    //                       ?.jsonBody ??
+                                    //                   ''),
+                                    //               r'''$.jwtToken''',
+                                    //             ).toString();
+                                    //           });
+                                    //         }
+                                    //       } else {
+                                    //         await showDialog(
+                                    //           context: context,
+                                    //           builder: (alertDialogContext) {
+                                    //             return AlertDialog(
+                                    //               title:
+                                    //                   const Text('Message'),
+                                    //               content: Text(
+                                    //                   BookCartAddItemCall
+                                    //                       .message(
+                                    //                 (_model.bookCategoryAddItem
+                                    //                         ?.jsonBody ??
+                                    //                     ''),
+                                    //               ).toString()),
+                                    //               actions: [
+                                    //                 TextButton(
+                                    //                   onPressed: () =>
+                                    //                       Navigator.pop(
+                                    //                           alertDialogContext),
+                                    //                   child: const Text('Ok'),
+                                    //                 ),
+                                    //               ],
+                                    //             );
+                                    //           },
+                                    //         );
+                                    //         setState(() {
+                                    //           FFAppState().token =
+                                    //               getJsonField(
+                                    //             (_model.bookCategoryAddItem
+                                    //                     ?.jsonBody ??
+                                    //                 ''),
+                                    //             r'''$.jwtToken''',
+                                    //           ).toString();
+                                    //         });
+                                    //       }
+                                    //     } else {
+                                    //       await showDialog(
+                                    //         context: context,
+                                    //         builder: (alertDialogContext) {
+                                    //           return AlertDialog(
+                                    //             title: const Text('Error'),
+                                    //             content:
+                                    //                 const Text('請稍後再試一次'),
+                                    //             actions: [
+                                    //               TextButton(
+                                    //                 onPressed: () =>
+                                    //                     Navigator.pop(
+                                    //                         alertDialogContext),
+                                    //                 child: const Text('Ok'),
+                                    //               ),
+                                    //             ],
+                                    //           );
+                                    //         },
+                                    //       );
+                                    //     }
 
-                                          setState(() {});
-                                        },
-                                        text: '加入購物車',
-                                        icon: const Icon(
-                                          Icons.add_shopping_cart_outlined,
-                                          size: 15.0,
-                                        ),
-                                        options: FFButtonOptions(
-                                          width: 230.0,
-                                          height: 40.0,
-                                          padding: const EdgeInsetsDirectional
-                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
-                                          iconPadding:
-                                              const EdgeInsetsDirectional
-                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                          color: FlutterFlowTheme.of(context)
-                                              .primaryText,
-                                          textStyle: FlutterFlowTheme.of(
-                                                  context)
-                                              .titleSmall
-                                              .override(
-                                                fontFamily: 'Readex Pro',
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryBackground,
-                                              ),
-                                          elevation: 3.0,
-                                          borderSide: const BorderSide(
-                                            color: Colors.transparent,
-                                            width: 1.0,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(48.0),
-                                        ),
-                                      ),
+                                    //     setState(() {});
+                                    //   },
+                                    //   text: '加入購物車',
+                                    //   icon: const Icon(
+                                    //     Icons.add_shopping_cart_outlined,
+                                    //     size: 15.0,
+                                    //   ),
+                                    //   options: FFButtonOptions(
+                                    //     width: 230.0,
+                                    //     height: 40.0,
+                                    //     padding: const EdgeInsetsDirectional
+                                    //         .fromSTEB(24.0, 0.0, 24.0, 0.0),
+                                    //     iconPadding:
+                                    //         const EdgeInsetsDirectional
+                                    //             .fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                    //     color: FlutterFlowTheme.of(context)
+                                    //         .primaryText,
+                                    //     textStyle: FlutterFlowTheme.of(
+                                    //             context)
+                                    //         .titleSmall
+                                    //         .override(
+                                    //           fontFamily: 'Readex Pro',
+                                    //           color:
+                                    //               FlutterFlowTheme.of(context)
+                                    //                   .secondaryBackground,
+                                    //         ),
+                                    //     elevation: 3.0,
+                                    //     borderSide: const BorderSide(
+                                    //       color: Colors.transparent,
+                                    //       width: 1.0,
+                                    //     ),
+                                    //     borderRadius:
+                                    //         BorderRadius.circular(48.0),
+                                    //   ),
+                                    // ),
                                   ],
                                 ),
                                 Padding(

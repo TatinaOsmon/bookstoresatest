@@ -219,8 +219,8 @@ class _ToolPageWidgetState extends State<ToolPageWidget>
                                         ),
                                       ),
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0, 0, 22, 0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0, 0, 22, 0),
                                         child: Text(
                                           '\$${widget.toolCategoryPrice?.toString()}',
                                           style: FlutterFlowTheme.of(context)

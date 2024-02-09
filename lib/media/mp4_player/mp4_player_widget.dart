@@ -13,9 +13,11 @@ class Mp4PlayerWidget extends StatefulWidget {
   const Mp4PlayerWidget({
     super.key,
     required this.productId,
+    required this.title,
   });
 
   final int? productId;
+  final String? title;
 
   @override
   _Mp4PlayerWidgetState createState() => _Mp4PlayerWidgetState();
@@ -86,7 +88,11 @@ class _Mp4PlayerWidgetState extends State<Mp4PlayerWidget> {
               padding:
                   const EdgeInsetsDirectional.fromSTEB(0.0, 15.0, 0.0, 0.0),
               child: Text(
-                'Video',
+                valueOrDefault<String>(
+                  widget.title,
+                  'Title',
+                  
+                ),
                 textAlign: TextAlign.center,
                 style: FlutterFlowTheme.of(context).headlineMedium.override(
                       fontFamily: 'Outfit',
@@ -118,6 +124,7 @@ class _Mp4PlayerWidgetState extends State<Mp4PlayerWidget> {
                     productId: widget.productId!,
                     jwtToken: currentUserData!.jwtToken,
                     refreshToken: currentUserData!.refreshToken,
+                    tableName: '',
                   ),
                 ),
               ),

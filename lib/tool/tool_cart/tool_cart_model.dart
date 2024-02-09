@@ -1,12 +1,16 @@
 import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import 'tool_cart_widget.dart' show ToolCartWidget;
+import 'tool_cart_widget.dart' show Tool, ToolCartWidget;
 import 'package:flutter/material.dart';
 
 class ToolCartModel extends FlutterFlowModel<ToolCartWidget> {
   ///  Local state fields for this page.
 
   List<int> priceList = [];
+  List<Tool> cartItems = [];
+  // List<Tool> cartItem = [];
+
+  // get cartItems => null;
   void addToPriceList(int item) => priceList.add(item);
   void removeFromPriceList(int item) => priceList.remove(item);
   void removeAtIndexFromPriceList(int index) => priceList.removeAt(index);
@@ -40,4 +44,11 @@ class ToolCartModel extends FlutterFlowModel<ToolCartWidget> {
   /// Action blocks are added here.
 
   /// Additional helper methods are added here.
+}
+
+class Tool {
+  final String title;
+  final String category;
+
+  Tool({required this.title, required this.category});
 }

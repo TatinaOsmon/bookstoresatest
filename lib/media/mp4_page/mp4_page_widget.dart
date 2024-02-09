@@ -199,22 +199,22 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                 ),
               ),
               actions: [
-                // Padding(
-                //   padding: const EdgeInsetsDirectional.fromSTEB(
-                //       0.0, 10.0, 15.0, 0.0),
-                //   child: FlutterFlowIconButton(
-                //     borderRadius: 20.0,
-                //     buttonSize: 50.0,
-                //     icon: Icon(
-                //       Icons.shopping_cart_outlined,
-                //       color: FlutterFlowTheme.of(context).primaryText,
-                //       size: 35.0,
-                //     ),
-                //     onPressed: () async {
-                //       context.pushNamed('MediaCart');
-                //     },
-                //   ),
-                // ),
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      0.0, 10.0, 15.0, 0.0),
+                  child: FlutterFlowIconButton(
+                    borderRadius: 20.0,
+                    buttonSize: 50.0,
+                    icon: Icon(
+                      Icons.shopping_cart_outlined,
+                      color: FlutterFlowTheme.of(context).primaryText,
+                      size: 35.0,
+                    ),
+                    onPressed: () async {
+                      context.pushNamed('MediaCart');
+                    },
+                  ),
+                ),
               ],
               centerTitle: true,
               elevation: 2.0,
@@ -296,7 +296,7 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                 EdgeInsetsDirectional.fromSTEB(
                                                     0, 0, 15, 0),
                                             child: Icon(
-                                              Icons.queue_music,
+                                              Icons.videocam,
                                               color:
                                                   FlutterFlowTheme.of(context)
                                                       .primaryText,
@@ -501,32 +501,6 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                             });
                                                           }
                                                         } else {
-                                                          await showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (alertDialogContext) {
-                                                              return AlertDialog(
-                                                                title: Text(
-                                                                    'Message'),
-                                                                content: Text(
-                                                                    getJsonField(
-                                                                  (_model.addItem
-                                                                          ?.jsonBody ??
-                                                                      ''),
-                                                                  r'''$.message''',
-                                                                ).toString()),
-                                                                actions: [
-                                                                  TextButton(
-                                                                    onPressed: () =>
-                                                                        Navigator.pop(
-                                                                            alertDialogContext),
-                                                                    child: Text(
-                                                                        'Ok'),
-                                                                  ),
-                                                                ],
-                                                              );
-                                                            },
-                                                          );
                                                           setState(() {
                                                             FFAppState().token =
                                                                 getJsonField(
@@ -560,60 +534,109 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                           },
                                                         );
                                                       }
-
-                                                      print(cartItem.items
+                                                      bool isInCart = cartItem
+                                                          .items
                                                           .any((element) =>
-                                                              element.title ==
+                                                              element.id ==
                                                               getJsonField(
                                                                 mp4Item,
                                                                 r'''$.title''',
-                                                              )));
-
-                                                      if (cartItem.items.any(
-                                                              (element) =>
-                                                                  element
-                                                                      .title ==
-                                                                  getJsonField(
-                                                                    mp4Item,
-                                                                    r'''$.title''',
-                                                                  )) ==
-                                                          false) {
-                                                        Provider.of<ItemCartRepo>(
-                                                                context,
-                                                                listen: false)
-                                                            .addItem(CartItem(
-                                                          name: getJsonField(
-                                                            mp4Item,
-                                                            r'''$.content''',
-                                                          ).toString(),
-                                                          id: getJsonField(
-                                                            mp4Item,
-                                                            r'''$.title''',
-                                                          ).toString(),
-                                                          price: getJsonField(
-                                                            mp4Item,
-                                                            r'''$.price''',
-                                                          ),
-                                                          title: getJsonField(
-                                                            mp4Item,
-                                                            r'''$.title''',
-                                                          ).toString(),
-                                                          category: '',
-                                                          pic: '',
-                                                        ));
+                                                              ));
+                                                      if (isInCart) {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return AlertDialog(
+                                                              title: Text(
+                                                                  'Message'),
+                                                              content: Text(
+                                                                  '這個商品已存在購物車 '),
+                                                              actions: [
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                  },
+                                                                  child: Text(
+                                                                      'Ok'),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
+                                                        );
                                                       } else {
                                                         showDialog(
-                                                            context: context,
-                                                            builder: (context) {
-                                                              return AlertDialog
-                                                                  .adaptive(
-                                                                title: Text(
-                                                                    '已經加入購物車'),
-                                                              );
-                                                            });
-                                                      }
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return AlertDialog(
+                                                              title: Text(
+                                                                  'Message'),
+                                                              content: Text(
+                                                                  '商品已成功添加'),
+                                                              actions: [
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                  },
+                                                                  child: Text(
+                                                                      'Ok'),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
+                                                        );
 
-                                                      setState(() {});
+                                                        print(cartItem.items
+                                                            .any((element) =>
+                                                                element.title ==
+                                                                getJsonField(
+                                                                  mp4Item,
+                                                                  r'''$.title''',
+                                                                )));
+
+                                                        if (cartItem.items.any(
+                                                                (element) =>
+                                                                    element
+                                                                        .title ==
+                                                                    getJsonField(
+                                                                      mp4Item,
+                                                                      r'''$.title''',
+                                                                    )) ==
+                                                            false) {
+                                                          Provider.of<ItemCartRepo>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .addItem(CartItem(
+                                                            name: getJsonField(
+                                                              mp4Item,
+                                                              r'''$.content''',
+                                                            ).toString(),
+                                                            id: getJsonField(
+                                                              mp4Item,
+                                                              r'''$.title''',
+                                                            ).toString(),
+                                                            price: getJsonField(
+                                                              mp4Item,
+                                                              r'''$.price''',
+                                                            ),
+                                                            title: getJsonField(
+                                                              mp4Item,
+                                                              r'''$.title''',
+                                                            ).toString(),
+                                                            category: '',
+                                                            pic: '',
+                                                          ));
+                                                        } else {}
+
+                                                        setState(() {});
+                                                      }
                                                     },
                                                     text: cartItem.items.any(
                                                       (element) =>
@@ -780,21 +803,22 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
           key: scaffoldKey,
           backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
           appBar: PreferredSize(
-            preferredSize: Size.fromHeight(65),
+            preferredSize: const Size.fromHeight(65.0),
             child: AppBar(
               backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
               automaticallyImplyLeading: false,
               leading: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(15, 10, 0, 0),
+                padding:
+                    const EdgeInsetsDirectional.fromSTEB(15.0, 10.0, 0.0, 0.0),
                 child: FlutterFlowIconButton(
                   borderColor: Colors.transparent,
-                  borderRadius: 30,
-                  borderWidth: 1,
-                  buttonSize: 50,
+                  borderRadius: 30.0,
+                  borderWidth: 1.0,
+                  buttonSize: 50.0,
                   icon: Icon(
                     Icons.arrow_back_rounded,
                     color: FlutterFlowTheme.of(context).primaryText,
-                    size: 35,
+                    size: 35.0,
                   ),
                   onPressed: () async {
                     context.pop();
@@ -802,28 +826,30 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                 ),
               ),
               title: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                padding:
+                    const EdgeInsetsDirectional.fromSTEB(0.0, 15.0, 0.0, 0.0),
                 child: Text(
                   widget.title ?? '',
                   textAlign: TextAlign.center,
                   style: FlutterFlowTheme.of(context).headlineMedium.override(
                         fontFamily: 'Outfit',
                         color: FlutterFlowTheme.of(context).primaryText,
-                        fontSize: 22,
+                        fontSize: 22.0,
                         fontWeight: FontWeight.w600,
                       ),
                 ),
               ),
               actions: [
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 10, 15, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      0.0, 10.0, 15.0, 0.0),
                   child: FlutterFlowIconButton(
-                    borderRadius: 20,
-                    buttonSize: 50,
+                    borderRadius: 20.0,
+                    buttonSize: 50.0,
                     icon: Icon(
                       Icons.shopping_cart_outlined,
                       color: FlutterFlowTheme.of(context).primaryText,
-                      size: 35,
+                      size: 35.0,
                     ),
                     onPressed: () async {
                       context.pushNamed('MediaCart');
@@ -832,13 +858,14 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                 ),
               ],
               centerTitle: true,
-              elevation: 2,
+              elevation: 2.0,
             ),
           ),
           body: SafeArea(
             top: true,
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(15, 15, 15, 110),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(15.0, 15.0, 15.0, 110.0),
               child: FutureBuilder<ApiCallResponse>(
                 future: MpFourFindAllCall.call(
                   id: widget.categoryId,
@@ -847,10 +874,11 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                 builder: (context, snapshot) {
                   // Customize what your widget looks like when it's loading.
                   if (!snapshot.hasData) {
+                    print(snapshot.data);
                     return Center(
                       child: SizedBox(
-                        width: 50,
-                        height: 50,
+                        width: 50.0,
+                        height: 50.0,
                         child: CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(
                             FlutterFlowTheme.of(context).primary,
@@ -879,12 +907,8 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                           shrinkWrap: true,
                           scrollDirection: Axis.vertical,
                           itemCount: mp4.length,
-                          // itemCount: mp4Categories.length,
                           itemBuilder: (context, mp4Index) {
                             final mp4Item = mp4[mp4Index];
-
-                            // print(
-                            //     'this is sort id mp4 ${mp4Categories[mp4Index]['sort']}}');
 
                             return Padding(
                               padding:
@@ -908,13 +932,12 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                             CrossAxisAlignment.center,
                                         children: [
                                           //we will change image here
-
                                           Padding(
                                             padding:
                                                 EdgeInsetsDirectional.fromSTEB(
                                                     0, 0, 15, 0),
                                             child: Icon(
-                                              Icons.queue_music_outlined,
+                                              Icons.videocam,
                                               color:
                                                   FlutterFlowTheme.of(context)
                                                       .primaryText,
@@ -957,9 +980,10 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                     ),
                                                   ),
                                                   Text(
-                                                    functions.formatPrice(
-                                                        getJsonField(mp4Item,
-                                                            r'''$.price''')),
+                                                    '\$${getJsonField(
+                                                      mp4Item,
+                                                      r'''$.price''',
+                                                    ).toString()}',
                                                     style: FlutterFlowTheme.of(
                                                             context)
                                                         .bodyMedium
@@ -1118,32 +1142,6 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                             });
                                                           }
                                                         } else {
-                                                          await showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (alertDialogContext) {
-                                                              return AlertDialog(
-                                                                title: Text(
-                                                                    'Message'),
-                                                                content: Text(
-                                                                    getJsonField(
-                                                                  (_model.addItem
-                                                                          ?.jsonBody ??
-                                                                      ''),
-                                                                  r'''$.message''',
-                                                                ).toString()),
-                                                                actions: [
-                                                                  TextButton(
-                                                                    onPressed: () =>
-                                                                        Navigator.pop(
-                                                                            alertDialogContext),
-                                                                    child: Text(
-                                                                        'Ok'),
-                                                                  ),
-                                                                ],
-                                                              );
-                                                            },
-                                                          );
                                                           setState(() {
                                                             FFAppState().token =
                                                                 getJsonField(
@@ -1177,59 +1175,109 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                           },
                                                         );
                                                       }
-                                                      print('this one');
-                                                      print(cartItem.items
+                                                      bool isInCart = cartItem
+                                                          .items
                                                           .any((element) =>
-                                                              element.title ==
+                                                              element.id ==
                                                               getJsonField(
                                                                 mp4Item,
                                                                 r'''$.title''',
-                                                              )));
-
-                                                      if (cartItem.items.any(
-                                                              (element) =>
-                                                                  element
-                                                                      .title ==
-                                                                  getJsonField(
-                                                                    mp4Item,
-                                                                    r'''$.title''',
-                                                                  )) ==
-                                                          false) {
-                                                        Provider.of<ItemCartRepo>(
-                                                                context,
-                                                                listen: false)
-                                                            .addItem(CartItem(
-                                                          name: getJsonField(
-                                                            mp4Item,
-                                                            r'''$.content''',
-                                                          ).toString(),
-                                                          id: getJsonField(
-                                                            mp4Item,
-                                                            r'''$.title''',
-                                                          ).toString(),
-                                                          price: getJsonField(
-                                                            mp4Item,
-                                                            r'''$.price''',
-                                                          ),
-                                                          title: getJsonField(
-                                                            mp4Item,
-                                                            r'''$.title''',
-                                                          ).toString(),
-                                                          category: '',
-                                                          pic: '',
-                                                        ));
-                                                        setState(() {});
-                                                      } else {
-                                                        showTopSnackBar(
-                                                          Overlay.of(context),
-                                                          CustomSnackBar.error(
-                                                            message: "沒有網路連線",
-                                                          ),
+                                                              ));
+                                                      if (isInCart) {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return AlertDialog(
+                                                              title: Text(
+                                                                  'Message'),
+                                                              content: Text(
+                                                                  '這個商品已存在購物車 '),
+                                                              actions: [
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                  },
+                                                                  child: Text(
+                                                                      'Ok'),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
                                                         );
+                                                      } else {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return AlertDialog(
+                                                              title: Text(
+                                                                  'Message'),
+                                                              content: Text(
+                                                                  '商品已成功添加'),
+                                                              actions: [
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                  },
+                                                                  child: Text(
+                                                                      'Ok'),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
+                                                        );
+
+                                                        print(cartItem.items
+                                                            .any((element) =>
+                                                                element.title ==
+                                                                getJsonField(
+                                                                  mp4Item,
+                                                                  r'''$.title''',
+                                                                )));
+
+                                                        if (cartItem.items.any(
+                                                                (element) =>
+                                                                    element
+                                                                        .title ==
+                                                                    getJsonField(
+                                                                      mp4Item,
+                                                                      r'''$.title''',
+                                                                    )) ==
+                                                            false) {
+                                                          Provider.of<ItemCartRepo>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .addItem(CartItem(
+                                                            name: getJsonField(
+                                                              mp4Item,
+                                                              r'''$.content''',
+                                                            ).toString(),
+                                                            id: getJsonField(
+                                                              mp4Item,
+                                                              r'''$.title''',
+                                                            ).toString(),
+                                                            price: getJsonField(
+                                                              mp4Item,
+                                                              r'''$.price''',
+                                                            ),
+                                                            title: getJsonField(
+                                                              mp4Item,
+                                                              r'''$.title''',
+                                                            ).toString(),
+                                                            category: '',
+                                                            pic: '',
+                                                          ));
+                                                        } else {}
+
+                                                        setState(() {});
                                                       }
-                                                      print('blablabla');
-                                                      print(cartItem
-                                                          .items.length);
                                                     },
                                                     text: cartItem.items.any(
                                                       (element) =>

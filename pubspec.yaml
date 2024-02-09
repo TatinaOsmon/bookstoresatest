@@ -93,7 +93,7 @@ flutter_icons:
 
   android: true
   ios: true
-  remove_alpha_ios: true
+  # remove_alpha_ios: true
 
   flutter_test:
     sdk: flutter

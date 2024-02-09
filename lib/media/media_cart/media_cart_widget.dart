@@ -1,3 +1,4 @@
+import 'package:book_store/models/cartItem.dart';
 import 'package:book_store/repositery/itemsCartRepo.dart';
 
 import '/auth/custom_auth/auth_util.dart';
@@ -22,7 +23,9 @@ import 'media_cart_model.dart';
 export 'media_cart_model.dart';
 
 class MediaCartWidget extends StatefulWidget {
-  const MediaCartWidget({Key? key}) : super(key: key);
+  MediaCartWidget({
+    Key? key,
+  }) : super(key: key);
 
   @override
   _MediaCartWidgetState createState() => _MediaCartWidgetState();
@@ -278,34 +281,16 @@ class _MediaCartWidgetState extends State<MediaCartWidget>
                 ),
                 Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(30, 30, 30, 30),
-                  child: FutureBuilder<ApiCallResponse>(
-                    future: MediaCartFindAllCall.call(
-                      userId: currentUserData?.userId,
-                      jwtToken: currentUserData?.jwtToken,
-                      refreshToken: currentUserData?.refreshToken,
-                    ),
-                    builder: (context, snapshot) {
+                  child: Consumer<ItemCartRepo>(
+                    builder: (context, itemscart, child) {
                       // Customize what your widget looks like when it's loading.
-                      if (!snapshot.hasData) {
-                        return Center(
-                          child: SizedBox(
-                            width: 50,
-                            height: 50,
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                FlutterFlowTheme.of(context).primary,
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                      final columnMediaCartFindAllResponse = snapshot.data!;
+
+                      final columnMediaCartFindAllResponse = itemscart.items;
                       return Builder(
                         builder: (context) {
-                          final mediaCart = MediaCartFindAllCall.mediaCart(
-                                columnMediaCartFindAllResponse.jsonBody,
-                              )?.toList() ??
-                              [];
+                          final List<CartItem> mediaCart =
+                              columnMediaCartFindAllResponse;
+
                           return SingleChildScrollView(
                               child: Column(
                             mainAxisSize: MainAxisSize.max,
@@ -350,10 +335,7 @@ class _MediaCartWidgetState extends State<MediaCartWidget>
                                                     const EdgeInsetsDirectional
                                                         .fromSTEB(0, 0, 0, 7),
                                                 child: Text(
-                                                  getJsonField(
-                                                    mediaCartItem,
-                                                    r'''$.title''',
-                                                  ).toString(),
+                                                  mediaCartItem.title,
                                                   style: FlutterFlowTheme.of(
                                                           context)
                                                       .bodyMedium
@@ -365,11 +347,8 @@ class _MediaCartWidgetState extends State<MediaCartWidget>
                                                 ),
                                               ),
                                               Text(
-                                                functions
-                                                    .formatPrice(getJsonField(
-                                                  mediaCartItem,
-                                                  r'''$.price''',
-                                                )),
+                                                functions.formatPrice(
+                                                    mediaCartItem.price),
                                                 style: FlutterFlowTheme.of(
                                                         context)
                                                     .bodyMedium
@@ -412,10 +391,7 @@ class _MediaCartWidgetState extends State<MediaCartWidget>
                                                   await MediaCartRemoveItemCall
                                                       .call(
                                                 userId: currentUserData?.userId,
-                                                index: getJsonField(
-                                                  mediaCartItem,
-                                                  r'''$.index''',
-                                                ),
+                                                index: mediaCartIndex,
                                                 refreshToken: currentUserData
                                                     ?.refreshToken,
                                                 jwtToken:
@@ -541,29 +517,24 @@ class _MediaCartWidgetState extends State<MediaCartWidget>
                                                   await showDialog(
                                                     context: context,
                                                     builder:
-                                                        (alertDialogContext) {
+                                                        (BuildContext context) {
                                                       return AlertDialog(
-                                                        title: const Text(
-                                                            'Message'),
-                                                        content:
-                                                            Text(getJsonField(
-                                                          (_model.removeItem
-                                                                  ?.jsonBody ??
-                                                              ''),
-                                                          r'''$.message''',
-                                                        ).toString()),
+                                                        title: Text('Message'),
+                                                        content: Text('已移除物品'),
                                                         actions: [
                                                           TextButton(
-                                                            onPressed: () =>
-                                                                Navigator.pop(
-                                                                    alertDialogContext),
-                                                            child: const Text(
-                                                                'Ok'),
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                            child: Text('Ok'),
                                                           ),
                                                         ],
                                                       );
                                                     },
                                                   );
+
                                                   setState(() {
                                                     FFAppState().token =
                                                         getJsonField(
@@ -574,7 +545,7 @@ class _MediaCartWidgetState extends State<MediaCartWidget>
                                                     ).toString();
                                                   });
                                                   _model.afterRemove =
-                                                      await BookCartFindAllCall
+                                                      await MediaCartFindAllCall
                                                           .call(
                                                     userId:
                                                         currentUserData?.userId,
@@ -587,8 +558,8 @@ class _MediaCartWidgetState extends State<MediaCartWidget>
 
                                                   setState(() {
                                                     _model.priceList =
-                                                        BookCartFindAllCall
-                                                                .price(
+                                                        MediaCartFindAllCall
+                                                                .priceList(
                                                       (_model.afterRemove
                                                               ?.jsonBody ??
                                                           ''),
@@ -654,15 +625,29 @@ class _MediaCartWidgetState extends State<MediaCartWidget>
                           child: Padding(
                             padding: const EdgeInsetsDirectional.fromSTEB(
                                 0, 7, 30, 10),
-                            child: Text(
-                              '總價\$${functions.calcSum(_model.priceList.toList()).toString()}',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .override(
-                                    fontFamily: 'Readex Pro',
-                                    color: FlutterFlowTheme.of(context).primary,
-                                    fontSize: 22,
-                                  ),
+                            child: Consumer<ItemCartRepo>(
+                              builder: (context, itemscart, child) {
+                                // Customize what your widget looks like when it's loading.
+
+                                final columnMediaCartFindAllResponse =
+                                    itemscart.items;
+                                return Builder(builder: (context) {
+                                  final List<CartItem> mediaCart =
+                                      columnMediaCartFindAllResponse;
+
+                                  return Text(
+                                    '${functions.formatPrice(int.parse(functions.calcSum(mediaCart.map((e) => e.price).toList()).toString()))}',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily: 'Readex Pro',
+                                          color: FlutterFlowTheme.of(context)
+                                              .primary,
+                                          fontSize: 22,
+                                        ),
+                                  );
+                                });
+                              },
                             ),
                           ),
                         ),

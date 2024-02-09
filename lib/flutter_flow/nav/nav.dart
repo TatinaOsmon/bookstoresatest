@@ -83,21 +83,20 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
       debugLogDiagnostics: true,
       refreshListenable: appStateNotifier,
       errorBuilder: (context, state) =>
-          appStateNotifier.loggedIn ? const NavBarPage() : const LoginWidget(),
+          appStateNotifier.loggedIn ? NavBarPage() : LoginWidget(),
       routes: [
         FFRoute(
           name: '_initialize',
           path: '/',
-          builder: (context, _) => appStateNotifier.loggedIn
-              ? const NavBarPage()
-              : const LoginWidget(),
+          builder: (context, _) =>
+              appStateNotifier.loggedIn ? NavBarPage() : LoginWidget(),
         ),
         FFRoute(
           name: 'HomePage',
           path: '/homePage',
           builder: (context, params) => params.isEmpty
-              ? const NavBarPage(initialPage: 'HomePage')
-              : const NavBarPage(
+              ? NavBarPage(initialPage: 'HomePage')
+              : NavBarPage(
                   initialPage: 'HomePage',
                   page: HomePageWidget(),
                 ),
@@ -127,7 +126,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: 'BookCart',
           path: '/bookCart',
-          builder: (context, params) => const NavBarPage(
+          builder: (context, params) => NavBarPage(
             initialPage: '',
             page: BookCartWidget(),
           ),
@@ -145,7 +144,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: 'ToolCart',
           path: '/toolCart',
-          builder: (context, params) => const NavBarPage(
+          builder: (context, params) => NavBarPage(
             initialPage: '',
             page: ToolCartWidget(),
           ),
@@ -172,8 +171,8 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: 'ToolCategoryPage',
           path: '/toolCategoryPage',
           builder: (context, params) => params.isEmpty
-              ? const NavBarPage(initialPage: 'ToolCategoryPage')
-              : const NavBarPage(
+              ? NavBarPage(initialPage: 'ToolCategoryPage')
+              : NavBarPage(
                   initialPage: 'ToolCategoryPage',
                   page: ToolCategoryPageWidget(),
                 ),
@@ -182,8 +181,8 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: 'profile',
           path: '/profile',
           builder: (context, params) => params.isEmpty
-              ? const NavBarPage(initialPage: 'profile')
-              : const NavBarPage(
+              ? NavBarPage(initialPage: 'profile')
+              : NavBarPage(
                   initialPage: 'profile',
                   page: ProfileWidget(),
                 ),
@@ -191,14 +190,14 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: 'createAccount',
           path: '/createAccount',
-          builder: (context, params) => const CreateAccountWidget(),
+          builder: (context, params) => CreateAccountWidget(),
         ),
         FFRoute(
           name: 'MediaPage',
           path: '/mediaPage',
           builder: (context, params) => params.isEmpty
-              ? const NavBarPage(initialPage: 'MediaPage')
-              : const NavBarPage(
+              ? NavBarPage(initialPage: 'MediaPage')
+              : NavBarPage(
                   initialPage: 'MediaPage',
                   page: MediaPageWidget(),
                 ),
@@ -206,7 +205,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: 'Mp3Category',
           path: '/mp3Category',
-          builder: (context, params) => const NavBarPage(
+          builder: (context, params) => NavBarPage(
             initialPage: '',
             page: Mp3CategoryWidget(),
           ),
@@ -225,7 +224,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: 'Mp4Category',
           path: '/mp4Category',
-          builder: (context, params) => const NavBarPage(
+          builder: (context, params) => NavBarPage(
             initialPage: '',
             page: Mp4CategoryWidget(),
           ),
@@ -247,8 +246,8 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: 'PrayFormPage',
           path: '/prayFormPage',
           builder: (context, params) => params.isEmpty
-              ? const NavBarPage(initialPage: 'PrayFormPage')
-              : const NavBarPage(
+              ? NavBarPage(initialPage: 'PrayFormPage')
+              : NavBarPage(
                   initialPage: 'PrayFormPage',
                   page: PrayFormPageWidget(),
                 ),
@@ -256,7 +255,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: 'orderHistory',
           path: '/orderHistory',
-          builder: (context, params) => const NavBarPage(
+          builder: (context, params) => NavBarPage(
             initialPage: '',
             page: OrderHistoryWidget(),
           ),
@@ -264,7 +263,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: 'MediaCart',
           path: '/mediaCart',
-          builder: (context, params) => const NavBarPage(
+          builder: (context, params) => NavBarPage(
             initialPage: '',
             page: MediaCartWidget(),
           ),
@@ -287,6 +286,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           path: '/mp3Player',
           builder: (context, params) => Mp3PlayerWidget(
             productId: params.getParam('productId', ParamType.int),
+            title: params.getParam('title', ParamType.String),
           ),
         ),
         FFRoute(
@@ -301,6 +301,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           path: '/mp4Player',
           builder: (context, params) => Mp4PlayerWidget(
             productId: params.getParam('productId', ParamType.int),
+            title: params.getParam('title', ParamType.String),
           ),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),

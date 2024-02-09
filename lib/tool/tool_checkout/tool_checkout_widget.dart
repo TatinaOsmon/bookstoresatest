@@ -214,6 +214,7 @@ class _ToolCheckoutWidgetState extends State<ToolCheckoutWidget>
                       hoverColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       onTap: () async {
+                        // close checkout preview screen
                         context.safePop();
                       },
                       child: Icon(

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class BookCartModel extends FlutterFlowModel<BookCartWidget> {
   ///  Local state fields for this page.
-  List<Book> cartItems = []; // Сиздин себетиңиздеги китептердин тизмеси
+  // List<Book> cartItems = []; // Сиздин себетиңиздеги китептердин тизмеси
   List<int> priceList = [];
   void addToPriceList(int item) => priceList.add(item);
 

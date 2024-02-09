@@ -121,103 +121,6 @@ class _HomePageWidgetState extends State<HomePageWidget>
     super.initState();
     _model = createModel(context, () => HomePageModel());
     fetchCategories();
-    //_cartModel = createModel(context, () => BookCartModel());
-
-    // SchedulerBinding.instance.addPostFrameCallback((_) async {
-    //   Function() _navigate = () {};
-    //   _cartModel.initial = await BookCartFindAllCall.call(
-    //     userId: currentUserData?.userId,
-    //     jwtToken: currentUserData?.jwtToken,
-    //     refreshToken: currentUserData?.refreshToken,
-    //   );
-    //   if ((_cartModel.initial?.succeeded ?? true)) {
-    //     // 有沒有success
-    //     // 如果有success代表他的登入有狀況
-    //     if (getJsonField(
-    //           (_cartModel.initial?.jsonBody ?? ''),
-    //           r'''$.success''',
-    //         ) !=
-    //         null) {
-    //       FFAppState().success = getJsonField(
-    //         (_cartModel.initial?.jsonBody ?? ''),
-    //         r'''$.success''',
-    //       );
-    //       if (FFAppState().success == true) {
-    //         await showDialog(
-    //           context: context,
-    //           builder: (alertDialogContext) {
-    //             return AlertDialog(
-    //               title: Text('Message'),
-    //               content: Text(getJsonField(
-    //                 (_cartModel.initial?.jsonBody ?? ''),
-    //                 r'''$.message''',
-    //               ).toString().toString()),
-    //               actions: [
-    //                 TextButton(
-    //                   onPressed: () => Navigator.pop(alertDialogContext),
-    //                   child: Text('Ok'),
-    //                 ),
-    //               ],
-    //             );
-    //           },
-    //         );
-    //         GoRouter.of(context).prepareAuthEvent();
-    //         await authManager.signOut();
-    //         GoRouter.of(context).clearRedirectLocation();
-
-    //         _navigate = () => context.goNamedAuth('login', context.mounted);
-    //       } else {
-    //         setState(() {
-    //           FFAppState().token = getJsonField(
-    //             (_cartModel.removeItem?.jsonBody ?? ''),
-    //             r'''$.jwtToken''',
-    //           ).toString().toString();
-    //         });
-    //         setState(() {
-    //           _cartModel.priceList = BookCartFindAllCall.price(
-    //             (_cartModel.initial?.jsonBody ?? ''),
-    //           )!
-    //               .toList()
-    //               .cast<int>();
-    //         });
-    //       }
-    //     } else {
-    //       setState(() {
-    //         FFAppState().token = getJsonField(
-    //           (_cartModel.removeItem?.jsonBody ?? ''),
-    //           r'''$.jwtToken''',
-    //         ).toString().toString();
-    //       });
-    //       setState(() {
-    //         _cartModel.priceList = BookCartFindAllCall.price(
-    //           (_cartModel.initial?.jsonBody ?? ''),
-    //         )!
-    //             .toList()
-    //             .cast<int>();
-    //       });
-    //     }
-    //   } else {
-    //     await showDialog(
-    //       context: context,
-    //       builder: (alertDialogContext) {
-    //         return AlertDialog(
-    //           title: Text('Error'),
-    //           content: Text('請稍後再試一次'),
-    //           actions: [
-    //             TextButton(
-    //               onPressed: () => Navigator.pop(alertDialogContext),
-    //               child: Text('Ok'),
-    //             ),
-    //           ],
-    //         );
-    //       },
-    //     );
-    //   }
-
-    //   _navigate();
-    // });
-
-    // print(_cartModel.cartItems.length);
   }
 
   @override
@@ -338,12 +241,14 @@ class _HomePageWidgetState extends State<HomePageWidget>
                             'this is sort id ${bookCategory[bookCategoryIndex]['sort']}}');
                         final bookCategoryItem =
                             bookCategory[bookCategoryIndex];
+                        print(
+                          bookCategory[bookCategoryIndex]['pic'],
+                        );
 
                         // itemCount: bookCategory.length,
                         // itemBuilder: (context, bookCategoryIndex) {
                         //   final bookCategoryItem =
                         //       bookCategory[bookCategoryIndex];
-                        print(' Tatina');
 
                         return InkWell(
                           splashColor: Colors.transparent,
@@ -408,7 +313,6 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                 ),
                               );
                             }
-                            print(' Emenuel');
                           },
                           child: Container(
                             width: MediaQuery.sizeOf(context).width * 0.45,
@@ -522,7 +426,6 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                     1.00, 1.00),
                                             child: FFButtonWidget(
                                               onPressed: () async {
-                                                print('Tati Emmenual');
                                                 context.pushNamed(
                                                   'BookPage',
                                                   queryParameters: {
@@ -633,6 +536,12 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                             child: Consumer<ItemCartRepo>(
                                                 builder: (context, cartItem,
                                                     widget) {
+                                              bool isInCart = cartItem.items
+                                                  .any((element) =>
+                                                      element.id ==
+                                                      getJsonField(
+                                                          bookCategoryItem,
+                                                          r'''$.title'''));
                                               return FFButtonWidget(
                                                 onPressed: () async {
                                                   if (await ConnectivityWrapper
@@ -755,33 +664,6 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                           });
                                                         }
                                                       } else {
-                                                        await showDialog(
-                                                          context: context,
-                                                          builder:
-                                                              (alertDialogContext) {
-                                                            return AlertDialog(
-                                                              title: const Text(
-                                                                  'Message'),
-                                                              content: Text(
-                                                                  BookCartAddItemCall
-                                                                      .message(
-                                                                (_model.addItem
-                                                                        ?.jsonBody ??
-                                                                    ''),
-                                                              ).toString()),
-                                                              actions: [
-                                                                TextButton(
-                                                                  onPressed: () =>
-                                                                      Navigator.pop(
-                                                                          alertDialogContext),
-                                                                  child:
-                                                                      const Text(
-                                                                          'Ok'),
-                                                                ),
-                                                              ],
-                                                            );
-                                                          },
-                                                        );
                                                         // 更新jwtToken
                                                         setState(() {
                                                           FFAppState().token =
@@ -793,67 +675,111 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                           ).toString();
                                                         });
                                                       }
-                                                    } else {
-                                                      await showDialog(
+                                                    } else {}
+                                                    if (isInCart) {
+                                                      showDialog(
                                                         context: context,
-                                                        builder:
-                                                            (alertDialogContext) {
+                                                        builder: (BuildContext
+                                                            context) {
                                                           return AlertDialog(
-                                                            title: const Text(
-                                                                'Error'),
-                                                            content: const Text(
-                                                                '請稍後再試一次'),
+                                                            title:
+                                                                Text('Message'),
+                                                            content: Text(
+                                                                '這個商品已存在購物車 '),
                                                             actions: [
                                                               TextButton(
-                                                                onPressed: () =>
-                                                                    Navigator.pop(
-                                                                        alertDialogContext),
+                                                                onPressed: () {
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
+                                                                },
                                                                 child:
-                                                                    const Text(
-                                                                        'Ok'),
+                                                                    Text('Ok'),
                                                               ),
                                                             ],
                                                           );
                                                         },
                                                       );
+                                                    } else {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return AlertDialog(
+                                                            title:
+                                                                Text('Message'),
+                                                            content:
+                                                                Text('商品已成功添加'),
+                                                            actions: [
+                                                              TextButton(
+                                                                onPressed: () {
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
+                                                                },
+                                                                child:
+                                                                    Text('Ok'),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        },
+                                                      );
+
+                                                      Provider.of<ItemCartRepo>(
+                                                              context,
+                                                              listen: false)
+                                                          .addItem(CartItem(
+                                                        name: getJsonField(
+                                                          bookCategoryItem,
+                                                          r'''$.content''',
+                                                        ).toString(),
+                                                        id: getJsonField(
+                                                          bookCategoryItem,
+                                                          r'''$.title''',
+                                                        ).toString(),
+                                                        price: getJsonField(
+                                                          bookCategoryItem,
+                                                          r'''$.price''',
+                                                        ),
+                                                        title: getJsonField(
+                                                          bookCategoryItem,
+                                                          r'''$.title''',
+                                                        ).toString(),
+                                                        category: '',
+                                                        pic: getJsonField(
+                                                          bookCategoryItem,
+                                                          r'''$.pic''',
+                                                        ).toString(),
+                                                      ));
                                                     }
-                                                    Provider.of<ItemCartRepo>(
-                                                            context,
-                                                            listen: false)
-                                                        .addItem(CartItem(
-                                                      name: getJsonField(
-                                                        bookCategoryItem,
-                                                        r'''$.content''',
-                                                      ).toString(),
-                                                      id: getJsonField(
-                                                        bookCategoryItem,
-                                                        r'''$.title''',
-                                                      ).toString(),
-                                                      price: getJsonField(
-                                                        bookCategoryItem,
-                                                        r'''$.price''',
-                                                      ),
-                                                      title: getJsonField(
-                                                        bookCategoryItem,
-                                                        r'''$.title''',
-                                                      ).toString(),
-                                                      category: '',
-                                                      pic: '',
-                                                    ));
 
                                                     setState(() {});
                                                   } else {
-                                                    showTopSnackBar(
-                                                      Overlay.of(context),
-                                                      CustomSnackBar.error(
-                                                        message: "沒有網路連線",
-                                                      ),
+                                                    showDialog(
+                                                      context: context,
+                                                      builder:
+                                                          (alertDialogContext) {
+                                                        return AlertDialog(
+                                                          title: const Text(
+                                                              'Error'),
+                                                          content: const Text(
+                                                              '請稍後再試一次 '),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () =>
+                                                                  Navigator.pop(
+                                                                      alertDialogContext),
+                                                              child: const Text(
+                                                                  'Ok'),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
                                                     );
                                                   }
-                                                  print('blablabla');
+
                                                   print(cartItem.items.length);
                                                 },
-
                                                 text: cartItem.items
                                                             .any((element) =>
                                                                 element.id ==
@@ -862,28 +788,8 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                   r'''$.title''',
                                                                 )) ==
                                                         false
-
-                                                    // text: cartItem.items.any(
-                                                    //   (element) =>
-                                                    //       element.title ==
-                                                    //       getJsonField(
-                                                    //         bookCategoryItem,
-                                                    //         r'''$.title''',
-                                                    //       ),
-                                                    // )
-                                                    ? '加入購物車 '
+                                                    ? '加入購物車'
                                                     : '已在購物車中',
-
-                                                // text: cartItem.items.any(
-                                                //   (element) =>
-                                                //       element.title ==
-                                                //       getJsonField(
-                                                //         bookCategoryItem,
-                                                //         r'''$.title''',
-                                                //       ).toString(),
-                                                // )
-                                                // ? 'Already in the Cart'
-                                                // : 'Add to Cart',
                                                 icon: const Icon(
                                                   Icons
                                                       .add_shopping_cart_outlined,
@@ -900,27 +806,13 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                       const EdgeInsetsDirectional
                                                           .fromSTEB(
                                                           0.0, 0.0, 0.0, 0.0),
-                                                  color: cartItem.items
-                                                              .any((element) =>
-                                                                  element.id ==
-                                                                  getJsonField(
-                                                                    bookCategoryItem,
-                                                                    r'''$.title''',
-                                                                  )) ==
-                                                          true
+                                                  color: isInCart
                                                       ? FlutterFlowTheme.of(
                                                               context)
                                                           .accent1
                                                       : FlutterFlowTheme.of(
                                                               context)
                                                           .primary,
-                                                  //  _cartModel.cartItems
-                                                  //         .contains(
-                                                  //             bookCategoryItem)
-                                                  //     ? Colors.grey
-                                                  //     : FlutterFlowTheme.of(
-                                                  //             context)
-                                                  //         .primary,
                                                   textStyle: FlutterFlowTheme
                                                           .of(context)
                                                       .titleSmall
@@ -966,542 +858,3 @@ class _HomePageWidgetState extends State<HomePageWidget>
     );
   }
 }
-  // return SingleChildScrollView(
-  //                       child: Column(
-  //                         mainAxisSize: MainAxisSize.max,
-  //                         children: List.generate(mp4.length, (mp4Index) {
-                            // final mp4Item = mp4[mp4Index];
-  //                           return Padding(
-  //                             padding:
-  //                                 EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
-  //                             child: Container(
-  //                               width: MediaQuery.sizeOf(context).width,
-  //                               decoration: BoxDecoration(
-  //                                 color: FlutterFlowTheme.of(context)
-  //                                     .primaryBackground,
-  //                                 borderRadius: BorderRadius.circular(8),
-  //                               ),
-  //                               child: Padding(
-  //                                 padding: EdgeInsetsDirectional.fromSTEB(
-  //                                     15, 15, 15, 15),
-  //                                 child: Row(
-  //                                   mainAxisSize: MainAxisSize.max,
-  //                                   crossAxisAlignment:
-  //                                       CrossAxisAlignment.start,
-  //                                   children: [
-  //                                     Padding(
-  //                                       padding: EdgeInsetsDirectional.fromSTEB(
-  //                                           0, 0, 15, 0),
-  //                                       child: Icon(
-  //                                         Icons.video_collection,
-  //                                         color: FlutterFlowTheme.of(context)
-  //                                             .primaryText,
-  //                                         size: 85,
-  //                                       ),
-  //                                     ),
-  //                                     Expanded(
-  //                                       child: Container(
-  //                                         width:
-  //                                             MediaQuery.sizeOf(context).width,
-  //                                         decoration: BoxDecoration(),
-  //                                         child: Column(
-  //                                           mainAxisSize: MainAxisSize.max,
-  //                                           children: [
-  //                                             Container(
-  //                                               width:
-  //                                                   MediaQuery.sizeOf(context)
-  //                                                       .width,
-  //                                               decoration: BoxDecoration(),
-  //                                               child: Column(
-  //                                                 mainAxisSize:
-  //                                                     MainAxisSize.max,
-  //                                                 crossAxisAlignment:
-  //                                                     CrossAxisAlignment.start,
-  //                                                 children: [
-  //                                                   Column(
-  //                                                     mainAxisSize:
-  //                                                         MainAxisSize.max,
-  //                                                     crossAxisAlignment:
-  //                                                         CrossAxisAlignment
-  //                                                             .start,
-  //                                                     children: [
-  //                                                       Padding(
-  //                                                         padding:
-  //                                                             EdgeInsetsDirectional
-  //                                                                 .fromSTEB(0,
-  //                                                                     0, 0, 7),
-  //                                                         child: Text(
-  //                                                           getJsonField(
-  //                                                             mp4Item,
-  //                                                             r'''$.title''',
-  //                                                           ).toString(),
-  //                                                           textAlign:
-  //                                                               TextAlign.start,
-  //                                                           style: FlutterFlowTheme
-  //                                                                   .of(context)
-  //                                                               .bodyMedium
-  //                                                               .override(
-  //                                                                 fontFamily:
-  //                                                                     'Readex Pro',
-  //                                                                 fontSize: 16,
-  //                                                               ),
-  //                                                         ),
-  //                                                       ),
-  //                                                       Text(
-  //                                                         '\$${getJsonField(
-  //                                                           mp4Item,
-  //                                                           r'''$.price''',
-  //                                                         ).toString()}',
-  //                                                         style: FlutterFlowTheme
-  //                                                                 .of(context)
-  //                                                             .bodyMedium
-  //                                                             .override(
-  //                                                               fontFamily:
-  //                                                                   'Readex Pro',
-  //                                                               color: FlutterFlowTheme.of(
-  //                                                                       context)
-  //                                                                   .primary,
-  //                                                               fontSize: 16,
-  //                                                             ),
-  //                                                       ),
-  //                                                     ],
-  //                                                   ),
-  //                                                   Column(
-  //                                                     mainAxisSize:
-  //                                                         MainAxisSize.max,
-  //                                                     children: [
-  //                                                       if (valueOrDefault<
-  //                                                           bool>(
-  //                                                         functions.newCustomFunction(
-  //                                                                 getJsonField(
-  //                                                               mp4Item,
-  //                                                               r'''$.purchased''',
-  //                                                             )) ==
-  //                                                             false,
-  //                                                         true,
-  //                                                       ))
-  //                                                         Align(
-  //                                                             alignment:
-  //                                                                 AlignmentDirectional(
-  //                                                                     1.00,
-  //                                                                     1.00),
-  //                                                             child: Consumer<
-  //                                                                     ItemCartRepo>(
-  //                                                                 builder: (context,
-  //                                                                     cartItem,
-  //                                                                     widget) {
-  //                                                               return FFButtonWidget(
-  //                                                                 onPressed:
-  //                                                                     () async {
-  //                                                                   print(cartItem
-  //                                                                       .items
-  //                                                                       .length);
-  //                                                                   _model.addItem =
-  //                                                                       await MediaCartAddItemCall
-  //                                                                           .call(
-  //                                                                     userId: currentUserData
-  //                                                                         ?.userId,
-  //                                                                     productId:
-  //                                                                         getJsonField(
-  //                                                                       mp4Item,
-  //                                                                       r'''$.productId''',
-  //                                                                     ),
-  //                                                                     tableName:
-  //                                                                         getJsonField(
-  //                                                                       mp4Item,
-  //                                                                       r'''$.tableName''',
-  //                                                                     ).toString(),
-  //                                                                     jwtToken:
-  //                                                                         currentUserData
-  //                                                                             ?.jwtToken,
-  //                                                                     refreshToken:
-  //                                                                         currentUserData
-  //                                                                             ?.refreshToken,
-  //                                                                   );
-  //                                                                   if ((_model
-  //                                                                           .addItem
-  //                                                                           ?.succeeded ??
-  //                                                                       true)) {
-  //                                                                     // 有沒有success
-  //                                                                     // 如果有success代表他的登入有狀況
-  //                                                                     if (getJsonField(
-  //                                                                           (_model.addItem?.jsonBody ??
-  //                                                                               ''),
-  //                                                                           r'''$.success''',
-  //                                                                         ) !=
-  //                                                                         null) {
-  //                                                                       FFAppState().success =
-  //                                                                           getJsonField(
-  //                                                                         (_model.addItem?.jsonBody ??
-  //                                                                             ''),
-  //                                                                         r'''$.success''',
-  //                                                                       );
-  //                                                                       if (FFAppState().success ==
-  //                                                                           true) {
-  //                                                                         await showDialog(
-  //                                                                           context:
-  //                                                                               context,
-  //                                                                           builder:
-  //                                                                               (alertDialogContext) {
-  //                                                                             return AlertDialog(
-  //                                                                               title: Text('Message'),
-  //                                                                               content: Text(getJsonField(
-  //                                                                                 (_model.addItem?.jsonBody ?? ''),
-  //                                                                                 r'''$.message''',
-  //                                                                               ).toString()),
-  //                                                                               actions: [
-  //                                                                                 TextButton(
-  //                                                                                   onPressed: () => Navigator.pop(alertDialogContext),
-  //                                                                                   child: Text('Ok'),
-  //                                                                                 ),
-  //                                                                               ],
-  //                                                                             );
-  //                                                                           },
-  //                                                                         );
-  //                                                                         GoRouter.of(context)
-  //                                                                             .prepareAuthEvent();
-  //                                                                         await authManager
-  //                                                                             .signOut();
-  //                                                                         GoRouter.of(context)
-  //                                                                             .clearRedirectLocation();
-
-  //                                                                         context.goNamedAuth(
-  //                                                                             'login',
-  //                                                                             context.mounted);
-  //                                                                       } else {
-  //                                                                         await showDialog(
-  //                                                                           context:
-  //                                                                               context,
-  //                                                                           builder:
-  //                                                                               (alertDialogContext) {
-  //                                                                             return AlertDialog(
-  //                                                                               title: Text('Message'),
-  //                                                                               content: Text(getJsonField(
-  //                                                                                 (_model.addItem?.jsonBody ?? ''),
-  //                                                                                 r'''$.message''',
-  //                                                                               ).toString()),
-  //                                                                               actions: [
-  //                                                                                 TextButton(
-  //                                                                                   onPressed: () => Navigator.pop(alertDialogContext),
-  //                                                                                   child: Text('Ok'),
-  //                                                                                 ),
-  //                                                                               ],
-  //                                                                             );
-  //                                                                           },
-  //                                                                         );
-  //                                                                         setState(
-  //                                                                             () {
-  //                                                                           FFAppState().token =
-  //                                                                               getJsonField(
-  //                                                                             (_model.addItem?.jsonBody ?? ''),
-  //                                                                             r'''$.jwtToken''',
-  //                                                                           ).toString();
-  //                                                                         });
-  //                                                                       }
-  //                                                                     } else {
-  //                                                                       await showDialog(
-  //                                                                         context:
-  //                                                                             context,
-  //                                                                         builder:
-  //                                                                             (alertDialogContext) {
-  //                                                                           return AlertDialog(
-  //                                                                             title: Text('Message'),
-  //                                                                             content: Text(getJsonField(
-  //                                                                               (_model.addItem?.jsonBody ?? ''),
-  //                                                                               r'''$.message''',
-  //                                                                             ).toString()),
-  //                                                                             actions: [
-  //                                                                               TextButton(
-  //                                                                                 onPressed: () => Navigator.pop(alertDialogContext),
-  //                                                                                 child: Text('Ok'),
-  //                                                                               ),
-  //                                                                             ],
-  //                                                                           );
-  //                                                                         },
-  //                                                                       );
-  //                                                                       setState(
-  //                                                                           () {
-  //                                                                         FFAppState().token =
-  //                                                                             getJsonField(
-  //                                                                           (_model.addItem?.jsonBody ??
-  //                                                                               ''),
-  //                                                                           r'''$.jwtToken''',
-  //                                                                         ).toString();
-  //                                                                       });
-  //                                                                     }
-  //                                                                   } else {
-  //                                                                     await showDialog(
-  //                                                                       context:
-  //                                                                           context,
-  //                                                                       builder:
-  //                                                                           (alertDialogContext) {
-  //                                                                         return AlertDialog(
-  //                                                                           title:
-  //                                                                               Text('Error'),
-  //                                                                           content:
-  //                                                                               Text('請稍後再試一次'),
-  //                                                                           actions: [
-  //                                                                             TextButton(
-  //                                                                               onPressed: () => Navigator.pop(alertDialogContext),
-  //                                                                               child: Text('Ok'),
-  //                                                                             ),
-  //                                                                           ],
-  //                                                                         );
-  //                                                                       },
-  //                                                                     );
-  //                                                                   }
-
-  //                                                                   print(cartItem
-  //                                                                       .items
-  //                                                                       .any((element) =>
-  //                                                                           element.title ==
-  //                                                                           getJsonField(
-  //                                                                             mp4Item,
-  //                                                                             r'''$.title''',
-  //                                                                           )));
-
-  //                                                                   if (cartItem.items.any((element) =>
-  //                                                                           element.title ==
-  //                                                                           getJsonField(
-  //                                                                             mp4Item,
-  //                                                                             r'''$.title''',
-  //                                                                           )) ==
-  //                                                                       false) {
-  //                                                                     Provider.of<ItemCartRepo>(
-  //                                                                             context,
-  //                                                                             listen:
-  //                                                                                 false)
-  //                                                                         .addItem(
-  //                                                                             CartItem(
-  //                                                                       name:
-  //                                                                           getJsonField(
-  //                                                                         mp4Item,
-  //                                                                         r'''$.content''',
-  //                                                                       ).toString(),
-  //                                                                       id: getJsonField(
-  //                                                                         mp4Item,
-  //                                                                         r'''$.title''',
-  //                                                                       ).toString(),
-  //                                                                       price:
-  //                                                                           getJsonField(
-  //                                                                         mp4Item,
-  //                                                                         r'''$.price''',
-  //                                                                       ),
-  //                                                                       title:
-  //                                                                           getJsonField(
-  //                                                                         mp4Item,
-  //                                                                         r'''$.title''',
-  //                                                                       ).toString(),
-  //                                                                       category:
-  //                                                                           '',
-  //                                                                     ));
-  //                                                                   } else {
-  //                                                                     showDialog(
-  //                                                                         context:
-  //                                                                             context,
-  //                                                                         builder:
-  //                                                                             (context) {
-  //                                                                           return AlertDialog.adaptive(
-  //                                                                             title: Text('Already added to cart'),
-  //                                                                           );
-  //                                                                         });
-  //                                                                   }
-
-  //                                                                   setState(
-  //                                                                       () {});
-  //                                                                 },
-  //                                                                 text: cartItem
-  //                                                                         .items
-  //                                                                         .any(
-  //                                                                   (element) =>
-  //                                                                       element
-  //                                                                           .title ==
-  //                                                                       getJsonField(
-  //                                                                         mp4Item,
-  //                                                                         r'''$.title''',
-  //                                                                       ).toString(),
-  //                                                                 )
-  //                                                                     ? '已在購物車中 '
-  //                                                                     : '加入購物車',
-  //                                                                 icon:
-  //                                                                     const Icon(
-  //                                                                   Icons
-  //                                                                       .add_shopping_cart_outlined,
-  //                                                                   size: 15.0,
-  //                                                                 ),
-  //                                                                 options:
-  //                                                                     FFButtonOptions(
-  //                                                                   width:
-  //                                                                       230.0,
-  //                                                                   height:
-  //                                                                       40.0,
-  //                                                                   padding: const EdgeInsetsDirectional
-  //                                                                       .fromSTEB(
-  //                                                                       24.0,
-  //                                                                       0.0,
-  //                                                                       24.0,
-  //                                                                       0.0),
-  //                                                                   iconPadding:
-  //                                                                       const EdgeInsetsDirectional
-  //                                                                           .fromSTEB(
-  //                                                                           0.0,
-  //                                                                           0.0,
-  //                                                                           0.0,
-  //                                                                           0.0),
-  //                                                                   color: cartItem
-  //                                                                           .items
-  //                                                                           .any(
-  //                                                                     (element) =>
-  //                                                                         element
-  //                                                                             .title ==
-  //                                                                         getJsonField(
-  //                                                                           mp4Item,
-  //                                                                           r'''$.title''',
-  //                                                                         ).toString(),
-  //                                                                   )
-  //                                                                       ? FlutterFlowTheme.of(context)
-  //                                                                           .accent1
-  //                                                                       : FlutterFlowTheme.of(context)
-  //                                                                           .primary,
-  //                                                                   textStyle: FlutterFlowTheme.of(
-  //                                                                           context)
-  //                                                                       .titleSmall
-  //                                                                       .override(
-  //                                                                         fontFamily:
-  //                                                                             'Readex Pro',
-  //                                                                         color:
-  //                                                                             Colors.white,
-  //                                                                       ),
-  //                                                                   elevation:
-  //                                                                       3.0,
-  //                                                                   borderSide:
-  //                                                                       const BorderSide(
-  //                                                                     color: Colors
-  //                                                                         .transparent,
-  //                                                                     width:
-  //                                                                         1.0,
-  //                                                                   ),
-  //                                                                   borderRadius:
-  //                                                                       BorderRadius.circular(
-  //                                                                           48.0),
-  //                                                                 ),
-  //                                                               ).animateOnPageLoad(
-  //                                                                   animationsMap[
-  //                                                                       'buttonOnPageLoadAnimation1']!);
-  //                                                             })),
-  //                                                       if (valueOrDefault<
-  //                                                           bool>(
-  //                                                         functions.newCustomFunction(
-  //                                                                 getJsonField(
-  //                                                               mp4Item,
-  //                                                               r'''$.purchased''',
-  //                                                             )) ==
-  //                                                             true,
-  //                                                         true,
-  //                                                       ))
-  //                                                         Align(
-  //                                                           alignment:
-  //                                                               AlignmentDirectional(
-  //                                                                   1.00, 1.00),
-  //                                                           child:
-  //                                                               FFButtonWidget(
-  //                                                             onPressed:
-  //                                                                 () async {
-  //                                                               context
-  //                                                                   .pushNamed(
-  //                                                                 'mp3Player',
-  //                                                                 queryParameters:
-  //                                                                     {
-  //                                                                   'productId':
-  //                                                                       serializeParam(
-  //                                                                     getJsonField(
-  //                                                                       mp4Item,
-  //                                                                       r'''$.productId''',
-  //                                                                     ),
-  //                                                                     ParamType
-  //                                                                         .int,
-  //                                                                   ),
-  //                                                                   'title':
-  //                                                                       serializeParam(
-  //                                                                     getJsonField(
-  //                                                                       mp4Item,
-  //                                                                       r'''$.title''',
-  //                                                                     ).toString(),
-  //                                                                     ParamType
-  //                                                                         .String,
-  //                                                                   ),
-  //                                                                 }.withoutNulls,
-  //                                                               );
-  //                                                             },
-  //                                                             text: '播放',
-  //                                                             icon: Icon(
-  //                                                               Icons
-  //                                                                   .play_arrow,
-  //                                                               size: 15,
-  //                                                             ),
-  //                                                             options:
-  //                                                                 FFButtonOptions(
-  //                                                               width: 230,
-  //                                                               height: 40,
-  //                                                               padding:
-  //                                                                   EdgeInsetsDirectional
-  //                                                                       .fromSTEB(
-  //                                                                           24,
-  //                                                                           0,
-  //                                                                           24,
-  //                                                                           0),
-  //                                                               iconPadding:
-  //                                                                   EdgeInsetsDirectional
-  //                                                                       .fromSTEB(
-  //                                                                           0,
-  //                                                                           0,
-  //                                                                           0,
-  //                                                                           0),
-  //                                                               color: FlutterFlowTheme.of(
-  //                                                                       context)
-  //                                                                   .secondary,
-  //                                                               textStyle: FlutterFlowTheme.of(
-  //                                                                       context)
-  //                                                                   .titleSmall
-  //                                                                   .override(
-  //                                                                     fontFamily:
-  //                                                                         'Readex Pro',
-  //                                                                     color: FlutterFlowTheme.of(
-  //                                                                             context)
-  //                                                                         .info,
-  //                                                                   ),
-  //                                                               elevation: 3,
-  //                                                               borderSide:
-  //                                                                   BorderSide(
-  //                                                                 color: Colors
-  //                                                                     .transparent,
-  //                                                                 width: 1,
-  //                                                               ),
-  //                                                               borderRadius:
-  //                                                                   BorderRadius
-  //                                                                       .circular(
-  //                                                                           48),
-  //                                                             ),
-  //                                                           ).animateOnPageLoad(
-  //                                                                   animationsMap[
-  //                                                                       'buttonOnPageLoadAnimation2']!),
-  //                                                         ),
-  //                                                     ],
-  //                                                   ),
-  //                                                 ],
-  //                                               ),
-  //                                             ),
-  //                                           ],
-  //                                         ),
-  //                                       ),
-  //                                     ),
-  //                                   ],
-  //                                 ),
-  //                               ),
-  //                             ).animateOnPageLoad(animationsMap[
-  //                                 'containerOnPageLoadAnimation']!),
-  //                           );
-  //                         }),
-  //                       ),
-  //                     );
-                   

@@ -149,7 +149,7 @@ class MpThreeFindAllCall {
 class MpFourFindAllCategoriesCall {
   // ... other properties and methods of ApiCallResponse
 
-  static Future<ApiCallResponse> call({int? userId}) async {
+  static Future<ApiCallResponse> call({int? userId, required id}) async {
     // Define the request body as a JSON string
     final ffApiRequestBody = '''
 {
@@ -703,6 +703,7 @@ class ToolCartRemoveItemCall {
     int? index,
     String? refreshToken = '',
     String? jwtToken = '',
+    required String toolId,
   }) async {
     final ffApiRequestBody = '''
 {
@@ -970,6 +971,10 @@ class GetOrderCall {
   "jwtToken": "$jwtToken",
   "refreshToken": "$refreshToken"
 }''';
+
+    print('userId:$userId');
+    print('jwToken:$jwtToken');
+    print('refreshToken:$refreshToken');
     return ApiManager.instance.makeApiCall(
       callName: 'getOrder',
       apiUrl: 'https://ebookapi.shingonzo.com/order/getOrder',

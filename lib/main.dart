@@ -1,3 +1,4 @@
+import 'package:book_store/book/book_cart/book_cart_widget.dart';
 import 'package:book_store/book/pdf_reader/pdf_reader_widget.dart';
 import 'package:book_store/repositery/itemsCartRepo.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +38,13 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (context) => TatynaProvider(),
-      )
+      ),
+      ChangeNotifierProvider(
+        create: (context) => OrderCountProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => LastProvider(),
+      ),
 
       // Add more providers here
     ],
@@ -208,7 +215,7 @@ class _NavBarPageState extends State<NavBarPage> {
           child: _currentPage ?? tabs[_currentPageName]!),
       extendBody: true,
       bottomNavigationBar: Container(
-        height: 91.0, // 设置你想要的高度
+        height: 120.0, // 设置你想要的高度
         child: FloatingNavbar(
           currentIndex: currentIndex,
           onTap: (i) => setState(() {

@@ -198,22 +198,22 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                 ),
               ),
               actions: [
-                // Padding(
-                //   padding: const EdgeInsetsDirectional.fromSTEB(
-                //       0.0, 10.0, 15.0, 0.0),
-                //   child: FlutterFlowIconButton(
-                //     borderRadius: 20.0,
-                //     buttonSize: 50.0,
-                //     icon: Icon(
-                //       Icons.shopping_cart_outlined,
-                //       color: FlutterFlowTheme.of(context).primaryText,
-                //       size: 35.0,
-                //     ),
-                //     onPressed: () async {
-                //       context.pushNamed('MediaCart');
-                //     },
-                //   ),
-                // ),
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      0.0, 10.0, 15.0, 0.0),
+                  child: FlutterFlowIconButton(
+                    borderRadius: 20.0,
+                    buttonSize: 50.0,
+                    icon: Icon(
+                      Icons.shopping_cart_outlined,
+                      color: FlutterFlowTheme.of(context).primaryText,
+                      size: 35.0,
+                    ),
+                    onPressed: () async {
+                      context.pushNamed('MediaCart');
+                    },
+                  ),
+                ),
               ],
               centerTitle: true,
               elevation: 2.0,
@@ -500,32 +500,6 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                             });
                                                           }
                                                         } else {
-                                                          await showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (alertDialogContext) {
-                                                              return AlertDialog(
-                                                                title: Text(
-                                                                    'Message'),
-                                                                content: Text(
-                                                                    getJsonField(
-                                                                  (_model.addItem
-                                                                          ?.jsonBody ??
-                                                                      ''),
-                                                                  r'''$.message''',
-                                                                ).toString()),
-                                                                actions: [
-                                                                  TextButton(
-                                                                    onPressed: () =>
-                                                                        Navigator.pop(
-                                                                            alertDialogContext),
-                                                                    child: Text(
-                                                                        'Ok'),
-                                                                  ),
-                                                                ],
-                                                              );
-                                                            },
-                                                          );
                                                           setState(() {
                                                             FFAppState().token =
                                                                 getJsonField(
@@ -559,60 +533,109 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                           },
                                                         );
                                                       }
-
-                                                      print(cartItem.items
+                                                      bool isInCart = cartItem
+                                                          .items
                                                           .any((element) =>
-                                                              element.title ==
+                                                              element.id ==
                                                               getJsonField(
                                                                 mp3Item,
                                                                 r'''$.title''',
-                                                              )));
-
-                                                      if (cartItem.items.any(
-                                                              (element) =>
-                                                                  element
-                                                                      .title ==
-                                                                  getJsonField(
-                                                                    mp3Item,
-                                                                    r'''$.title''',
-                                                                  )) ==
-                                                          false) {
-                                                        Provider.of<ItemCartRepo>(
-                                                                context,
-                                                                listen: false)
-                                                            .addItem(CartItem(
-                                                          name: getJsonField(
-                                                            mp3Item,
-                                                            r'''$.content''',
-                                                          ).toString(),
-                                                          id: getJsonField(
-                                                            mp3Item,
-                                                            r'''$.title''',
-                                                          ).toString(),
-                                                          price: getJsonField(
-                                                            mp3Item,
-                                                            r'''$.price''',
-                                                          ),
-                                                          title: getJsonField(
-                                                            mp3Item,
-                                                            r'''$.title''',
-                                                          ).toString(),
-                                                          category: '',
-                                                          pic: '',
-                                                        ));
+                                                              ));
+                                                      if (isInCart) {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return AlertDialog(
+                                                              title: Text(
+                                                                  'Message'),
+                                                              content: Text(
+                                                                  '這個商品已存在購物車 '),
+                                                              actions: [
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                  },
+                                                                  child: Text(
+                                                                      'Ok'),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
+                                                        );
                                                       } else {
                                                         showDialog(
-                                                            context: context,
-                                                            builder: (context) {
-                                                              return AlertDialog
-                                                                  .adaptive(
-                                                                title: Text(
-                                                                    '已經加入購物車'),
-                                                              );
-                                                            });
-                                                      }
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return AlertDialog(
+                                                              title: Text(
+                                                                  'Message'),
+                                                              content: Text(
+                                                                  '商品已成功添加'),
+                                                              actions: [
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                  },
+                                                                  child: Text(
+                                                                      'Ok'),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
+                                                        );
 
-                                                      setState(() {});
+                                                        print(cartItem.items
+                                                            .any((element) =>
+                                                                element.title ==
+                                                                getJsonField(
+                                                                  mp3Item,
+                                                                  r'''$.title''',
+                                                                )));
+
+                                                        if (cartItem.items.any(
+                                                                (element) =>
+                                                                    element
+                                                                        .title ==
+                                                                    getJsonField(
+                                                                      mp3Item,
+                                                                      r'''$.title''',
+                                                                    )) ==
+                                                            false) {
+                                                          Provider.of<ItemCartRepo>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .addItem(CartItem(
+                                                            name: getJsonField(
+                                                              mp3Item,
+                                                              r'''$.content''',
+                                                            ).toString(),
+                                                            id: getJsonField(
+                                                              mp3Item,
+                                                              r'''$.title''',
+                                                            ).toString(),
+                                                            price: getJsonField(
+                                                              mp3Item,
+                                                              r'''$.price''',
+                                                            ),
+                                                            title: getJsonField(
+                                                              mp3Item,
+                                                              r'''$.title''',
+                                                            ).toString(),
+                                                            category: '',
+                                                            pic: '',
+                                                          ));
+                                                        } else {}
+
+                                                        setState(() {});
+                                                      }
                                                     },
                                                     text: cartItem.items.any(
                                                       (element) =>
@@ -884,7 +907,6 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
 
                             // print(
                             //     'this is sort id mp3 ${mp3Categories[mp3Index]['sort']}}');
-
                             return Padding(
                               padding:
                                   EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
@@ -907,13 +929,12 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                             CrossAxisAlignment.center,
                                         children: [
                                           //we will change image here
-
                                           Padding(
                                             padding:
                                                 EdgeInsetsDirectional.fromSTEB(
                                                     0, 0, 15, 0),
                                             child: Icon(
-                                              Icons.queue_music_outlined,
+                                              Icons.queue_music,
                                               color:
                                                   FlutterFlowTheme.of(context)
                                                       .primaryText,
@@ -956,9 +977,10 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                     ),
                                                   ),
                                                   Text(
-                                                    functions.formatPrice(
-                                                        getJsonField(mp3Item,
-                                                            r'''$.price''')),
+                                                    '\$${getJsonField(
+                                                      mp3Item,
+                                                      r'''$.price''',
+                                                    ).toString()}',
                                                     style: FlutterFlowTheme.of(
                                                             context)
                                                         .bodyMedium
@@ -1117,32 +1139,6 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                             });
                                                           }
                                                         } else {
-                                                          await showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (alertDialogContext) {
-                                                              return AlertDialog(
-                                                                title: Text(
-                                                                    'Message'),
-                                                                content: Text(
-                                                                    getJsonField(
-                                                                  (_model.addItem
-                                                                          ?.jsonBody ??
-                                                                      ''),
-                                                                  r'''$.message''',
-                                                                ).toString()),
-                                                                actions: [
-                                                                  TextButton(
-                                                                    onPressed: () =>
-                                                                        Navigator.pop(
-                                                                            alertDialogContext),
-                                                                    child: Text(
-                                                                        'Ok'),
-                                                                  ),
-                                                                ],
-                                                              );
-                                                            },
-                                                          );
                                                           setState(() {
                                                             FFAppState().token =
                                                                 getJsonField(
@@ -1176,59 +1172,109 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                           },
                                                         );
                                                       }
-                                                      print('this one');
-                                                      print(cartItem.items
+                                                      bool isInCart = cartItem
+                                                          .items
                                                           .any((element) =>
-                                                              element.title ==
+                                                              element.id ==
                                                               getJsonField(
                                                                 mp3Item,
                                                                 r'''$.title''',
-                                                              )));
-
-                                                      if (cartItem.items.any(
-                                                              (element) =>
-                                                                  element
-                                                                      .title ==
-                                                                  getJsonField(
-                                                                    mp3Item,
-                                                                    r'''$.title''',
-                                                                  )) ==
-                                                          false) {
-                                                        Provider.of<ItemCartRepo>(
-                                                                context,
-                                                                listen: false)
-                                                            .addItem(CartItem(
-                                                          name: getJsonField(
-                                                            mp3Item,
-                                                            r'''$.content''',
-                                                          ).toString(),
-                                                          id: getJsonField(
-                                                            mp3Item,
-                                                            r'''$.title''',
-                                                          ).toString(),
-                                                          price: getJsonField(
-                                                            mp3Item,
-                                                            r'''$.price''',
-                                                          ),
-                                                          title: getJsonField(
-                                                            mp3Item,
-                                                            r'''$.title''',
-                                                          ).toString(),
-                                                          category: '',
-                                                          pic: '',
-                                                        ));
-                                                        setState(() {});
-                                                      } else {
-                                                        showTopSnackBar(
-                                                          Overlay.of(context),
-                                                          CustomSnackBar.error(
-                                                            message: "沒有網路連線",
-                                                          ),
+                                                              ));
+                                                      if (isInCart) {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return AlertDialog(
+                                                              title: Text(
+                                                                  'Message'),
+                                                              content: Text(
+                                                                  '這個商品已存在購物車 '),
+                                                              actions: [
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                  },
+                                                                  child: Text(
+                                                                      'Ok'),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
                                                         );
+                                                      } else {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return AlertDialog(
+                                                              title: Text(
+                                                                  'Message'),
+                                                              content: Text(
+                                                                  '商品已成功添加'),
+                                                              actions: [
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                  },
+                                                                  child: Text(
+                                                                      'Ok'),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
+                                                        );
+
+                                                        print(cartItem.items
+                                                            .any((element) =>
+                                                                element.title ==
+                                                                getJsonField(
+                                                                  mp3Item,
+                                                                  r'''$.title''',
+                                                                )));
+
+                                                        if (cartItem.items.any(
+                                                                (element) =>
+                                                                    element
+                                                                        .title ==
+                                                                    getJsonField(
+                                                                      mp3Item,
+                                                                      r'''$.title''',
+                                                                    )) ==
+                                                            false) {
+                                                          Provider.of<ItemCartRepo>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .addItem(CartItem(
+                                                            name: getJsonField(
+                                                              mp3Item,
+                                                              r'''$.content''',
+                                                            ).toString(),
+                                                            id: getJsonField(
+                                                              mp3Item,
+                                                              r'''$.title''',
+                                                            ).toString(),
+                                                            price: getJsonField(
+                                                              mp3Item,
+                                                              r'''$.price''',
+                                                            ),
+                                                            title: getJsonField(
+                                                              mp3Item,
+                                                              r'''$.title''',
+                                                            ).toString(),
+                                                            category: '',
+                                                            pic: '',
+                                                          ));
+                                                        } else {}
+
+                                                        setState(() {});
                                                       }
-                                                      print('blablabla');
-                                                      print(cartItem
-                                                          .items.length);
                                                     },
                                                     text: cartItem.items.any(
                                                       (element) =>

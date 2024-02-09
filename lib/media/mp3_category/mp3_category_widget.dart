@@ -189,22 +189,22 @@ class _Mp3CategoryWidgetState extends State<Mp3CategoryWidget>
                 ),
               ),
               actions: [
-                // Padding(
-                //   padding: const EdgeInsetsDirectional.fromSTEB(
-                //       0.0, 10.0, 15.0, 0.0),
-                //   child: FlutterFlowIconButton(
-                //     borderRadius: 20.0,
-                //     buttonSize: 50.0,
-                //     icon: Icon(
-                //       Icons.shopping_cart_outlined,
-                //       color: FlutterFlowTheme.of(context).primaryText,
-                //       size: 35.0,
-                //     ),
-                //     onPressed: () async {
-                //       context.pushNamed('MediaCart');
-                //     },
-                //   ),
-                // ),
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      0.0, 10.0, 15.0, 0.0),
+                  child: FlutterFlowIconButton(
+                    borderRadius: 20.0,
+                    buttonSize: 50.0,
+                    icon: Icon(
+                      Icons.shopping_cart_outlined,
+                      color: FlutterFlowTheme.of(context).primaryText,
+                      size: 35.0,
+                    ),
+                    onPressed: () async {
+                      context.pushNamed('MediaCart');
+                    },
+                  ),
+                ),
               ],
               centerTitle: true,
               elevation: 2.0,
@@ -213,8 +213,7 @@ class _Mp3CategoryWidgetState extends State<Mp3CategoryWidget>
           body: SafeArea(
             top: true,
             child: Padding(
-              padding:
-                  const EdgeInsetsDirectional.fromSTEB(15.0, 15.0, 15.0, 110.0),
+              padding: EdgeInsetsDirectional.fromSTEB(15, 15, 15, 110),
               child: FutureBuilder<ApiCallResponse>(
                 future: MpThreeFindAllCategoriesCall.call(
                   userId: currentUserData?.userId,
@@ -222,11 +221,10 @@ class _Mp3CategoryWidgetState extends State<Mp3CategoryWidget>
                 builder: (context, snapshot) {
                   // Customize what your widget looks like when it's loading.
                   if (!snapshot.hasData) {
-                    print(snapshot.data);
                     return Center(
                       child: SizedBox(
-                        width: 50.0,
-                        height: 50.0,
+                        width: 50,
+                        height: 50,
                         child: CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(
                             FlutterFlowTheme.of(context).primary,
@@ -255,8 +253,12 @@ class _Mp3CategoryWidgetState extends State<Mp3CategoryWidget>
                           shrinkWrap: true,
                           scrollDirection: Axis.vertical,
                           itemCount: mp3.length,
+                          // itemCount: mp3Categories.length,
                           itemBuilder: (context, mp3Index) {
-                            final mp3CategoryItem = mp3[mp3Index];
+                            final mp3Item = mp3[mp3Index];
+
+                            // print(
+                            //     'this is sort id mp3 ${mp3Categories[mp3Index]['sort']}}');
 
                             return Padding(
                               padding:
@@ -288,8 +290,8 @@ class _Mp3CategoryWidgetState extends State<Mp3CategoryWidget>
                                                   BorderRadius.circular(10),
                                               image: DecorationImage(
                                                 image: NetworkImage(
-                                                  getJsonField(mp3CategoryItem,
-                                                      r'''$.pic'''),
+                                                  getJsonField(
+                                                      mp3Item, r'''$.pic'''),
                                                 ),
                                                 fit: BoxFit.cover,
                                               ),
@@ -316,7 +318,7 @@ class _Mp3CategoryWidgetState extends State<Mp3CategoryWidget>
                                                                 0, 0, 0, 7),
                                                     child: Text(
                                                       getJsonField(
-                                                        mp3CategoryItem,
+                                                        mp3Item,
                                                         r'''$.title''',
                                                       ).toString(),
                                                       textAlign:
@@ -333,10 +335,9 @@ class _Mp3CategoryWidgetState extends State<Mp3CategoryWidget>
                                                     ),
                                                   ),
                                                   Text(
-                                                    '\$${getJsonField(
-                                                      mp3CategoryItem,
-                                                      r'''$.price''',
-                                                    ).toString()}',
+                                                    functions.formatPrice(
+                                                        getJsonField(mp3Item,
+                                                            r'''$.price''')),
                                                     style: FlutterFlowTheme.of(
                                                             context)
                                                         .bodyMedium
@@ -358,393 +359,65 @@ class _Mp3CategoryWidgetState extends State<Mp3CategoryWidget>
                                       Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
-                                          if (valueOrDefault<bool>(
-                                            functions.newCustomFunction(
-                                                    getJsonField(
-                                                  mp3CategoryItem,
-                                                  r'''$.purchased''',
-                                                )) ==
-                                                false,
-                                            true,
-                                          ))
-                                            Align(
-                                                alignment: AlignmentDirectional(
-                                                    1.00, 1.00),
-                                                child: Consumer<ItemCartRepo>(
-                                                    builder: (context, cartItem,
-                                                        widget) {
-                                                  return FFButtonWidget(
-                                                    onPressed: () async {
-                                                      print(cartItem
-                                                          .items.length);
-                                                      _model.addItem =
-                                                          await MediaCartAddItemCall
-                                                              .call(
-                                                        userId: currentUserData
-                                                            ?.userId,
-                                                        productId: getJsonField(
-                                                          mp3CategoryItem,
-                                                          r'''$.productId''',
-                                                        ),
-                                                        tableName: getJsonField(
-                                                          mp3CategoryItem,
-                                                          r'''$.tableName''',
-                                                        ).toString(),
-                                                        jwtToken:
-                                                            currentUserData
-                                                                ?.jwtToken,
-                                                        refreshToken:
-                                                            currentUserData
-                                                                ?.refreshToken,
-                                                      );
-                                                      if ((_model.addItem
-                                                              ?.succeeded ??
-                                                          true)) {
-                                                        // 有沒有success
-                                                        // 如果有success代表他的登入有狀況
-                                                        if (getJsonField(
-                                                              (_model.addItem
-                                                                      ?.jsonBody ??
-                                                                  ''),
-                                                              r'''$.success''',
-                                                            ) !=
-                                                            null) {
-                                                          FFAppState().success =
-                                                              getJsonField(
-                                                            (_model.addItem
-                                                                    ?.jsonBody ??
-                                                                ''),
-                                                            r'''$.success''',
-                                                          );
-                                                          if (FFAppState()
-                                                                  .success ==
-                                                              true) {
-                                                            await showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (alertDialogContext) {
-                                                                return AlertDialog(
-                                                                  title: Text(
-                                                                      'Message'),
-                                                                  content: Text(
-                                                                      getJsonField(
-                                                                    (_model.addItem
-                                                                            ?.jsonBody ??
-                                                                        ''),
-                                                                    r'''$.message''',
-                                                                  ).toString()),
-                                                                  actions: [
-                                                                    TextButton(
-                                                                      onPressed:
-                                                                          () =>
-                                                                              Navigator.pop(alertDialogContext),
-                                                                      child: Text(
-                                                                          'Ok'),
-                                                                    ),
-                                                                  ],
-                                                                );
-                                                              },
-                                                            );
-                                                            GoRouter.of(context)
-                                                                .prepareAuthEvent();
-                                                            await authManager
-                                                                .signOut();
-                                                            GoRouter.of(context)
-                                                                .clearRedirectLocation();
-
-                                                            context.goNamedAuth(
-                                                                'login',
-                                                                context
-                                                                    .mounted);
-                                                          } else {
-                                                            await showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (alertDialogContext) {
-                                                                return AlertDialog(
-                                                                  title: Text(
-                                                                      'Message'),
-                                                                  content: Text(
-                                                                      getJsonField(
-                                                                    (_model.addItem
-                                                                            ?.jsonBody ??
-                                                                        ''),
-                                                                    r'''$.message''',
-                                                                  ).toString()),
-                                                                  actions: [
-                                                                    TextButton(
-                                                                      onPressed:
-                                                                          () =>
-                                                                              Navigator.pop(alertDialogContext),
-                                                                      child: Text(
-                                                                          'Ok'),
-                                                                    ),
-                                                                  ],
-                                                                );
-                                                              },
-                                                            );
-                                                            setState(() {
-                                                              FFAppState()
-                                                                      .token =
-                                                                  getJsonField(
-                                                                (_model.addItem
-                                                                        ?.jsonBody ??
-                                                                    ''),
-                                                                r'''$.jwtToken''',
-                                                              ).toString();
-                                                            });
-                                                          }
-                                                        } else {
-                                                          await showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (alertDialogContext) {
-                                                              return AlertDialog(
-                                                                title: Text(
-                                                                    'Message'),
-                                                                content: Text(
-                                                                    getJsonField(
-                                                                  (_model.addItem
-                                                                          ?.jsonBody ??
-                                                                      ''),
-                                                                  r'''$.message''',
-                                                                ).toString()),
-                                                                actions: [
-                                                                  TextButton(
-                                                                    onPressed: () =>
-                                                                        Navigator.pop(
-                                                                            alertDialogContext),
-                                                                    child: Text(
-                                                                        'Ok'),
-                                                                  ),
-                                                                ],
-                                                              );
-                                                            },
-                                                          );
-                                                          setState(() {
-                                                            FFAppState().token =
-                                                                getJsonField(
-                                                              (_model.addItem
-                                                                      ?.jsonBody ??
-                                                                  ''),
-                                                              r'''$.jwtToken''',
-                                                            ).toString();
-                                                          });
-                                                        }
-                                                      } else {
-                                                        await showDialog(
-                                                          context: context,
-                                                          builder:
-                                                              (alertDialogContext) {
-                                                            return AlertDialog(
-                                                              title:
-                                                                  Text('Error'),
-                                                              content: Text(
-                                                                  '請稍後再試一次'),
-                                                              actions: [
-                                                                TextButton(
-                                                                  onPressed: () =>
-                                                                      Navigator.pop(
-                                                                          alertDialogContext),
-                                                                  child: Text(
-                                                                      'Ok'),
-                                                                ),
-                                                              ],
-                                                            );
-                                                          },
-                                                        );
-                                                      }
-
-                                                      print(cartItem.items
-                                                          .any((element) =>
-                                                              element.title ==
-                                                              getJsonField(
-                                                                mp3CategoryItem,
-                                                                r'''$.title''',
-                                                              )));
-
-                                                      if (cartItem.items.any(
-                                                              (element) =>
-                                                                  element
-                                                                      .title ==
-                                                                  getJsonField(
-                                                                    mp3CategoryItem,
-                                                                    r'''$.title''',
-                                                                  )) ==
-                                                          false) {
-                                                        Provider.of<ItemCartRepo>(
-                                                                context,
-                                                                listen: false)
-                                                            .addItem(CartItem(
-                                                          name: getJsonField(
-                                                            mp3CategoryItem,
-                                                            r'''$.content''',
-                                                          ).toString(),
-                                                          id: getJsonField(
-                                                            mp3CategoryItem,
-                                                            r'''$.title''',
-                                                          ).toString(),
-                                                          price: getJsonField(
-                                                            mp3CategoryItem,
-                                                            r'''$.price''',
-                                                          ),
-                                                          title: getJsonField(
-                                                            mp3CategoryItem,
-                                                            r'''$.title''',
-                                                          ).toString(),
-                                                          category: '',
-                                                          pic: '',
-                                                        ));
-                                                      } else {
-                                                        showDialog(
-                                                            context: context,
-                                                            builder: (context) {
-                                                              return AlertDialog
-                                                                  .adaptive(
-                                                                title: Text(
-                                                                    '已經加入購物車'),
-                                                              );
-                                                            });
-                                                      }
-
-                                                      setState(() {});
-                                                    },
-                                                    text: cartItem.items.any(
-                                                      (element) =>
-                                                          element.title ==
-                                                          getJsonField(
-                                                            mp3CategoryItem,
-                                                            r'''$.title''',
-                                                          ).toString(),
-                                                    )
-                                                        ? '已在購物車中 '
-                                                        : '加入購物車',
-                                                    icon: const Icon(
-                                                      Icons
-                                                          .add_shopping_cart_outlined,
-                                                      size: 15.0,
+                                          Align(
+                                            alignment: AlignmentDirectional(
+                                                1.00, 1.00),
+                                            child: FFButtonWidget(
+                                              onPressed: () async {
+                                                context.pushNamed(
+                                                  'Mp3Page',
+                                                  queryParameters: {
+                                                    'categoryId':
+                                                        serializeParam(
+                                                      getJsonField(
+                                                        mp3Item,
+                                                        r'''$.id''',
+                                                      ),
+                                                      ParamType.int,
                                                     ),
-                                                    options: FFButtonOptions(
-                                                      width: 230.0,
-                                                      height: 40.0,
-                                                      padding:
-                                                          const EdgeInsetsDirectional
-                                                              .fromSTEB(24.0,
-                                                              0.0, 24.0, 0.0),
-                                                      iconPadding:
-                                                          const EdgeInsetsDirectional
-                                                              .fromSTEB(0.0,
-                                                              0.0, 0.0, 0.0),
-                                                      color: cartItem.items.any(
-                                                        (element) =>
-                                                            element.title ==
-                                                            getJsonField(
-                                                              mp3CategoryItem,
-                                                              r'''$.title''',
-                                                            ).toString(),
-                                                      )
-                                                          ? FlutterFlowTheme.of(
-                                                                  context)
-                                                              .accent1
-                                                          : FlutterFlowTheme.of(
-                                                                  context)
-                                                              .primary,
-                                                      textStyle:
+                                                    'title': serializeParam(
+                                                      getJsonField(
+                                                        mp3Item,
+                                                        r'''$.title''',
+                                                      ).toString(),
+                                                      ParamType.String,
+                                                    ),
+                                                  }.withoutNulls,
+                                                );
+                                              },
+                                              text: '播放',
+                                              options: FFButtonOptions(
+                                                width: 230,
+                                                height: 40,
+                                                padding: EdgeInsetsDirectional
+                                                    .fromSTEB(24, 0, 24, 0),
+                                                iconPadding:
+                                                    EdgeInsetsDirectional
+                                                        .fromSTEB(0, 0, 0, 0),
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondary,
+                                                textStyle: FlutterFlowTheme.of(
+                                                        context)
+                                                    .titleSmall
+                                                    .override(
+                                                      fontFamily: 'Readex Pro',
+                                                      color:
                                                           FlutterFlowTheme.of(
                                                                   context)
-                                                              .titleSmall
-                                                              .override(
-                                                                fontFamily:
-                                                                    'Readex Pro',
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                      elevation: 3.0,
-                                                      borderSide:
-                                                          const BorderSide(
-                                                        color:
-                                                            Colors.transparent,
-                                                        width: 1.0,
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              48.0),
+                                                              .info,
                                                     ),
-                                                  ).animateOnPageLoad(animationsMap[
-                                                      'buttonOnPageLoadAnimation1']!);
-                                                })),
-                                          if (valueOrDefault<bool>(
-                                            functions.newCustomFunction(
-                                                    getJsonField(
-                                                  mp3CategoryItem,
-                                                  r'''$.purchased''',
-                                                )) ==
-                                                true,
-                                            true,
-                                          ))
-                                            Align(
-                                              alignment: AlignmentDirectional(
-                                                  1.00, 1.00),
-                                              child: FFButtonWidget(
-                                                onPressed: () async {
-                                                  context.pushNamed(
-                                                    'Mp3Page',
-                                                    queryParameters: {
-                                                      'id': serializeParam(
-                                                        getJsonField(
-                                                          mp3CategoryItem,
-                                                          r'''$.id''',
-                                                        ),
-                                                        ParamType.int,
-                                                      ),
-                                                      'title': serializeParam(
-                                                        getJsonField(
-                                                          mp3CategoryItem,
-                                                          r'''$.title''',
-                                                        ).toString(),
-                                                        ParamType.String,
-                                                      ),
-                                                    }.withoutNulls,
-                                                  );
-                                                },
-                                                text: '播放',
-                                                icon: Icon(
-                                                  Icons.play_arrow,
-                                                  size: 15,
+                                                elevation: 3,
+                                                borderSide: BorderSide(
+                                                  color: Colors.transparent,
+                                                  width: 1,
                                                 ),
-                                                options: FFButtonOptions(
-                                                  width: 230,
-                                                  height: 40,
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(24, 0, 24, 0),
-                                                  iconPadding:
-                                                      EdgeInsetsDirectional
-                                                          .fromSTEB(0, 0, 0, 0),
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .secondary,
-                                                  textStyle: FlutterFlowTheme
-                                                          .of(context)
-                                                      .titleSmall
-                                                      .override(
-                                                        fontFamily:
-                                                            'Readex Pro',
-                                                        color:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .info,
-                                                      ),
-                                                  elevation: 3,
-                                                  borderSide: BorderSide(
-                                                    color: Colors.transparent,
-                                                    width: 1,
-                                                  ),
-                                                  borderRadius:
-                                                      BorderRadius.circular(48),
-                                                ),
-                                              ).animateOnPageLoad(animationsMap[
-                                                  'buttonOnPageLoadAnimation2']!),
-                                            ),
+                                                borderRadius:
+                                                    BorderRadius.circular(48),
+                                              ),
+                                            ).animateOnPageLoad(animationsMap[
+                                                'buttonOnPageLoadAnimation2']!),
+                                          ),
                                         ],
                                       ),
                                     ],

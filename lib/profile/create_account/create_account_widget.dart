@@ -565,9 +565,9 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                                                 dateTimeFormat(
                                                   'yMMMd',
                                                   _model.datePicked,
-                                                  locale: FFLocalizations.of(
-                                                          context)
-                                                      .languageCode,
+                                                  // locale: FFLocalizations.of(
+                                                  //         context)
+                                                  //     .languageCode,
                                                 ),
                                                 style:
                                                     FlutterFlowTheme.of(context)
@@ -740,7 +740,7 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                                     child: FFButtonWidget(
                                       onPressed: () async {
                                         if (formkey.currentState!.validate()) {
-                                          if (_model.datePicked  == null) {
+                                          if (_model.datePicked == null) {
                                             safeSetState(() {
                                               datePickedError = '請填入生日';
                                             });

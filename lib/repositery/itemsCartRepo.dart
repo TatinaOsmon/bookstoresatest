@@ -16,5 +16,10 @@ class ItemCartRepo with ChangeNotifier {
     notifyListeners();
   }
 
-  // Other methods...
+  void clearCart() {
+    _items.clear();
+    notifyListeners();
+
+    // Other methods...
+  }
 }

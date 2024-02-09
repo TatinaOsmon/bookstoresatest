@@ -80,10 +80,6 @@ class _PdfViewState extends State<PdfView> {
     _pdfViewerController = PdfViewerController();
     _pdfViewerController.zoomLevel = 2.0;
     disableScreenshot();
-    _checkAndOpenPdf();
-    print('jhujkkklll');
-    // _pdfFile = File(widget.pdfPath);
-    // _fileSize = _pdfFile.lengthSync();
 
     // Updated string format for generateMd5
     String input =
@@ -217,7 +213,7 @@ class _PdfViewState extends State<PdfView> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    //Size size = MediaQuery.of(context).size;
     _pdfViewerController.zoomLevel = .0;
     return PopScope(
       onPopInvoked: (didPop) {
@@ -277,35 +273,38 @@ class _PdfViewState extends State<PdfView> {
                         ValueListenableBuilder(
                           valueListenable: indexNotifier,
                           builder: (context, value, _) {
-                            final val = (value / _pdfViewerController.pageCount)
-                                    .isNaN
-                                ? 0
-                                : 1 - (value / _pdfViewerController.pageCount);
+                            final totalPages = _pdfViewerController.pageCount;
+                            // Ensure the current page is within bounds
+                            final currentPage = value as int;
+                            // Adjust calculation for correct direction
+                            // final double sliderValue = totalPages > 1
+                            //     ? 1.0 - ((currentPage - 1) / (totalPages - 1))
+                            //     : 0.0;
                             return Directionality(
                                 textDirection: TextDirection.rtl,
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    Expanded(
-                                      child: Slider(
-                                        value: val.toDouble(),
-                                        min: 0,
-                                        max: 1,
-                                        onChanged: (ratio) {
-                                          final maxPage =
-                                              _pdfViewerController.pageCount -
-                                                  1;
-                                          final val =
-                                              (maxPage * (1 - ratio)).floor();
-                                          _pdfViewerController.jumpToPage(val);
-                                          indexNotifier.value = val;
-                                        },
-                                        semanticFormatterCallback:
-                                            (double value) {
-                                          return '${value.toInt()}'; // Display the progress visually
-                                        },
-                                      ),
-                                    ),
+                                    // Expanded(
+                                    //  // child: Slider(
+                                    //     // value: sliderValue.toDouble(),
+                                    //    // min: 0,
+                                    //   //  max: 1,
+                                    //    // onChanged: (ratio) {
+                                    //       final maxPage =
+                                    //           _pdfViewerController.pageCount -
+                                    //               1;
+                                    //       final val =
+                                    //           (maxPage * (1 - ratio)).floor();
+                                    //       _pdfViewerController.jumpToPage(val);
+                                    //       indexNotifier.value = val;
+                                    //     },
+                                    //    // semanticFormatterCallback:
+                                    //         (double value) {
+                                    //       return '${value.toInt()}'; // Display the progress visually
+                                    //     },
+                                    //   ),
+                                    // ),
                                     IconButton(
                                       icon: Icon(
                                         Icons.arrow_forward_rounded,

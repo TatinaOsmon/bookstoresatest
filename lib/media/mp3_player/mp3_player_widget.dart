@@ -13,9 +13,11 @@ class Mp3PlayerWidget extends StatefulWidget {
   const Mp3PlayerWidget({
     super.key,
     required this.productId,
+    required this.title,
   });
 
   final int? productId;
+  final String? title;
 
   @override
   _Mp3PlayerWidgetState createState() => _Mp3PlayerWidgetState();
@@ -86,7 +88,10 @@ class _Mp3PlayerWidgetState extends State<Mp3PlayerWidget> {
               padding:
                   const EdgeInsetsDirectional.fromSTEB(0.0, 15.0, 0.0, 0.0),
               child: Text(
-                'Audio',
+                valueOrDefault<String>(
+                  widget.title,
+                  'Title',
+                ),
                 textAlign: TextAlign.center,
                 style: FlutterFlowTheme.of(context).headlineMedium.override(
                       fontFamily: 'Outfit',

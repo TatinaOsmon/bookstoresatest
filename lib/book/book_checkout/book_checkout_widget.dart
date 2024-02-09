@@ -1,3 +1,8 @@
+import 'package:book_store/book/book_cart/book_cart_widget.dart';
+import 'package:book_store/book/book_checkout/book_checkout_model.dart';
+import 'package:book_store/models/cartItem.dart';
+import 'package:book_store/repositery/itemsCartRepo.dart';
+
 import '/auth/custom_auth/auth_util.dart';
 import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/flutter_flow_animations.dart';
@@ -10,8 +15,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
-import 'book_checkout_model.dart';
-export 'book_checkout_model.dart';
 
 class BookCheckoutWidget extends StatefulWidget {
   const BookCheckoutWidget({super.key});
@@ -59,6 +62,7 @@ class _BookCheckoutWidgetState extends State<BookCheckoutWidget>
 
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
+      Function() navigate = () {};
       _model.initial = await BookCartFindAllCall.call(
         userId: currentUserData?.userId,
         jwtToken: currentUserData?.jwtToken,
@@ -99,12 +103,12 @@ class _BookCheckoutWidgetState extends State<BookCheckoutWidget>
             await authManager.signOut();
             GoRouter.of(context).clearRedirectLocation();
 
-            context.pushNamedAuth('login', context.mounted);
+            navigate = () => context.goNamedAuth('login', context.mounted);
           } else {
             setState(() {
               FFAppState().token = getJsonField(
                 (_model.initial?.jsonBody ?? ''),
-                r'''$.jwtToken''',
+                r'''$.jetToken''',
               ).toString().toString();
             });
             setState(() {
@@ -157,6 +161,8 @@ class _BookCheckoutWidgetState extends State<BookCheckoutWidget>
           },
         );
       }
+
+      navigate();
     });
   }
 
@@ -245,81 +251,91 @@ class _BookCheckoutWidgetState extends State<BookCheckoutWidget>
                 color: FlutterFlowTheme.of(context).alternate,
               ),
               Expanded(
-                child: Builder(
-                  builder: (context) {
-                    final bookCart = BookCartFindAllCall.bookcart(
-                          (_model.initial?.jsonBody ?? ''),
-                        )?.toList() ??
-                        [];
-                    return SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children:
-                            List.generate(bookCart.length, (bookCartIndex) {
-                          final bookCartItem = bookCart[bookCartIndex];
-                          return Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                0.0, 0.0, 0.0, 8.0),
-                            child: Container(
-                              width: double.infinity,
-                              height: 60.0,
-                              decoration: BoxDecoration(
-                                color: FlutterFlowTheme.of(context)
-                                    .primaryBackground,
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    12.0, 8.0, 12.0, 8.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Icon(
-                                      Icons.menu_book_rounded,
-                                      color: FlutterFlowTheme.of(context)
-                                          .primaryText,
-                                      size: 43.0,
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsetsDirectional
-                                            .fromSTEB(12.0, 0.0, 0.0, 0.0),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              getJsonField(
-                                                bookCartItem,
-                                                r'''$.title''',
-                                              ).toString(),
-                                              style:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyLarge,
-                                            ),
-                                          ],
+                child: Consumer<ItemCartRepo>(
+                    builder: (context, itemscart, child) {
+                  // Customize what your widget looks like when it's loading.
+
+                  final columnBookCartFindAllResponse = itemscart.items;
+                  return Builder(
+                    builder: (context) {
+                      final List<CartItem> bookCart =
+                          columnBookCartFindAllResponse;
+                      Provider.of<OrderCountProvider>(context, listen: false)
+                          .orderCount = bookCart;
+                      Provider.of<OrderCountProvider>(context, listen: false)
+                          .orderCountNotifier();
+                      return SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: List.generate(
+                              Provider.of<OrderCountProvider>(context,
+                                      listen: false)
+                                  .orderCount
+                                  .length, (bookCartIndex) {
+                            final bookCartItem = bookCart[bookCartIndex];
+
+                            return Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                  0.0, 0.0, 0.0, 8.0),
+                              child: Container(
+                                width: double.infinity,
+                                height: 60.0,
+                                decoration: BoxDecoration(
+                                  color: FlutterFlowTheme.of(context)
+                                      .primaryBackground,
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      12.0, 8.0, 12.0, 8.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Icon(
+                                        Icons.menu_book_rounded,
+                                        color: FlutterFlowTheme.of(context)
+                                            .primaryText,
+                                        size: 43.0,
+                                      ),
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(12.0, 0.0, 0.0, 0.0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                bookCartItem.title,
+                                                maxLines: 1,
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyLarge,
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Text(
-                                      functions.formatPrice(getJsonField(
-                                          bookCartItem, r'''$.price''')),
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium,
-                                    ),
-                                  ],
+                                      Text(
+                                        '\$${bookCartItem.price}',
+                                        textAlign: TextAlign.end,
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        }),
-                      ),
-                    );
-                  },
-                ),
+                            );
+                          }),
+                        ),
+                      );
+                    },
+                  );
+                }),
               ),
               Column(
                 mainAxisSize: MainAxisSize.max,
@@ -344,32 +360,28 @@ class _BookCheckoutWidgetState extends State<BookCheckoutWidget>
                                         .secondaryText,
                                   ),
                             ),
-                            FlutterFlowIconButton(
-                              borderColor: Colors.transparent,
-                              borderRadius: 30.0,
-                              borderWidth: 1.0,
-                              buttonSize: 36.0,
-                              icon: Icon(
-                                Icons.info_outlined,
-                                color:
-                                    FlutterFlowTheme.of(context).secondaryText,
-                                size: 18.0,
-                              ),
-                              onPressed: () {
-                                print('IconButton pressed ...');
-                              },
-                            ),
                           ],
                         ),
-                        Text(
-                          '\$${functions.calcSum(_model.priceList.toList()).toString()}',
-                          style: FlutterFlowTheme.of(context)
-                              .displaySmall
-                              .override(
-                                fontFamily: 'Outfit',
-                                color: FlutterFlowTheme.of(context).primary,
-                              ),
-                        ),
+                        Consumer<ItemCartRepo>(
+                            builder: (context, itemscart, child) {
+                          // Customize what your widget looks like when it's loading.
+
+                          final columnBookCartFindAllResponse = itemscart.items;
+                          return Builder(builder: (context) {
+                            final List<CartItem> bookCart =
+                                columnBookCartFindAllResponse;
+
+                            return Text(
+                              '${functions.formatPrice(int.parse(functions.calcSum(bookCart.map((e) => e.price).toList()).toString()))}',
+                              style: FlutterFlowTheme.of(context)
+                                  .displaySmall
+                                  .override(
+                                    fontFamily: 'Outfit',
+                                    color: FlutterFlowTheme.of(context).primary,
+                                  ),
+                            );
+                          });
+                        }),
                       ],
                     ),
                   ),
@@ -385,101 +397,33 @@ class _BookCheckoutWidgetState extends State<BookCheckoutWidget>
                           refreshToken: currentUserData?.refreshToken,
                         );
                         if ((_model.createOrder?.succeeded ?? true)) {
-                          // 有沒有success
-                          // 如果有success代表他的登入有狀況
-                          if (getJsonField(
-                                (_model.createOrder?.jsonBody ?? ''),
-                                r'''$.success''',
-                              ) !=
-                              null) {
-                            FFAppState().success = getJsonField(
-                              (_model.createOrder?.jsonBody ?? ''),
-                              r'''$.success''',
-                            );
-                            if (FFAppState().success == false) {
-                              await showDialog(
-                                context: context,
-                                builder: (alertDialogContext) {
-                                  return AlertDialog(
-                                    title: const Text('Message'),
-                                    content: Text(getJsonField(
-                                      (_model.createOrder?.jsonBody ?? ''),
-                                      r'''$.message''',
-                                    ).toString()),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(alertDialogContext),
-                                        child: const Text('Ok'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                              GoRouter.of(context).prepareAuthEvent();
-                              await authManager.signOut();
-                              GoRouter.of(context).clearRedirectLocation();
-
-                              context.pushNamedAuth('login', context.mounted);
-                            } else {
-                              setState(() {
-                                FFAppState().token = getJsonField(
+                          await showDialog(
+                            context: context,
+                            builder: (alertDialogContext) {
+                              return AlertDialog(
+                                title: const Text('Message'),
+                                content: Text(BookCartCreateOrderCall.message(
                                   (_model.createOrder?.jsonBody ?? ''),
-                                  r'''$.jwtToken''',
-                                ).toString();
-                              });
-                              await showDialog(
-                                context: context,
-                                builder: (alertDialogContext) {
-                                  return AlertDialog(
-                                    title: const Text('Message'),
-                                    content:
-                                        Text(BookCartCreateOrderCall.message(
-                                      (_model.createOrder?.jsonBody ?? ''),
-                                    ).toString()),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(alertDialogContext),
-                                        child: const Text('Ok'),
-                                      ),
-                                    ],
-                                  );
-                                },
+                                ).toString()),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(alertDialogContext),
+                                    child: const Text('Ok'),
+                                  ),
+                                ],
                               );
+                            },
+                          );
 
-                              context.pushNamedAuth(
-                                  'orderHistory', context.mounted);
-                            }
-                          } else {
-                            setState(() {
-                              FFAppState().token = getJsonField(
-                                (_model.createOrder?.jsonBody ?? ''),
-                                r'''$.jwtToken''',
-                              ).toString();
-                            });
-                            await showDialog(
-                              context: context,
-                              builder: (alertDialogContext) {
-                                return AlertDialog(
-                                  title: const Text('Message'),
-                                  content: Text(BookCartCreateOrderCall.message(
-                                    (_model.createOrder?.jsonBody ?? ''),
-                                  ).toString()),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(alertDialogContext),
-                                      child: const Text('Ok'),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-
-                            context.pushNamedAuth(
-                                'orderHistory', context.mounted);
-                          }
+                          context.pushNamed('orderHistory');
+                          Provider.of<OrderCountProvider>(context,
+                                  listen: false)
+                              .orderCount
+                              .clear();
+                          Provider.of<OrderCountProvider>(context,
+                                  listen: false)
+                              .orderCountNotifier();
                         } else {
                           await showDialog(
                             context: context,

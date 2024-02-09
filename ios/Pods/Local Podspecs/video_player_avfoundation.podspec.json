@@ -39,5 +39,10 @@
   },
   "pod_target_xcconfig": {
     "DEFINES_MODULE": "YES"
+  },
+  "resource_bundles": {
+    "video_player_avfoundation_privacy": [
+      "Resources/PrivacyInfo.xcprivacy"
+    ]
   }
 }

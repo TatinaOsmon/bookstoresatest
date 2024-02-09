@@ -1,3 +1,5 @@
+import 'package:book_store/book/book_cart/book_cart_widget.dart';
+
 import '/auth/custom_auth/auth_util.dart';
 import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/flutter_flow_animations.dart';
@@ -50,6 +52,10 @@ class _OrderHistoryWidgetState extends State<OrderHistoryWidget>
     ),
   };
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _model = createModel(context, () => OrderHistoryModel());
   @override
   void initState() {
     super.initState();
@@ -241,39 +247,6 @@ class _OrderHistoryWidgetState extends State<OrderHistoryWidget>
                               focusColor: Colors.transparent,
                               hoverColor: Colors.transparent,
                               highlightColor: Colors.transparent,
-                              // onTap: () async {
-                              //   await showAlignedDialog(
-                              //     context: context,
-                              //     isGlobal: true,
-                              //     avoidOverflow: false,
-                              //     targetAnchor: const AlignmentDirectional(0.0, 0.0)
-                              //         .resolve(Directionality.of(context)),
-                              //     followerAnchor: const AlignmentDirectional(0.0, 0.0)
-                              //         .resolve(Directionality.of(context)),
-                              //     builder: (dialogContext) {
-                              //       return Material(
-                              //         color: Colors.transparent,
-                              //         child: GestureDetector(
-                              //           onTap: () => _model
-                              //                   .unfocusNode.canRequestFocus
-                              //               ? FocusScope.of(context)
-                              //                   .requestFocus(
-                              //                       _model.unfocusNode)
-                              //               : FocusScope.of(context).unfocus(),
-                              //           child: OrderDetailWidget(
-                              //             goods: (getJsonField(
-                              //               orderItem,
-                              //               r'''$.goods''',
-                              //               true,
-                              //             ) as List)
-                              //                 .map<String>((s) => s.toString())
-                              //                 .toList(),
-                              //           ),
-                              //         ),
-                              //       );
-                              //     },
-                              //   ).then((value) => setState(() {}));
-                              // },
                               child: Container(
                                 width: MediaQuery.sizeOf(context).width * 1.0,
                                 decoration: BoxDecoration(
@@ -352,6 +325,10 @@ class _OrderHistoryWidgetState extends State<OrderHistoryWidget>
                                                       scrollDirection:
                                                           Axis.vertical,
                                                       itemCount: good.length,
+                                                      // itemCount:
+                                                      //     Provider.of<lastProvider>(context, listen: false)
+                                                      //         .lastCount
+                                                      //         .length,
                                                       itemBuilder:
                                                           (context, goodIndex) {
                                                         final goodItem =
