@@ -1,0 +1,44 @@
+{
+  "name": "no_screenshot",
+  "version": "0.0.1+4",
+  "summary": "Flutter plugin to enable, disable or toggle screenshot support in your application.",
+  "description": "A new Flutter plugin project.",
+  "homepage": "https://github.com/FlutterPlaza/no_screenshot",
+  "license": {
+    "file": "../LICENSE"
+  },
+  "authors": {
+    "FlutterPlaza": "dev@flutterplaza.com"
+  },
+  "source": {
+    "path": "."
+  },
+  "source_files": "Classes/**/*",
+  "dependencies": {
+    "Flutter": [
+
+    ],
+    "ScreenProtectorKit": [
+      "~> 1.2.0"
+    ]
+  },
+  "platforms": {
+    "ios": "10.0"
+  },
+  "pod_target_xcconfig": {
+    "DEFINES_MODULE": "YES",
+    "EXCLUDED_ARCHS[sdk=iphonesimulator*]": "i386"
+  },
+  "swift_versions": [
+    "4.0",
+    "4.1",
+    "4.2",
+    "5.0",
+    "5.1",
+    "5.2",
+    "5.3",
+    "5.4",
+    "5.5"
+  ],
+  "swift_version": "5.5"
+}
