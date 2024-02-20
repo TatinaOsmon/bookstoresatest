@@ -12,9 +12,11 @@ class PdfReaderWidget extends StatefulWidget {
   const PdfReaderWidget({
     super.key,
     required this.productId,
+    required this.file,
   });
 
   final int? productId;
+  final Uint8List file;
 
   @override
   _PdfReaderWidgetState createState() => _PdfReaderWidgetState();
@@ -85,9 +87,7 @@ class _PdfReaderWidgetState extends State<PdfReaderWidget> {
                     width: MediaQuery.sizeOf(context).width,
                     height: MediaQuery.sizeOf(context).height,
                     productId: widget.productId!,
-                    jwtToken: currentUserData!.jwtToken,
-                    refreshToken: currentUserData!.refreshToken,
-                    userId: currentUserData!.userId,
+                    file: widget.file,
                     // userNname:currentUserData!.
                   ),
                 ),

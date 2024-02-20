@@ -180,9 +180,9 @@ class _ToolCategoryPageWidgetState extends State<ToolCategoryPageWidget>
                     color: FlutterFlowTheme.of(context).primaryText,
                     size: 35.0,
                   ),
-                  // onPressed: () async {
-                  //   context.pushNamed('ToolCart');
-                  // },
+                  onPressed: () async {
+                    context.pushNamed('ToolCart');
+                  },
                 ),
               ),
             ],
@@ -385,309 +385,311 @@ class _ToolCategoryPageWidgetState extends State<ToolCategoryPageWidget>
                                               (context, cartItem, widget) {
                                             return FFButtonWidget(
                                               onPressed: () async {
-                                                // print(cartItem.items.length);
-                                                // final cartRes =
-                                                //     await ToolCartFindAllCall
-                                                //         .call(
-                                                //   userId: currentUserData?.userId,
-                                                //   jwtToken:
-                                                //       currentUserData?.jwtToken,
-                                                //   refreshToken: currentUserData
-                                                //       ?.refreshToken,
-                                                // );
-                                                // final toolCart =
-                                                //     ToolCartFindAllCall.toolCart(
-                                                //           cartRes.jsonBody,
-                                                //         )?.toList() ??
-                                                //         [];
-                                                // final isInCart =
-                                                //     cart.any((item) =>
-                                                //         getJsonField(
-                                                //           item,
-                                                //           r'''$.id''',
-                                                //         ) ==
-                                                //         getJsonField(
-                                                //           toolCategoryItem,
-                                                //           r'''$.id''',
-                                                //         ));
-                                                // if (isInCart == true) {
-                                                //   await showDialog(
-                                                //     context: context,
-                                                //     builder:
-                                                //         (alertDialogContext) {
-                                                //       return AlertDialog(
-                                                //         title:
-                                                //             const Text('Message'),
-                                                //         content: const Text(
-                                                //           '已在購物車中',
-                                                //         ),
-                                                //         actions: [
-                                                //           TextButton(
-                                                //             onPressed: () =>
-                                                //                 Navigator.pop(
-                                                //                     alertDialogContext),
-                                                //             child:
-                                                //                 const Text('Ok'),
-                                                //           ),
-                                                //         ],
-                                                //       );
-                                                //     },
-                                                //   );
-                                                //   return;
-                                                // }
-
-                                                // //  toolCartItem = toolCart[toolCartIndex]
-
-                                                // Function() navigate = () {};
-                                                // _model.addItem =
-                                                //     await ToolCartAddItemCall
-                                                //         .call(
-                                                //   userId:
-                                                //       currentUserData?.userId,
-                                                //   productId: getJsonField(
-                                                //     toolCategoryItem,
-                                                //     r'''$.productId''',
-                                                //   ),
-                                                //   tableName: getJsonField(
-                                                //     toolCategoryItem,
-                                                //     r'''$.tableName''',
-                                                //   ).toString(),
-                                                //   jwtToken:
-                                                //       currentUserData?.jwtToken,
-                                                //   refreshToken: currentUserData
-                                                //       ?.refreshToken,
-                                                // );
-                                                // if ((_model
-                                                //         .addItem?.succeeded ??
-                                                //     true)) {
-                                                //   // 有沒有success
-                                                //   // 如果有success代表他的登入有狀況
-                                                //   if (getJsonField(
-                                                //         (_model.addItem
-                                                //                 ?.jsonBody ??
-                                                //             ''),
-                                                //         r'''$.success''',
-                                                //       ) !=
-                                                //       null) {
-                                                //     FFAppState().success =
-                                                //         getJsonField(
-                                                //       (_model.addItem
-                                                //               ?.jsonBody ??
-                                                //           ''),
-                                                //       r'''$.success''',
-                                                //     );
-                                                //     if (FFAppState().success ==
-                                                //         true) {
-                                                //       await fetchCartAndCategory();
-                                                //       await showDialog(
-                                                //         context: context,
-                                                //         builder:
-                                                //             (alertDialogContext) {
-                                                //           return AlertDialog(
-                                                //             title: const Text(
-                                                //                 'Message'),
-                                                //             content: Text(
-                                                //                 getJsonField(
-                                                //               (_model.addItem
-                                                //                       ?.jsonBody ??
-                                                //                   ''),
-                                                //               r'''$.message''',
-                                                //             ).toString()),
-                                                //             actions: [
-                                                //               TextButton(
-                                                //                 onPressed: () =>
-                                                //                     Navigator.pop(
-                                                //                         alertDialogContext),
-                                                //                 child:
-                                                //                     const Text(
-                                                //                         'Ok'),
-                                                //               ),
-                                                //             ],
-                                                //           );
-                                                //         },
-                                                //       );
-                                                //       GoRouter.of(context)
-                                                //           .prepareAuthEvent();
-                                                //       await authManager
-                                                //           .signOut();
-                                                //       GoRouter.of(context)
-                                                //           .clearRedirectLocation();
-
-                                                //       context.goNamedAuth(
-                                                //           'login',
-                                                //           context.mounted);
-                                                //     } else {
-                                                //       await showDialog(
-                                                //         context: context,
-                                                //         builder:
-                                                //             (alertDialogContext) {
-                                                //           return AlertDialog(
-                                                //             title: const Text(
-                                                //                 'Message'),
-                                                //             content: Text(
-                                                //                 getJsonField(
-                                                //               (_model.addItem
-                                                //                       ?.jsonBody ??
-                                                //                   ''),
-                                                //               r'''$.message''',
-                                                //             ).toString()),
-                                                //             actions: [
-                                                //               TextButton(
-                                                //                 onPressed: () =>
-                                                //                     Navigator.pop(
-                                                //                         alertDialogContext),
-                                                //                 child:
-                                                //                     const Text(
-                                                //                         'Ok'),
-                                                //               ),
-                                                //             ],
-                                                //           );
-                                                //         },
-                                                //       );
-                                                //       // 更新jwtToken
-                                                //       setState(() {
-                                                //         FFAppState().token =
-                                                //             getJsonField(
-                                                //           (_model.addItem
-                                                //                   ?.jsonBody ??
-                                                //               ''),
-                                                //           r'''$.jwtToken''',
-                                                //         ).toString();
-                                                //       });
-                                                //     }
-                                                //   } else {
-                                                //     await showDialog(
-                                                //       context: context,
-                                                //       builder:
-                                                //           (alertDialogContext) {
-                                                //         return AlertDialog(
-                                                //           title: const Text(
-                                                //               'Message'),
-                                                //           content:
-                                                //               Text(getJsonField(
-                                                //             (_model.addItem
-                                                //                     ?.jsonBody ??
-                                                //                 ''),
-                                                //             r'''$.message''',
-                                                //           ).toString()),
-                                                //           actions: [
-                                                //             TextButton(
-                                                //               onPressed: () =>
-                                                //                   Navigator.pop(
-                                                //                       alertDialogContext),
-                                                //               child: const Text(
-                                                //                   'Ok'),
-                                                //             ),
-                                                //           ],
-                                                //         );
-                                                //       },
-                                                //     );
-                                                //     // 更新jwtToken
-                                                //     setState(() {
-                                                //       FFAppState().token =
-                                                //           getJsonField(
-                                                //         (_model.addItem
-                                                //                 ?.jsonBody ??
-                                                //             ''),
-                                                //         r'''$.jwtToken''',
-                                                //       ).toString();
-                                                //     });
-                                                //   }
-                                                // } else {
-                                                //   await showDialog(
-                                                //     context: context,
-                                                //     builder:
-                                                //         (alertDialogContext) {
-                                                //       return AlertDialog(
-                                                //         title:
-                                                //             const Text('Error'),
-                                                //         content: const Text(
-                                                //             '請稍後再試一次'),
-                                                //         actions: [
-                                                //           TextButton(
-                                                //             onPressed: () =>
-                                                //                 Navigator.pop(
-                                                //                     alertDialogContext),
-                                                //             child: const Text(
-                                                //                 'Ok'),
-                                                //           ),
-                                                //         ],
-                                                //       );
-                                                //     },
-                                                //   );
-                                                // }
-
-                                                // print(cartItem.items
-                                                //     .any((element) =>
-                                                //         element.title ==
-                                                //         getJsonField(
-                                                //           toolCategoryItem,
-                                                //           r'''$.title''',
-                                                //         )));
-
-                                                // // if (cartItem.items.any(
-                                                // //       (element) =>
-                                                // //           element.title ==
-                                                // //           toolCategories[
-                                                // //                   toolCategoryIndex]
-                                                // //               ['title'],
-                                                // //     ) ==
-                                                // //     false) {
-                                                // //   Provider.of<ItemCartRepo>(
-                                                // //           context,
-                                                // //           listen: false)
-                                                // //       .addItem(CartItem(
-                                                // //     name: getJsonField(
-                                                // //       toolCategoryItem,
-                                                // //       r'''$.content''',
-                                                // //     ).toString(),
-                                                // //     id: getJsonField(
-                                                // //       toolCategoryItem,
-                                                // //       r'''$.title''',
-                                                // //     ).toString(),
-                                                // //     price: toolCategories[
-                                                // //             toolCategoryIndex]
-                                                // //         ['price'],
-                                                // //     title: toolCategories[
-                                                // //             toolCategoryIndex]
-                                                // //         ['title'],
-                                                // //     category: '',
-                                                // //     pic: toolCategories[
-                                                // //             toolCategoryIndex]
-                                                // //         ['pic'],
-                                                // //   ));
-
-                                                // //   setState(() {});
-                                                // // } else {
-                                                // //   showTopSnackBar(
-                                                // //     Overlay.of(context),
-                                                // //     CustomSnackBar.error(
-                                                // //       message: "沒有網路連線",
-                                                // //     ),
-                                                // //   );
-                                                // // }
-
-                                                // print(cartItem.items.length);
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      title: Text('警報'),
-                                                      content: Text('目前不可用'),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                          child: Text('關閉'),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
+                                                print(cartItem.items.length);
+                                                final cartRes =
+                                                    await ToolCartFindAllCall
+                                                        .call(
+                                                  userId:
+                                                      currentUserData?.userId,
+                                                  jwtToken:
+                                                      currentUserData?.jwtToken,
+                                                  refreshToken: currentUserData
+                                                      ?.refreshToken,
                                                 );
+                                                final toolCart =
+                                                    ToolCartFindAllCall
+                                                            .toolCart(
+                                                          cartRes.jsonBody,
+                                                        )?.toList() ??
+                                                        [];
+                                                final isInCart =
+                                                    cart.any((item) =>
+                                                        getJsonField(
+                                                          item,
+                                                          r'''$.id''',
+                                                        ) ==
+                                                        getJsonField(
+                                                          toolCategoryItem,
+                                                          r'''$.id''',
+                                                        ));
+                                                if (isInCart == true) {
+                                                  await showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (alertDialogContext) {
+                                                      return AlertDialog(
+                                                        title: const Text(
+                                                            'Message'),
+                                                        content: const Text(
+                                                          '已在購物車中',
+                                                        ),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    alertDialogContext),
+                                                            child: const Text(
+                                                                'Ok'),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                  return;
+                                                }
+
+                                                //  toolCartItem = toolCart[toolCartIndex]
+
+                                                Function() navigate = () {};
+                                                _model.addItem =
+                                                    await ToolCartAddItemCall
+                                                        .call(
+                                                  userId:
+                                                      currentUserData?.userId,
+                                                  productId: getJsonField(
+                                                    toolCategoryItem,
+                                                    r'''$.productId''',
+                                                  ),
+                                                  tableName: getJsonField(
+                                                    toolCategoryItem,
+                                                    r'''$.tableName''',
+                                                  ).toString(),
+                                                  jwtToken:
+                                                      currentUserData?.jwtToken,
+                                                  refreshToken: currentUserData
+                                                      ?.refreshToken,
+                                                );
+                                                if ((_model
+                                                        .addItem?.succeeded ??
+                                                    true)) {
+                                                  // 有沒有success
+                                                  // 如果有success代表他的登入有狀況
+                                                  if (getJsonField(
+                                                        (_model.addItem
+                                                                ?.jsonBody ??
+                                                            ''),
+                                                        r'''$.success''',
+                                                      ) !=
+                                                      null) {
+                                                    FFAppState().success =
+                                                        getJsonField(
+                                                      (_model.addItem
+                                                              ?.jsonBody ??
+                                                          ''),
+                                                      r'''$.success''',
+                                                    );
+                                                    if (FFAppState().success ==
+                                                        true) {
+                                                      await fetchCartAndCategory();
+                                                      await showDialog(
+                                                        context: context,
+                                                        builder:
+                                                            (alertDialogContext) {
+                                                          return AlertDialog(
+                                                            title: const Text(
+                                                                'Message'),
+                                                            content: Text(
+                                                                getJsonField(
+                                                              (_model.addItem
+                                                                      ?.jsonBody ??
+                                                                  ''),
+                                                              r'''$.message''',
+                                                            ).toString()),
+                                                            actions: [
+                                                              TextButton(
+                                                                onPressed: () =>
+                                                                    Navigator.pop(
+                                                                        alertDialogContext),
+                                                                child:
+                                                                    const Text(
+                                                                        'Ok'),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        },
+                                                      );
+                                                      GoRouter.of(context)
+                                                          .prepareAuthEvent();
+                                                      await authManager
+                                                          .signOut();
+                                                      GoRouter.of(context)
+                                                          .clearRedirectLocation();
+
+                                                      context.goNamedAuth(
+                                                          'login',
+                                                          context.mounted);
+                                                    } else {
+                                                      await showDialog(
+                                                        context: context,
+                                                        builder:
+                                                            (alertDialogContext) {
+                                                          return AlertDialog(
+                                                            title: const Text(
+                                                                'Message'),
+                                                            content: Text(
+                                                                getJsonField(
+                                                              (_model.addItem
+                                                                      ?.jsonBody ??
+                                                                  ''),
+                                                              r'''$.message''',
+                                                            ).toString()),
+                                                            actions: [
+                                                              TextButton(
+                                                                onPressed: () =>
+                                                                    Navigator.pop(
+                                                                        alertDialogContext),
+                                                                child:
+                                                                    const Text(
+                                                                        'Ok'),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        },
+                                                      );
+                                                      // 更新jwtToken
+                                                      setState(() {
+                                                        FFAppState().token =
+                                                            getJsonField(
+                                                          (_model.addItem
+                                                                  ?.jsonBody ??
+                                                              ''),
+                                                          r'''$.jwtToken''',
+                                                        ).toString();
+                                                      });
+                                                    }
+                                                  } else {
+                                                    await showDialog(
+                                                      context: context,
+                                                      builder:
+                                                          (alertDialogContext) {
+                                                        return AlertDialog(
+                                                          title: const Text(
+                                                              'Message'),
+                                                          content:
+                                                              Text(getJsonField(
+                                                            (_model.addItem
+                                                                    ?.jsonBody ??
+                                                                ''),
+                                                            r'''$.message''',
+                                                          ).toString()),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () =>
+                                                                  Navigator.pop(
+                                                                      alertDialogContext),
+                                                              child: const Text(
+                                                                  'Ok'),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                    // 更新jwtToken
+                                                    setState(() {
+                                                      FFAppState().token =
+                                                          getJsonField(
+                                                        (_model.addItem
+                                                                ?.jsonBody ??
+                                                            ''),
+                                                        r'''$.jwtToken''',
+                                                      ).toString();
+                                                    });
+                                                  }
+                                                } else {
+                                                  await showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (alertDialogContext) {
+                                                      return AlertDialog(
+                                                        title:
+                                                            const Text('Error'),
+                                                        content: const Text(
+                                                            '請稍後再試一次'),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    alertDialogContext),
+                                                            child: const Text(
+                                                                'Ok'),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                }
+
+                                                print(cartItem.items
+                                                    .any((element) =>
+                                                        element.title ==
+                                                        getJsonField(
+                                                          toolCategoryItem,
+                                                          r'''$.title''',
+                                                        )));
+
+                                                if (cartItem.items.any(
+                                                      (element) =>
+                                                          element.title ==
+                                                          toolCategories[
+                                                                  toolCategoryIndex]
+                                                              ['title'],
+                                                    ) ==
+                                                    false) {
+                                                  Provider.of<ItemCartRepo>(
+                                                          context,
+                                                          listen: false)
+                                                      .addItem(CartItem(
+                                                    name: getJsonField(
+                                                      toolCategoryItem,
+                                                      r'''$.content''',
+                                                    ).toString(),
+                                                    id: getJsonField(
+                                                      toolCategoryItem,
+                                                      r'''$.title''',
+                                                    ).toString(),
+                                                    price: toolCategories[
+                                                            toolCategoryIndex]
+                                                        ['price'],
+                                                    title: toolCategories[
+                                                            toolCategoryIndex]
+                                                        ['title'],
+                                                    category: '',
+                                                    pic: toolCategories[
+                                                            toolCategoryIndex]
+                                                        ['pic'],
+                                                  ));
+
+                                                  setState(() {});
+                                                } else {
+                                                  showTopSnackBar(
+                                                    Overlay.of(context),
+                                                    CustomSnackBar.error(
+                                                      message: "沒有網路連線",
+                                                    ),
+                                                  );
+                                                }
+
+                                                print(cartItem.items.length);
+                                                // showDialog(
+                                                //   context: context,
+                                                //   builder:
+                                                //       (BuildContext context) {
+                                                //     return AlertDialog(
+                                                //       title: Text('警報'),
+                                                //       content: Text('目前不可用'),
+                                                //       actions: [
+                                                //         TextButton(
+                                                //           onPressed: () {
+                                                //             Navigator.of(
+                                                //                     context)
+                                                //                 .pop();
+                                                //           },
+                                                //           child: Text('關閉'),
+                                                //         ),
+                                                //       ],
+                                                //     );
+                                                //   },
+                                                // );
                                               },
                                               text: cartItem.items
                                                           .any((element) =>

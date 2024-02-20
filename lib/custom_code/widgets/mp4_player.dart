@@ -240,10 +240,10 @@ class _Mp4PlayerState extends State<Mp4Player> {
                         ),
                       );
                     }),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.skip_previous, color: Colors.black),
-                ),
+                // IconButton(
+                //   onPressed: () {},
+                //   icon: const Icon(Icons.skip_previous, color: Colors.black),
+                // ),
                 FlutterFlowIconButton(
                   borderRadius: 20,
                   borderWidth: 0,
@@ -273,15 +273,15 @@ class _Mp4PlayerState extends State<Mp4Player> {
                     }
                   },
                 ),
-                IconButton(
-                  onPressed: () {
-                    //  _controller.setPlaybackSpeed(2.0);
-                  },
-                  icon: const Icon(
-                    Icons.skip_next,
-                    color: Colors.black,
-                  ),
-                ),
+                // IconButton(
+                //   onPressed: () {
+                //     //  _controller.setPlaybackSpeed(2.0);
+                //   },
+                //   icon: const Icon(
+                //     Icons.skip_next,
+                //     color: Colors.black,
+                //   ),
+                // ),
                 Text(
                   _videoDuration(
                       controller!.value.duration - controller!.value.position),

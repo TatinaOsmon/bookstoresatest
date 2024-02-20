@@ -5,6 +5,7 @@ class CartItem {
   final int price;
   final String title;
   final String pic;
+
   // ... other fields
 
   const CartItem({

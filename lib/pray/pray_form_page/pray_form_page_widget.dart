@@ -136,10 +136,6 @@ class _PrayFormPageWidgetState extends State<PrayFormPageWidget> {
               key: formkey,
               child: Column(
                 children: [
-                  Text(
-                    'Welcome to support',
-                    style: FlutterFlowTheme.of(context).labelLarge,
-                  ),
                   Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(
                         0.0, 4.0, 0.0, 0.0),
@@ -291,6 +287,7 @@ class _PrayFormPageWidgetState extends State<PrayFormPageWidget> {
                                 onPressed: () async {
                                   final datePickedDate = await showDatePicker(
                                     context: context,
+                                    locale: const Locale('zh', 'ZH'),
                                     initialDate: getCurrentTimestamp,
                                     firstDate: DateTime(1900),
                                     lastDate: getCurrentTimestamp,

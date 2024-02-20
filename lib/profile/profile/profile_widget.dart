@@ -59,24 +59,24 @@ class _ProfileWidgetState extends State<ProfileWidget> {
           child: AppBar(
             backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
             automaticallyImplyLeading: false,
-            leading: Padding(
-              padding:
-                  const EdgeInsetsDirectional.fromSTEB(15.0, 10.0, 0.0, 0.0),
-              child: FlutterFlowIconButton(
-                borderColor: Colors.transparent,
-                borderRadius: 30.0,
-                borderWidth: 1.0,
-                buttonSize: 50.0,
-                icon: Icon(
-                  Icons.arrow_back_rounded,
-                  color: FlutterFlowTheme.of(context).primaryText,
-                  size: 35.0,
-                ),
-                onPressed: () async {
-                  context.pop();
-                },
-              ),
-            ),
+            // leading: Padding(
+            //   padding:
+            //       const EdgeInsetsDirectional.fromSTEB(15.0, 10.0, 0.0, 0.0),
+            //   child: FlutterFlowIconButton(
+            //     borderColor: Colors.transparent,
+            //     borderRadius: 30.0,
+            //     borderWidth: 1.0,
+            //     buttonSize: 50.0,
+            //     icon: Icon(
+            //       Icons.arrow_back_rounded,
+            //       color: FlutterFlowTheme.of(context).primaryText,
+            //       size: 35.0,
+            //     ),
+            //     onPressed: () async {
+            //       context.pop();
+            //     },
+            //   ),
+            // ),
             title: Padding(
               padding:
                   const EdgeInsetsDirectional.fromSTEB(0.0, 15.0, 0.0, 0.0),
@@ -111,7 +111,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
                       child: Image.asset(
-                        'assets/images/JZJG.png',
+                        'assets/images/LOGO2.png',
                         width: MediaQuery.sizeOf(context).width * 0.5,
                         fit: BoxFit.fitWidth,
                       ),
@@ -149,22 +149,22 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         color: FlutterFlowTheme.of(context).secondaryBackground,
                         borderRadius: BorderRadius.circular(12.0),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(
+                      child: const Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(
                             8.0, 12.0, 8.0, 12.0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  12.0, 0.0, 0.0, 0.0),
-                              child: Text(
-                                '變更個人資料',
-                                style: FlutterFlowTheme.of(context).bodyLarge,
-                              ),
-                            ),
-                          ],
-                        ),
+                        // child: Row(
+                        //   mainAxisSize: MainAxisSize.max,
+                        //   children: [
+                        //     Padding(
+                        //       padding: const EdgeInsetsDirectional.fromSTEB(
+                        //           12.0, 0.0, 0.0, 0.0),
+                        //       child: Text(
+                        //         '變更個人資料',
+                        //         style: FlutterFlowTheme.of(context).bodyLarge,
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
                       ),
                     ),
                   ),
@@ -469,7 +469,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
                         child: Image.asset(
-                          'assets/images/appstore.png',
+                          'assets/images/LOGO1.png',
                           width: 70.0,
                           fit: BoxFit.cover,
                         ),

@@ -408,6 +408,12 @@ class _BookCartWidgetState extends State<BookCartWidget>
                                               Provider.of<ItemCartRepo>(context,
                                                       listen: false)
                                                   .removeItem(bookCartIndex);
+                                              print(Provider.of<ItemCartRepo>(
+                                                      context,
+                                                      listen: false)
+                                                  .items
+                                                  .length);
+
                                               setState(() {});
                                               Function() _navigate = () {};
                                               _model.removeItem =

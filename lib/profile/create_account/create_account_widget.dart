@@ -120,15 +120,8 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                                     style: FlutterFlowTheme.of(context)
                                         .displaySmall,
                                   ),
-                                  Padding(
-                                    padding:
-                                        const EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 12.0, 0.0, 24.0),
-                                    child: Text(
-                                      'Let\'s get started by filling out the form below.',
-                                      style: FlutterFlowTheme.of(context)
-                                          .labelMedium,
-                                    ),
+                                  const SizedBox(
+                                    height: 30,
                                   ),
 
                                   Padding(
@@ -545,13 +538,6 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                                                     : FlutterFlowTheme.of(
                                                             context)
                                                         .secondaryText,
-                                                // style: FlutterFlowTheme.of(context)
-                                                //     .bodyMedium
-                                                //     .override(
-                                                //       fontFamily: 'Readex Pro',
-                                                //       color: FlutterFlowTheme.of(
-                                                //               context)
-                                                //           .secondaryText,
                                               ),
                                             ),
                                           ),
@@ -585,6 +571,8 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                                                   final datePickedDate =
                                                       await showDatePicker(
                                                     context: context,
+                                                    locale: const Locale(
+                                                        'zh', 'ZH'),
                                                     initialDate:
                                                         getCurrentTimestamp,
                                                     firstDate: DateTime(1900),

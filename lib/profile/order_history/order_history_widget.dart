@@ -233,7 +233,7 @@ class _OrderHistoryWidgetState extends State<OrderHistoryWidget>
                         [];
                     return ListView.builder(
                       padding: EdgeInsets.zero,
-                      reverse: true,
+                      // reverse: true,
                       scrollDirection: Axis.vertical,
                       itemCount: order.length,
                       itemBuilder: (context, orderIndex) {
@@ -271,28 +271,28 @@ class _OrderHistoryWidgetState extends State<OrderHistoryWidget>
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsetsDirectional
-                                                        .fromSTEB(
-                                                        0.0, 0.0, 0.0, 15.0),
-                                                child: RichText(
-                                                  text: TextSpan(
-                                                    children: const [
-                                                      TextSpan(
-                                                        text: 'Order #',
-                                                        style: TextStyle(),
-                                                      )
-                                                    ],
-                                                    style: FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyLarge,
-                                                  ),
-                                                  textScaler: TextScaler.linear(
-                                                      MediaQuery.of(context)
-                                                          .textScaleFactor),
-                                                ),
-                                              ),
+                                              // Padding(
+                                              //   padding:
+                                              //       const EdgeInsetsDirectional
+                                              //           .fromSTEB(
+                                              //           0.0, 0.0, 0.0, 15.0),
+                                              //   child: RichText(
+                                              //     text: TextSpan(
+                                              //       children: const [
+                                              //         TextSpan(
+                                              //           text: 'Order #',
+                                              //           style: TextStyle(),
+                                              //         )
+                                              //       ],
+                                              //       style: FlutterFlowTheme.of(
+                                              //               context)
+                                              //           .bodyLarge,
+                                              //     ),
+                                              //     textScaler: TextScaler.linear(
+                                              //         MediaQuery.of(context)
+                                              //             .textScaleFactor),
+                                              //   ),
+                                              // ),
                                               Padding(
                                                 padding:
                                                     const EdgeInsetsDirectional

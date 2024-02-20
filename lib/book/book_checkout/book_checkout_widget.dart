@@ -390,9 +390,15 @@ class _BookCheckoutWidgetState extends State<BookCheckoutWidget>
                         16.0, 0.0, 16.0, 24.0),
                     child: FFButtonWidget(
                       onPressed: () async {
+                        print('cart List' + _model.cartIndexList.toString());
                         _model.createOrder = await BookCartCreateOrderCall.call(
                           userId: currentUserData?.userId,
+
                           indexList: _model.cartIndexList,
+                          //  Provider.of<ItemCartRepo>(context, listen: false)
+                          //         .items
+                          //         .map((e) => int.parse(e.id))
+                          //         .toList(),
                           jwtToken: currentUserData?.jwtToken,
                           refreshToken: currentUserData?.refreshToken,
                         );

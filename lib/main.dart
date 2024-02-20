@@ -1,6 +1,7 @@
 import 'package:book_store/book/book_cart/book_cart_widget.dart';
 import 'package:book_store/book/pdf_reader/pdf_reader_widget.dart';
 import 'package:book_store/repositery/itemsCartRepo.dart';
+
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
@@ -102,16 +103,9 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       // title: '真言藏',
       title: '真言藏',
-      // localizationsDelegates: const [
-      //   // FFLocalizationsDelegate(),
-      //   GlobalMaterialLocalizations.delegate,
-      //   GlobalWidgetsLocalizations.delegate,
-      //   GlobalCupertinoLocalizations.delegate,
-      // ],
-      // locale: _locale,
-      // supportedLocales: const [
-      //   Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
-      // ],
+      localizationsDelegates: [GlobalMaterialLocalizations.delegate],
+      supportedLocales: [const Locale('en'), const Locale('zh')],
+
       theme: ThemeData(
         brightness: Brightness.light,
         scrollbarTheme: const ScrollbarThemeData(),

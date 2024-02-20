@@ -272,10 +272,10 @@ class _Mp3ScreenState extends State<Mp3Player> {
                     color: Colors.black,
                   ),
                 ),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.skip_previous, color: Colors.black),
-                ),
+                // IconButton(
+                //   onPressed: () {},
+                //   icon: const Icon(Icons.skip_previous, color: Colors.black),
+                // ),
                 FlutterFlowIconButton(
                   borderRadius: 20,
                   borderWidth: 0,
@@ -299,16 +299,16 @@ class _Mp3ScreenState extends State<Mp3Player> {
                     print("按了一下");
                   },
                 ),
-                IconButton(
-                  onPressed: () {
-                    ableScreenshot();
-                    //  _controller.setPlaybackSpeed(2.0);
-                  },
-                  icon: const Icon(
-                    Icons.skip_next,
-                    color: Colors.black,
-                  ),
-                ),
+                // IconButton(
+                //   onPressed: () {
+                //     ableScreenshot();
+                //     //  _controller.setPlaybackSpeed(2.0);
+                //   },
+                //   icon: const Icon(
+                //     Icons.skip_next,
+                //     color: Colors.black,
+                //   ),
+                // ),
                 Text(
                   formatTime(duration - position),
                   style: TextStyle(

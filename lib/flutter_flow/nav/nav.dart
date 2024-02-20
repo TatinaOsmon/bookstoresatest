@@ -289,13 +289,13 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
             title: params.getParam('title', ParamType.String),
           ),
         ),
-        FFRoute(
-          name: 'pdfReader',
-          path: '/pdfReader',
-          builder: (context, params) => PdfReaderWidget(
-            productId: params.getParam('productId', ParamType.int),
-          ),
-        ),
+        // FFRoute(
+        //   name: 'pdfReader',
+        //   path: '/pdfReader',
+        //   builder: (context, params) => PdfReaderWidget(
+        //     productId: params.getParam('productId', ParamType.int),
+        //   ),
+        // ),
         FFRoute(
           name: 'mp4Player',
           path: '/mp4Player',
