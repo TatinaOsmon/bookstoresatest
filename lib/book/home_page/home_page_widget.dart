@@ -750,6 +750,9 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                           bookCategoryItem,
                                                           r'''$.pic''',
                                                         ).toString(),
+                                                        index: getJsonField(
+                                                            bookCategoryItem,
+                                                            r'''$.index'''),
                                                       ));
                                                     }
 

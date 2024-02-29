@@ -22,4 +22,8 @@ class ItemCartRepo with ChangeNotifier {
 
     // Other methods...
   }
+
+  CartItem getItem(int index) {
+    return _items[index];
+  }
 }

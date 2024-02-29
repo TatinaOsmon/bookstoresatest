@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -67,6 +68,7 @@ class _PdfViewState extends State<PdfView> {
 
   // Define the GlobalKey
   final GlobalKey<SfPdfViewerState> _pdfViewerKey = GlobalKey();
+  bool isDocumentLoaded = false;
 
   @override
   void initState() {
@@ -150,7 +152,7 @@ class _PdfViewState extends State<PdfView> {
             _pdfViewerController.zoomLevel = widget.width! / widget.height!;
 
             return Scaffold(
-              body: widget.file.isNotEmpty
+              body: (widget.file.isNotEmpty)
                   ? Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -175,105 +177,119 @@ class _PdfViewState extends State<PdfView> {
                               onDocumentLoaded: (details) async {
                                 _pdfViewerController
                                     .jumpToPage(_pdfViewerController.pageCount);
+                                setState(() {
+                                  isDocumentLoaded = true;
+                                });
                               },
 
                               // Save the current page number
                               onPageChanged: (PdfPageChangedDetails details) {
-                                if (mounted) {
-                                  print(
-                                      'CurrentPage: ${_pdfViewerController.pageNumber}');
+                                // if (mounted && details.newPageNumber != 0) {
+                                //   print(
+                                //       'CurrentPage: ${_pdfViewerController.pageNumber}');
+                                if (mounted)
                                   indexNotifier.value =
                                       _pdfViewerController.pageNumber;
-                                }
-                                if (lastViewedPage == details.newPageNumber)
-                                  return;
-                                lastViewedPage = details.newPageNumber;
-                                print(
-                                    "Page changed to: $lastViewedPage"); // Debug print
-                                _savePageNumber(lastViewedPage);
+                                // }
+                                // if (lastViewedPage == details.newPageNumber)
+                                //   return;
+                                // lastViewedPage = details.newPageNumber;
+                                // print(
+                                //     "Page changed to: $lastViewedPage"); // Debug print
+                                // _savePageNumber(lastViewedPage);
                               },
                             );
                           }),
                         ),
-                        ValueListenableBuilder(
-                          valueListenable: indexNotifier,
-                          builder: (context, value, _) {
-                            final totalPages = _pdfViewerController.pageCount;
-                            // Ensure the current page is within bounds
-                            print(totalPages);
-                            final currentPage = value as int;
-                            // Adjust calculation for correct direction
-                            final double sliderValue = totalPages > 1
-                                ? 1.0 - ((currentPage - 1) / (totalPages - 1))
-                                : 0.0;
+                        if (isDocumentLoaded)
+                          ValueListenableBuilder(
+                            valueListenable: indexNotifier,
+                            builder: (context, value, _) {
+                              final totalPages = _pdfViewerController.pageCount;
+                              // Ensure the current page is within bounds
+                              print(totalPages);
+                              final currentPage = value as int;
+                              // Adjust calculation for correct direction
+                              // final double sliderValue = totalPages > 1
+                              //     ? 1.0 - ((currentPage - 1) / (totalPages - 1))
+                              //     : 0.0;
 
-                            // 7, 1:16 AM => 03:46am  today afternoon or at evening
-                            // please commit and push the code to Github.
-                            return Directionality(
-                                textDirection: TextDirection.rtl,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Expanded(
-                                      child: Slider(
-                                        value: sliderValue.toDouble(),
-                                        min: 0,
-                                        max: 6,
-                                        onChanged: (ratio) {
-                                          final maxPage =
-                                              _pdfViewerController.pageCount;
-                                          final val =
-                                              (maxPage * (1 - ratio)).floor();
-                                          _pdfViewerController.jumpToPage(val);
-                                          indexNotifier.value = val;
-                                        },
-                                        semanticFormatterCallback:
-                                            (double value) {
-                                          return '${value.toInt()}'; // Display the progress visually
+                              int sliderValue = totalPages > 1
+                                  ? (totalPages.toInt() - currentPage.toInt())
+                                  : 0;
+
+                              if (sliderValue > totalPages) {
+                                sliderValue = totalPages;
+                              }
+                              print('SliderValue: $sliderValue'); // 16, 1
+                              print('totalpages: $totalPages'); // 16
+                              print('currentpage: $currentPage'); //0,
+                              return Directionality(
+                                  textDirection: TextDirection.rtl,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Expanded(
+                                        // child: Slider(
+                                        //   value: sliderValue.toDouble(),
+                                        //   min: 0,
+                                        //   max: 10,
+                                        //   onChanged: (ratio) {
+                                        //     final maxPage =
+                                        //         _pdfViewerController.pageCount;
+                                        //     final val =
+                                        //         (maxPage * (1 - ratio)).floor();
+                                        //     _pdfViewerController.jumpToPage(val);
+                                        //     indexNotifier.value = val;
+                                        //   },
+                                        //   semanticFormatterCallback:
+                                        //       (double value) {
+                                        //     return '${value.toInt()}'; // Display the progress visually
+                                        //   },
+                                        // ),
+                                        child: Slider(
+                                          value: sliderValue.toDouble(),
+                                          min: 0,
+                                          max: totalPages.toDouble(),
+                                          onChanged: (pageNo) {
+                                            final intPageNo =
+                                                (_pdfViewerController
+                                                            .pageCount -
+                                                        pageNo)
+                                                    .round();
+                                            _pdfViewerController
+                                                .jumpToPage(intPageNo);
+                                            indexNotifier.value = intPageNo;
+                                          },
+                                          // semanticFormatterCallback:
+                                          //     (double value) {
+                                          //   final intPageNo =
+                                          //       (_pdfViewerController
+                                          //                   .pageCount -
+                                          //               1 -
+                                          //               value)
+                                          //           .toInt();
+                                          //   return '${intPageNo + 1}'; // Display the progress visually, add 1 since page numbers start from 1
+                                          // },
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.arrow_forward_rounded,
+                                          color: FlutterFlowTheme.of(context)
+                                              .primaryText,
+                                          size: 35.0,
+                                        ),
+                                        onPressed: () {
+                                          ableScreenshot();
+                                          Navigator.pop(context);
+                                          // Define the action for the back button
                                         },
                                       ),
-                                      // child: Slider(
-                                      //   value: sliderValue.toDouble(),
-                                      //   min: 0,
-                                      //   max: _pdfViewerController.pageCount - 1,
-                                      //   onChanged: (pageNo) {
-                                      //     final intPageNo =
-                                      //         (_pdfViewerController.pageCount -
-                                      //                 1 -
-                                      //                 pageNo)
-                                      //             .round();
-                                      //     _pdfViewerController
-                                      //         .jumpToPage(intPageNo);
-                                      //     indexNotifier.value = intPageNo;
-                                      //   },
-                                      //   semanticFormatterCallback:
-                                      //       (double value) {
-                                      //     final intPageNo =
-                                      //         (_pdfViewerController.pageCount -
-                                      //                 1 -
-                                      //                 value)
-                                      //             .toInt();
-                                      //     return '${intPageNo + 1}'; // Display the progress visually, add 1 since page numbers start from 1
-                                      //   },
-                                      // ),
-                                    ),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.arrow_forward_rounded,
-                                        color: FlutterFlowTheme.of(context)
-                                            .primaryText,
-                                        size: 35.0,
-                                      ),
-                                      onPressed: () {
-                                        ableScreenshot();
-                                        Navigator.pop(context);
-                                        // Define the action for the back button
-                                      },
-                                    ),
-                                  ],
-                                ));
-                          },
-                        )
+                                    ],
+                                  ));
+                            },
+                          )
                       ],
                     )
                   : const Center(child: CircularProgressIndicator()),
@@ -282,76 +298,5 @@ class _PdfViewState extends State<PdfView> {
         ),
       ),
     );
-  }
-
-  Uint8List _reversePdfPages(Uint8List input) {
-    // Create a new PDF document
-    try {
-      PdfDocument document = PdfDocument.fromBase64String(base64Encode(input),
-          password: password!);
-      final newDoc = PdfDocument();
-
-      // Get the number of pages
-      int pageCount = document.pages.count;
-
-      // Iterate through the pages in reverse order
-      for (int i = pageCount - 1; i >= 0; i--) {
-        // Get the page
-        PdfPage page = document.pages[i];
-        newDoc.pages
-            .add()
-            .graphics
-            .drawPdfTemplate(page.createTemplate(), Offset.zero);
-      }
-      return Uint8List.fromList(newDoc.saveSync());
-    } catch (e) {
-      print('ERROR: $e');
-      return Uint8List(0);
-    }
-  }
-
-  Future<Uint8List> _addWatermark(String userAccount) async {
-    try {
-      // PDF документин жүктөө/ download pdf document
-
-      PdfDocument document = PdfDocument.fromBase64String(
-          base64Encode(widget.file),
-          password: password);
-
-      // Add watermark
-      for (int i = 0; i < document.pages.count; i++) {
-        PdfPage page = document.pages[i];
-        PdfGraphics graphics = page.graphics;
-
-        // Safe graphic state
-        PdfGraphicsState state = graphics.save();
-
-        // change watermark color
-        graphics.setTransparency(0.15); // Көбүрөөк ачык
-        // graphics.rotateTransform(-40);
-
-        // chage watermar style
-        PdfFont font = PdfStandardFont(PdfFontFamily.helvetica, 45);
-        PdfBrush brush = PdfSolidBrush(PdfColor(100, 100, 100)); // color
-
-        String watermarkText = " $userAccount";
-        for (double yPos = 0; yPos < page.size.height; yPos += 100) {
-          for (double xPos = 0; xPos < page.size.width; xPos += 200) {
-            graphics.drawString(watermarkText, font,
-                brush: brush, bounds: Rect.fromLTWH(xPos, yPos, 400, 100));
-          }
-        }
-
-        graphics.restore(state);
-      }
-
-      // safe pdf document and remove
-      final res = await document.save();
-      document.dispose();
-      return Uint8List.fromList(res);
-    } on Exception catch (e) {
-      print('Watermark error: $e');
-      return Uint8List(0);
-    }
   }
 }

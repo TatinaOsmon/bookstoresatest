@@ -310,6 +310,9 @@ class _BookIntroWidgetState extends State<BookIntroWidget>
                               Container(
                                 width: MediaQuery.of(context).size.width /
                                     2, // Adjust the width as needed
+                                height: 50 *
+                                    MediaQuery.of(context).size.height /
+                                    100, // Set a static height for the container
                                 decoration: BoxDecoration(
                                   border: Border.all(
                                     color: Colors.black,

@@ -37,13 +37,14 @@ class _Mp4PlayerState extends State<Mp4Player> {
   VideoPlayerController? controller =
       VideoPlayerController.asset('assets/video/video.mp4');
   bool isPlayerInitialized = false;
+  bool _isVideoEnded = false;
 
   bool isPlaying = false;
   bool showImage = true; // Added state variable
   final String tableName = 'mp4';
   String? password;
+  bool videoEnded = false;
 
-  // late VideoPlayerController _controller;
   Future<void>? initializeVideoPlayerFuture;
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
@@ -67,6 +68,15 @@ class _Mp4PlayerState extends State<Mp4Player> {
     super.initState();
     initializePlayer();
     disableScreenshot();
+    controller?.addListener(() {
+      final bool isEnded =
+          controller!.value.position >= controller!.value.duration;
+      if (isEnded != videoEnded) {
+        setState(() {
+          videoEnded = isEnded;
+        });
+      }
+    });
   }
 
   Future<void> initializePlayer() async {
@@ -155,6 +165,15 @@ class _Mp4PlayerState extends State<Mp4Player> {
         }).catchError((error) {
           print("Video initialization error: $error");
         });
+
+      controller!.addListener(() {
+        if (controller!.value.isCompleted) {
+          setState(() {
+            isPlaying = false;
+            controller!.seekTo(Duration(seconds: 0));
+          });
+        }
+      });
     } catch (e) {
       print('Error initializing video player: $e');
     }
@@ -175,19 +194,16 @@ class _Mp4PlayerState extends State<Mp4Player> {
         Expanded(
           child: Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 55),
-            child: showImage // Conditional display
+            child: showImage
                 ? Center(
-                    // Center the content
                     child: Container(
                       width: 300,
                       height: 300,
                       child: Stack(
-                        alignment:
-                            Alignment.center, // Center alignment for Stack
+                        alignment: Alignment.center,
                         children: [
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(
-                                150), // Make the image circular
+                            borderRadius: BorderRadius.circular(150),
                             child: Image.asset(
                               'assets/images/main.jpg',
                               width: 300,
@@ -196,8 +212,7 @@ class _Mp4PlayerState extends State<Mp4Player> {
                             ),
                           ),
                           Align(
-                            alignment: Alignment
-                                .center, // Align the smaller container to the center
+                            alignment: Alignment.center,
                             child: Container(
                               width: 50,
                               height: 50,
@@ -221,7 +236,7 @@ class _Mp4PlayerState extends State<Mp4Player> {
           ),
         ),
         isPlayerInitialized
-            ? VideoProgressIndicator(controller!, allowScrubbing: true)
+            ? CustomVideoProgressIndicator(controller: controller!)
             : Container(),
         Padding(
           padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
@@ -240,10 +255,6 @@ class _Mp4PlayerState extends State<Mp4Player> {
                         ),
                       );
                     }),
-                // IconButton(
-                //   onPressed: () {},
-                //   icon: const Icon(Icons.skip_previous, color: Colors.black),
-                // ),
                 FlutterFlowIconButton(
                   borderRadius: 20,
                   borderWidth: 0,
@@ -273,15 +284,6 @@ class _Mp4PlayerState extends State<Mp4Player> {
                     }
                   },
                 ),
-                // IconButton(
-                //   onPressed: () {
-                //     //  _controller.setPlaybackSpeed(2.0);
-                //   },
-                //   icon: const Icon(
-                //     Icons.skip_next,
-                //     color: Colors.black,
-                //   ),
-                // ),
                 Text(
                   _videoDuration(
                       controller!.value.duration - controller!.value.position),
@@ -294,6 +296,61 @@ class _Mp4PlayerState extends State<Mp4Player> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class CustomVideoProgressIndicator extends StatefulWidget {
+  final VideoPlayerController controller;
+
+  const CustomVideoProgressIndicator({Key? key, required this.controller})
+      : super(key: key);
+
+  @override
+  State<CustomVideoProgressIndicator> createState() =>
+      _CustomVideoProgressIndicatorState();
+}
+
+class _CustomVideoProgressIndicatorState
+    extends State<CustomVideoProgressIndicator> {
+  bool videoEnded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(() {
+      final isVideoEnded =
+          widget.controller.value.position >= widget.controller.value.duration;
+      if (isVideoEnded != videoEnded) {
+        setState(() {
+          videoEnded = isVideoEnded;
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<VideoPlayerValue>(
+      valueListenable: widget.controller,
+      builder: (context, value, child) {
+        double progress = value.isInitialized
+            ? value.position.inSeconds / value.duration.inSeconds
+            : 0;
+        return Slider(
+          value: progress,
+          onChanged: (newProgress) {
+            final newPosition = value.duration * newProgress;
+            widget.controller.seekTo(newPosition);
+          },
+          min: 0,
+          max: 1,
+          activeColor: videoEnded
+              ? Colors.red
+              : Colors.black, // Change color when video ends
+          inactiveColor: Colors.grey,
+        );
+      },
     );
   }
 }

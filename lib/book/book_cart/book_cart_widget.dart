@@ -33,6 +33,8 @@ class BookCartWidget extends StatefulWidget {
 class _BookCartWidgetState extends State<BookCartWidget>
     with TickerProviderStateMixin {
   late BookCartModel _model;
+  var isLoading = true;
+  late List<CartItem> items;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -76,6 +78,16 @@ class _BookCartWidgetState extends State<BookCartWidget>
       ],
     ),
   };
+
+  void fetchCartItems() async {
+    var fetchedItems = await BookCartFindAllCall.call(
+      userId: currentUserData?.userId,
+      jwtToken: currentUserData?.jwtToken,
+      refreshToken: currentUserData?.refreshToken,
+    );
+
+    if (fetchedItems.succeeded) {}
+  }
 
   @override
   void initState() {
@@ -405,6 +417,13 @@ class _BookCartWidgetState extends State<BookCartWidget>
                                               size: 24,
                                             ),
                                             onPressed: () async {
+                                              var serverItemIndex =
+                                                  (Provider.of<ItemCartRepo>(
+                                                              context,
+                                                              listen: false)
+                                                          .getItem(
+                                                              bookCartIndex))
+                                                      .index;
                                               Provider.of<ItemCartRepo>(context,
                                                       listen: false)
                                                   .removeItem(bookCartIndex);
@@ -420,7 +439,8 @@ class _BookCartWidgetState extends State<BookCartWidget>
                                                   await BookCartRemoveItemCall
                                                       .call(
                                                 userId: currentUserData?.userId,
-                                                index: bookCartIndex,
+                                                //index: bookCartIndex,
+                                                index: serverItemIndex,
                                                 refreshToken: currentUserData
                                                     ?.refreshToken,
                                                 jwtToken:

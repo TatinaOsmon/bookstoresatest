@@ -631,6 +631,9 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                             ).toString(),
                                                             category: '',
                                                             pic: '',
+                                                            index: getJsonField(
+                                                                mp3Item,
+                                                                r'''$.index'''),
                                                           ));
                                                         } else {}
 
@@ -1270,6 +1273,9 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                             ).toString(),
                                                             category: '',
                                                             pic: '',
+                                                            index: getJsonField(
+                                                                mp3Item,
+                                                                r'''$.index'''),
                                                           ));
                                                         } else {}
 

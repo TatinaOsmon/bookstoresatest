@@ -632,6 +632,9 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                             ).toString(),
                                                             category: '',
                                                             pic: '',
+                                                            index: getJsonField(
+                                                                mp4Item,
+                                                                r'''$.index'''),
                                                           ));
                                                         } else {}
 
@@ -1273,6 +1276,9 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                             ).toString(),
                                                             category: '',
                                                             pic: '',
+                                                            index: getJsonField(
+                                                                mp4Item,
+                                                                r'''$.index'''),
                                                           ));
                                                         } else {}
 

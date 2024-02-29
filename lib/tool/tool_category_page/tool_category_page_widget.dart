@@ -657,6 +657,9 @@ class _ToolCategoryPageWidgetState extends State<ToolCategoryPageWidget>
                                                     pic: toolCategories[
                                                             toolCategoryIndex]
                                                         ['pic'],
+                                                    index: toolCategories[
+                                                            toolCategoryIndex]
+                                                        ['index'],
                                                   ));
 
                                                   setState(() {});

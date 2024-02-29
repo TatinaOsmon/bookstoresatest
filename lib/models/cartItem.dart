@@ -5,6 +5,7 @@ class CartItem {
   final int price;
   final String title;
   final String pic;
+  final int? index;
 
   // ... other fields
 
@@ -15,5 +16,6 @@ class CartItem {
     required this.title,
     required String category,
     required this.pic,
+    required this.index,
   });
 }

@@ -311,303 +311,297 @@ class _MediaCartWidgetState extends State<MediaCartWidget>
                                         const EdgeInsetsDirectional.fromSTEB(
                                             22, 22, 22, 22),
                                     child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsetsDirectional
-                                                .fromSTEB(0, 0, 22, 0),
-                                            child: Icon(
-                                              Icons.video_collection_outlined,
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .primaryText,
-                                              size: 85,
-                                            ),
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(0, 0, 22, 0),
+                                          child: Icon(
+                                            Icons.video_collection_outlined,
+                                            color: FlutterFlowTheme.of(context)
+                                                .primaryText,
+                                            size: 85,
                                           ),
-                                          Expanded(
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.max,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsetsDirectional
-                                                          .fromSTEB(0, 0, 0, 7),
-                                                  child: Text(
-                                                    mediaCartItem.title,
-                                                    style: FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontFamily:
-                                                              'Readex Pro',
-                                                          fontSize: 16,
-                                                        ),
-                                                  ),
-                                                ),
-                                                Text(
-                                                  functions.formatPrice(
-                                                      mediaCartItem.price),
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(0, 0, 0, 7),
+                                                child: Text(
+                                                  mediaCartItem.title,
                                                   style: FlutterFlowTheme.of(
                                                           context)
                                                       .bodyMedium
                                                       .override(
                                                         fontFamily:
                                                             'Readex Pro',
-                                                        color:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .primary,
                                                         fontSize: 16,
                                                       ),
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                              Text(
+                                                functions.formatPrice(
+                                                    mediaCartItem.price),
+                                                style: FlutterFlowTheme.of(
+                                                        context)
+                                                    .bodyMedium
+                                                    .override(
+                                                      fontFamily: 'Readex Pro',
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .primary,
+                                                      fontSize: 16,
+                                                    ),
+                                              ),
+                                            ],
                                           ),
-                                        ]),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(22, 0, 0, 0),
+                                          child: FlutterFlowIconButton(
+                                            borderColor:
+                                                FlutterFlowTheme.of(context)
+                                                    .primaryText,
+                                            borderRadius: 20,
+                                            borderWidth: 3,
+                                            buttonSize: 40,
+                                            icon: FaIcon(
+                                              FontAwesomeIcons.trashAlt,
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primaryText,
+                                              size: 24,
+                                            ),
+                                            onPressed: () async {
+                                              Provider.of<ItemCartRepo>(context,
+                                                      listen: false)
+                                                  .removeItem(mediaCartIndex);
+                                              setState(() {});
+                                              Function() _navigate = () {};
+                                              _model.removeItem =
+                                                  await MediaCartRemoveItemCall
+                                                      .call(
+                                                userId: currentUserData?.userId,
+                                                index: mediaCartIndex,
+                                                refreshToken: currentUserData
+                                                    ?.refreshToken,
+                                                jwtToken:
+                                                    currentUserData?.jwtToken,
+                                              );
+                                              if ((_model
+                                                      .removeItem?.succeeded ??
+                                                  true)) {
+                                                // 有沒有success
+                                                // 如果有success代表他的登入有狀況
+                                                if (getJsonField(
+                                                      (_model.removeItem
+                                                              ?.jsonBody ??
+                                                          ''),
+                                                      r'''$.success''',
+                                                    ) !=
+                                                    null) {
+                                                  FFAppState().success =
+                                                      getJsonField(
+                                                    (_model.removeItem
+                                                            ?.jsonBody ??
+                                                        ''),
+                                                    r'''$.success''',
+                                                  );
+                                                  if (FFAppState().success ==
+                                                      true) {
+                                                    await showDialog(
+                                                      context: context,
+                                                      builder:
+                                                          (alertDialogContext) {
+                                                        return AlertDialog(
+                                                          title: const Text(
+                                                              'Message'),
+                                                          content:
+                                                              Text(getJsonField(
+                                                            (_model.removeItem
+                                                                    ?.jsonBody ??
+                                                                ''),
+                                                            r'''$.message''',
+                                                          ).toString()),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () =>
+                                                                  Navigator.pop(
+                                                                      alertDialogContext),
+                                                              child: const Text(
+                                                                  'Ok'),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                    GoRouter.of(context)
+                                                        .prepareAuthEvent();
+                                                    await authManager.signOut();
+                                                    GoRouter.of(context)
+                                                        .clearRedirectLocation();
+
+                                                    _navigate = () =>
+                                                        context.goNamedAuth(
+                                                            'login',
+                                                            context.mounted);
+                                                  } else {
+                                                    await showDialog(
+                                                      context: context,
+                                                      builder:
+                                                          (alertDialogContext) {
+                                                        return AlertDialog(
+                                                          title: const Text(
+                                                              'Message'),
+                                                          content:
+                                                              Text(getJsonField(
+                                                            (_model.removeItem
+                                                                    ?.jsonBody ??
+                                                                ''),
+                                                            r'''$.message''',
+                                                          ).toString()),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () =>
+                                                                  Navigator.pop(
+                                                                      alertDialogContext),
+                                                              child: const Text(
+                                                                  'Ok'),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                    setState(() {
+                                                      FFAppState().token =
+                                                          getJsonField(
+                                                        (_model.removeItem
+                                                                ?.jsonBody ??
+                                                            ''),
+                                                        r'''$.jwtToken''',
+                                                      ).toString();
+                                                    });
+                                                    _model.afterRemove2 =
+                                                        await MediaCartFindAllCall
+                                                            .call(
+                                                      userId: currentUserData
+                                                          ?.userId,
+                                                      jwtToken: currentUserData
+                                                          ?.jwtToken,
+                                                      refreshToken:
+                                                          currentUserData
+                                                              ?.refreshToken,
+                                                    );
+                                                    setState(() {
+                                                      _model.priceList =
+                                                          MediaCartFindAllCall
+                                                                  .priceList(
+                                                        (_model.afterRemove2
+                                                                ?.jsonBody ??
+                                                            ''),
+                                                      )!
+                                                              .toList()
+                                                              .cast<int>();
+                                                    });
+                                                  }
+                                                } else {
+                                                  await showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return AlertDialog(
+                                                        title: Text('Message'),
+                                                        content: Text('已移除物品'),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                            child: Text('Ok'),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+
+                                                  setState(() {
+                                                    FFAppState().token =
+                                                        getJsonField(
+                                                      (_model.removeItem
+                                                              ?.jsonBody ??
+                                                          ''),
+                                                      r'''$.jwtToken''',
+                                                    ).toString();
+                                                  });
+                                                  _model.afterRemove =
+                                                      await MediaCartFindAllCall
+                                                          .call(
+                                                    userId:
+                                                        currentUserData?.userId,
+                                                    jwtToken: currentUserData
+                                                        ?.jwtToken,
+                                                    refreshToken:
+                                                        currentUserData
+                                                            ?.refreshToken,
+                                                  );
+
+                                                  setState(() {
+                                                    _model.priceList =
+                                                        MediaCartFindAllCall
+                                                                .priceList(
+                                                      (_model.afterRemove
+                                                              ?.jsonBody ??
+                                                          ''),
+                                                    )!
+                                                            .toList()
+                                                            .cast<int>();
+                                                  });
+                                                }
+                                              } else {
+                                                await showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (alertDialogContext) {
+                                                    return AlertDialog(
+                                                      title:
+                                                          const Text('Error'),
+                                                      content:
+                                                          const Text('請稍後再試一次'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                  alertDialogContext),
+                                                          child:
+                                                              const Text('Ok'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              }
+
+                                              setState(() {});
+                                            },
+                                          ).animateOnPageLoad(animationsMap[
+                                              'iconButtonOnPageLoadAnimation']!),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
+                                ).animateOnPageLoad(animationsMap[
+                                    'containerOnPageLoadAnimation']!),
                               );
-                              //           Padding(
-                              //             padding: const EdgeInsetsDirectional
-                              //                 .fromSTEB(22, 0, 0, 0),
-                              //             child: FlutterFlowIconButton(
-                              //               borderColor:
-                              //                   FlutterFlowTheme.of(context)
-                              //                       .primaryText,
-                              //               borderRadius: 20,
-                              //               borderWidth: 3,
-                              //               buttonSize: 40,
-                              //               icon: FaIcon(
-                              //                 FontAwesomeIcons.trashAlt,
-                              //                 color:
-                              //                     FlutterFlowTheme.of(context)
-                              //                         .primaryText,
-                              //                 size: 24,
-                              //               ),
-                              //               onPressed: () async {
-                              //                 Provider.of<ItemCartRepo>(context,
-                              //                         listen: false)
-                              //                     .removeItem(mediaCartIndex);
-                              //                 setState(() {});
-                              //                 Function() _navigate = () {};
-                              //                 _model.removeItem =
-                              //                     await MediaCartRemoveItemCall
-                              //                         .call(
-                              //                   userId: currentUserData?.userId,
-                              //                   index: mediaCartIndex,
-                              //                   refreshToken: currentUserData
-                              //                       ?.refreshToken,
-                              //                   jwtToken:
-                              //                       currentUserData?.jwtToken,
-                              //                 );
-                              //                 if ((_model
-                              //                         .removeItem?.succeeded ??
-                              //                     true)) {
-                              //                   // 有沒有success
-                              //                   // 如果有success代表他的登入有狀況
-                              //                   if (getJsonField(
-                              //                         (_model.removeItem
-                              //                                 ?.jsonBody ??
-                              //                             ''),
-                              //                         r'''$.success''',
-                              //                       ) !=
-                              //                       null) {
-                              //                     FFAppState().success =
-                              //                         getJsonField(
-                              //                       (_model.removeItem
-                              //                               ?.jsonBody ??
-                              //                           ''),
-                              //                       r'''$.success''',
-                              //                     );
-                              //                     if (FFAppState().success ==
-                              //                         true) {
-                              //                       await showDialog(
-                              //                         context: context,
-                              //                         builder:
-                              //                             (alertDialogContext) {
-                              //                           return AlertDialog(
-                              //                             title: const Text(
-                              //                                 'Message'),
-                              //                             content:
-                              //                                 Text(getJsonField(
-                              //                               (_model.removeItem
-                              //                                       ?.jsonBody ??
-                              //                                   ''),
-                              //                               r'''$.message''',
-                              //                             ).toString()),
-                              //                             actions: [
-                              //                               TextButton(
-                              //                                 onPressed: () =>
-                              //                                     Navigator.pop(
-                              //                                         alertDialogContext),
-                              //                                 child: const Text(
-                              //                                     'Ok'),
-                              //                               ),
-                              //                             ],
-                              //                           );
-                              //                         },
-                              //                       );
-                              //                       GoRouter.of(context)
-                              //                           .prepareAuthEvent();
-                              //                       await authManager.signOut();
-                              //                       GoRouter.of(context)
-                              //                           .clearRedirectLocation();
-
-                              //                       _navigate = () =>
-                              //                           context.goNamedAuth(
-                              //                               'login',
-                              //                               context.mounted);
-                              //                     } else {
-                              //                       await showDialog(
-                              //                         context: context,
-                              //                         builder:
-                              //                             (alertDialogContext) {
-                              //                           return AlertDialog(
-                              //                             title: const Text(
-                              //                                 'Message'),
-                              //                             content:
-                              //                                 Text(getJsonField(
-                              //                               (_model.removeItem
-                              //                                       ?.jsonBody ??
-                              //                                   ''),
-                              //                               r'''$.message''',
-                              //                             ).toString()),
-                              //                             actions: [
-                              //                               TextButton(
-                              //                                 onPressed: () =>
-                              //                                     Navigator.pop(
-                              //                                         alertDialogContext),
-                              //                                 child: const Text(
-                              //                                     'Ok'),
-                              //                               ),
-                              //                             ],
-                              //                           );
-                              //                         },
-                              //                       );
-                              //                       setState(() {
-                              //                         FFAppState().token =
-                              //                             getJsonField(
-                              //                           (_model.removeItem
-                              //                                   ?.jsonBody ??
-                              //                               ''),
-                              //                           r'''$.jwtToken''',
-                              //                         ).toString();
-                              //                       });
-                              //                       _model.afterRemove2 =
-                              //                           await MediaCartFindAllCall
-                              //                               .call(
-                              //                         userId: currentUserData
-                              //                             ?.userId,
-                              //                         jwtToken: currentUserData
-                              //                             ?.jwtToken,
-                              //                         refreshToken:
-                              //                             currentUserData
-                              //                                 ?.refreshToken,
-                              //                       );
-                              //                       setState(() {
-                              //                         _model.priceList =
-                              //                             MediaCartFindAllCall
-                              //                                     .priceList(
-                              //                           (_model.afterRemove2
-                              //                                   ?.jsonBody ??
-                              //                               ''),
-                              //                         )!
-                              //                                 .toList()
-                              //                                 .cast<int>();
-                              //                       });
-                              //                     }
-                              //                   } else {
-                              //                     await showDialog(
-                              //                       context: context,
-                              //                       builder:
-                              //                           (BuildContext context) {
-                              //                         return AlertDialog(
-                              //                           title: Text('Message'),
-                              //                           content: Text('已移除物品'),
-                              //                           actions: [
-                              //                             TextButton(
-                              //                               onPressed: () {
-                              //                                 Navigator.of(
-                              //                                         context)
-                              //                                     .pop();
-                              //                               },
-                              //                               child: Text('Ok'),
-                              //                             ),
-                              //                           ],
-                              //                         );
-                              //                       },
-                              //                     );
-
-                              //                     setState(() {
-                              //                       FFAppState().token =
-                              //                           getJsonField(
-                              //                         (_model.removeItem
-                              //                                 ?.jsonBody ??
-                              //                             ''),
-                              //                         r'''$.jwtToken''',
-                              //                       ).toString();
-                              //                     });
-                              //                     _model.afterRemove =
-                              //                         await MediaCartFindAllCall
-                              //                             .call(
-                              //                       userId:
-                              //                           currentUserData?.userId,
-                              //                       jwtToken: currentUserData
-                              //                           ?.jwtToken,
-                              //                       refreshToken:
-                              //                           currentUserData
-                              //                               ?.refreshToken,
-                              //                     );
-
-                              //                     setState(() {
-                              //                       _model.priceList =
-                              //                           MediaCartFindAllCall
-                              //                                   .priceList(
-                              //                         (_model.afterRemove
-                              //                                 ?.jsonBody ??
-                              //                             ''),
-                              //                       )!
-                              //                               .toList()
-                              //                               .cast<int>();
-                              //                     });
-                              //                   }
-                              //                 } else {
-                              //                   await showDialog(
-                              //                     context: context,
-                              //                     builder:
-                              //                         (alertDialogContext) {
-                              //                       return AlertDialog(
-                              //                         title:
-                              //                             const Text('Error'),
-                              //                         content:
-                              //                             const Text('請稍後再試一次'),
-                              //                         actions: [
-                              //                           TextButton(
-                              //                             onPressed: () =>
-                              //                                 Navigator.pop(
-                              //                                     alertDialogContext),
-                              //                             child:
-                              //                                 const Text('Ok'),
-                              //                           ),
-                              //                         ],
-                              //                       );
-                              //                     },
-                              //                   );
-                              //                 }
-
-                              //                 setState(() {});
-                              //               },
-                              //             ).animateOnPageLoad(animationsMap[
-                              //                 'iconButtonOnPageLoadAnimation']!),
-                              //           ),
-                              //         ],
-                              //       ),
-                              //     ),
-                              //   ).animateOnPageLoad(animationsMap[
-                              //       'containerOnPageLoadAnimation']!),
-                              // );
                             }),
                           ));
                         },

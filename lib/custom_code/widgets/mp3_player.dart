@@ -71,9 +71,17 @@ class _Mp3ScreenState extends State<Mp3Player> {
     player = AudioPlayer();
 
     player.onPlayerStateChanged.listen((event) {
-      setState(() {
-        isPlaying = event == PlayerState.playing;
-      });
+      if (event == PlayerState.stopped) {
+        setState(() {
+          isPlaying = event == PlayerState.playing;
+        });
+      }
+      if (event == PlayerState.completed) {
+        setState(() {
+          player.stop();
+        });
+      }
+      ;
     });
 
     player.onDurationChanged.listen((newDuration) {
@@ -248,6 +256,8 @@ class _Mp3ScreenState extends State<Mp3Player> {
         ),
         Slider.adaptive(
           activeColor: Colors.black,
+          inactiveColor: Colors.red,
+          thumbColor: Colors.black,
           min: 0,
           max: duration.inSeconds.toDouble() < 1.0
               ? 1.0
