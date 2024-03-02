@@ -646,7 +646,7 @@ class _ToolCategoryPageWidgetState extends State<ToolCategoryPageWidget>
                                                     id: getJsonField(
                                                       toolCategoryItem,
                                                       r'''$.title''',
-                                                    ).toString(),
+                                                    ),
                                                     price: toolCategories[
                                                             toolCategoryIndex]
                                                         ['price'],

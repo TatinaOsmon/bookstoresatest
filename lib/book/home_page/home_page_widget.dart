@@ -735,8 +735,8 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                         ).toString(),
                                                         id: getJsonField(
                                                           bookCategoryItem,
-                                                          r'''$.title''',
-                                                        ).toString(),
+                                                          r'''$.id''',
+                                                        ),
                                                         price: getJsonField(
                                                           bookCategoryItem,
                                                           r'''$.price''',

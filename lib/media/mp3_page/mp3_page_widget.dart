@@ -620,7 +620,7 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                             id: getJsonField(
                                                               mp3Item,
                                                               r'''$.title''',
-                                                            ).toString(),
+                                                            ),
                                                             price: getJsonField(
                                                               mp3Item,
                                                               r'''$.price''',
@@ -1262,7 +1262,7 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                             id: getJsonField(
                                                               mp3Item,
                                                               r'''$.title''',
-                                                            ).toString(),
+                                                            ),
                                                             price: getJsonField(
                                                               mp3Item,
                                                               r'''$.price''',

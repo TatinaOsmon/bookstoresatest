@@ -88,7 +88,7 @@ dev_dependencies:
   lints: 3.0.0
 
 flutter_icons:
-  image_path: "assets/images/appstore.png"
+  image_path: "assets/images/LOGO1.png"
 
   android: true
   ios: true

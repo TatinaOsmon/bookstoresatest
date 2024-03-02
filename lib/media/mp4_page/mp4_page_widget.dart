@@ -621,7 +621,7 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                             id: getJsonField(
                                                               mp4Item,
                                                               r'''$.title''',
-                                                            ).toString(),
+                                                            ),
                                                             price: getJsonField(
                                                               mp4Item,
                                                               r'''$.price''',
@@ -1265,7 +1265,7 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                             id: getJsonField(
                                                               mp4Item,
                                                               r'''$.title''',
-                                                            ).toString(),
+                                                            ),
                                                             price: getJsonField(
                                                               mp4Item,
                                                               r'''$.price''',

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:book_store/book/book_cart/book_cart_widget.dart';
 import 'package:book_store/book/book_checkout/book_checkout_model.dart';
 import 'package:book_store/models/cartItem.dart';
@@ -251,91 +253,131 @@ class _BookCheckoutWidgetState extends State<BookCheckoutWidget>
                 color: FlutterFlowTheme.of(context).alternate,
               ),
               Expanded(
-                child: Consumer<ItemCartRepo>(
-                    builder: (context, itemscart, child) {
-                  // Customize what your widget looks like when it's loading.
+                child: FutureBuilder<ApiCallResponse>(
+                    future: BookCartFindAllCall.call(
+                      userId: currentUserData?.userId,
+                      jwtToken: currentUserData?.jwtToken,
+                      refreshToken: currentUserData?.refreshToken,
+                    ),
+                    builder: (context, snapshot) {
+                      // Customize what your widget looks like when it's loading.
 
-                  final columnBookCartFindAllResponse = itemscart.items;
-                  return Builder(
-                    builder: (context) {
-                      final List<CartItem> bookCart =
-                          columnBookCartFindAllResponse;
-                      Provider.of<OrderCountProvider>(context, listen: false)
-                          .orderCount = bookCart;
-                      Provider.of<OrderCountProvider>(context, listen: false)
-                          .orderCountNotifier();
-                      return SingleChildScrollView(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: List.generate(
-                              Provider.of<OrderCountProvider>(context,
-                                      listen: false)
-                                  .orderCount
-                                  .length, (bookCartIndex) {
-                            final bookCartItem = bookCart[bookCartIndex];
-
-                            return Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  0.0, 0.0, 0.0, 8.0),
-                              child: Container(
-                                width: double.infinity,
-                                height: 60.0,
-                                decoration: BoxDecoration(
-                                  color: FlutterFlowTheme.of(context)
-                                      .primaryBackground,
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(
-                                      12.0, 8.0, 12.0, 8.0),
-                                  child: Row(
+                      List<CartItem> columnBookCartFindAllResponse = [];
+                      return !snapshot.hasData
+                          ? const Center(child: CircularProgressIndicator())
+                          : Builder(
+                              builder: (context) {
+                                log(snapshot.data!.bodyText.toString());
+                                List jsonDataCartList =
+                                    snapshot.data!.jsonBody['Bookcart'];
+                                List<CartItem> bookCart = List.generate(
+                                    jsonDataCartList.length,
+                                    (index) => CartItem(
+                                        id: jsonDataCartList[index]['id'] ?? 0,
+                                        name: jsonDataCartList[index]['name'] ??
+                                            'not specified',
+                                        price: jsonDataCartList[index]
+                                                ['price'] ??
+                                            0,
+                                        title: jsonDataCartList[index]
+                                                ['title'] ??
+                                            'not specified',
+                                        category: jsonDataCartList[index]
+                                                ['category'] ??
+                                            'not specified',
+                                        pic: jsonDataCartList[index]['pic'] ??
+                                            'not specified',
+                                        index: jsonDataCartList[index]
+                                                ['index'] ??
+                                            0));
+                                snapshot.data!.jsonBody;
+                                Provider.of<OrderCountProvider>(context,
+                                        listen: false)
+                                    .orderCount = bookCart;
+                                Provider.of<OrderCountProvider>(context,
+                                        listen: false)
+                                    .orderCountNotifier();
+                                return SingleChildScrollView(
+                                  child: Column(
                                     mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Icon(
-                                        Icons.menu_book_rounded,
-                                        color: FlutterFlowTheme.of(context)
-                                            .primaryText,
-                                        size: 43.0,
-                                      ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsetsDirectional
-                                              .fromSTEB(12.0, 0.0, 0.0, 0.0),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                bookCartItem.title,
-                                                maxLines: 1,
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyLarge,
-                                              ),
-                                            ],
+                                    children: List.generate(
+                                        Provider.of<OrderCountProvider>(context,
+                                                listen: false)
+                                            .orderCount
+                                            .length, (bookCartIndex) {
+                                      final bookCartItem =
+                                          bookCart[bookCartIndex];
+
+                                      return Padding(
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0.0, 0.0, 0.0, 8.0),
+                                        child: Container(
+                                          width: double.infinity,
+                                          height: 60.0,
+                                          decoration: BoxDecoration(
+                                            color: FlutterFlowTheme.of(context)
+                                                .primaryBackground,
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(12.0, 8.0, 12.0, 8.0),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              children: [
+                                                Icon(
+                                                  Icons.menu_book_rounded,
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primaryText,
+                                                  size: 43.0,
+                                                ),
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(12.0, 0.0,
+                                                            0.0, 0.0),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          bookCartItem.title,
+                                                          maxLines: 1,
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyLarge,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '\$${bookCartItem.price}',
+                                                  textAlign: TextAlign.end,
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyMedium,
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      Text(
-                                        '\$${bookCartItem.price}',
-                                        textAlign: TextAlign.end,
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium,
-                                      ),
-                                    ],
+                                      );
+                                    }),
                                   ),
-                                ),
-                              ),
+                                );
+                              },
                             );
-                          }),
-                        ),
-                      );
-                    },
-                  );
-                }),
+                    }),
               ),
               Column(
                 mainAxisSize: MainAxisSize.max,
