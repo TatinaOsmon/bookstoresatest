@@ -153,23 +153,23 @@ class _ToolPageWidgetState extends State<ToolPageWidget>
                 ),
               ),
               actions: [
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(
-                      0.0, 10.0, 15.0, 0.0),
-                  child: FlutterFlowIconButton(
-                    borderRadius: 20.0,
-                    borderWidth: 1.0,
-                    buttonSize: 50.0,
-                    icon: Icon(
-                      Icons.shopping_cart_outlined,
-                      color: FlutterFlowTheme.of(context).primaryText,
-                      size: 35.0,
-                    ),
-                    onPressed: () async {
-                      context.pushNamed('ToolCart');
-                    },
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsetsDirectional.fromSTEB(
+                //       0.0, 10.0, 15.0, 0.0),
+                //   child: FlutterFlowIconButton(
+                //     borderRadius: 20.0,
+                //     borderWidth: 1.0,
+                //     buttonSize: 50.0,
+                //     icon: Icon(
+                //       Icons.shopping_cart_outlined,
+                //       color: FlutterFlowTheme.of(context).primaryText,
+                //       size: 35.0,
+                //     ),
+                //     onPressed: () async {
+                //       context.pushNamed('ToolCart');
+                //     },
+                //   ),
+                // ),
               ],
               centerTitle: true,
               elevation: 2.0,
@@ -218,211 +218,211 @@ class _ToolPageWidgetState extends State<ToolPageWidget>
                                               ),
                                         ),
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsetsDirectional
-                                            .fromSTEB(0, 0, 22, 0),
-                                        child: Text(
-                                          '\$${widget.toolCategoryPrice?.toString()}',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily: 'Readex Pro',
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primary,
-                                                fontSize: 16,
-                                              ),
-                                        ),
-                                      ),
-                                      FFButtonWidget(
-                                        onPressed: () async {
-                                          Function() _navigate = () {};
-                                          _model.toolCategoryAddItem =
-                                              await ToolCartAddItemCall.call(
-                                            userId: currentUserData?.userId,
-                                            productId: widget.toolCategoryId,
-                                            tableName: 'toolCategory',
-                                            jwtToken: currentUserData?.jwtToken,
-                                            refreshToken:
-                                                currentUserData?.refreshToken,
-                                          );
-                                          if ((_model.toolCategoryAddItem
-                                                  ?.succeeded ??
-                                              true)) {
-                                            // 有沒有success
-                                            // 如果有success代表他的登入有狀況
-                                            if (getJsonField(
-                                                  (_model.toolCategoryAddItem
-                                                          ?.jsonBody ??
-                                                      ''),
-                                                  r'''$.success''',
-                                                ) !=
-                                                null) {
-                                              FFAppState().success =
-                                                  getJsonField(
-                                                (_model.toolCategoryAddItem
-                                                        ?.jsonBody ??
-                                                    ''),
-                                                r'''$.success''',
-                                              );
-                                              if (FFAppState().success ==
-                                                  false) {
-                                                await showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (alertDialogContext) {
-                                                    return AlertDialog(
-                                                      title: Text('Message'),
-                                                      content:
-                                                          Text(getJsonField(
-                                                        (_model.toolCategoryAddItem
-                                                                ?.jsonBody ??
-                                                            ''),
-                                                        r'''$.message''',
-                                                      ).toString()),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () =>
-                                                              Navigator.pop(
-                                                                  alertDialogContext),
-                                                          child: Text('Ok'),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                                GoRouter.of(context)
-                                                    .prepareAuthEvent();
-                                                await authManager.signOut();
-                                                GoRouter.of(context)
-                                                    .clearRedirectLocation();
-                                                _navigate = () =>
-                                                    context.goNamedAuth('login',
-                                                        context.mounted);
-                                              } else {
-                                                await showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (alertDialogContext) {
-                                                    return AlertDialog(
-                                                      title: Text('Message'),
-                                                      content:
-                                                          Text(getJsonField(
-                                                        (_model.toolCategoryAddItem
-                                                                ?.jsonBody ??
-                                                            ''),
-                                                        r'''$.message''',
-                                                      ).toString()),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () =>
-                                                              Navigator.pop(
-                                                                  alertDialogContext),
-                                                          child: Text('Ok'),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                                setState(() {
-                                                  FFAppState().token =
-                                                      getJsonField(
-                                                    (_model.toolCategoryAddItem
-                                                            ?.jsonBody ??
-                                                        ''),
-                                                    r'''$.jwtToken''',
-                                                  ).toString();
-                                                });
-                                              }
-                                            } else {
-                                              await showDialog(
-                                                context: context,
-                                                builder: (alertDialogContext) {
-                                                  return AlertDialog(
-                                                    title: Text('Message'),
-                                                    content: Text(getJsonField(
-                                                      (_model.toolCategoryAddItem
-                                                              ?.jsonBody ??
-                                                          ''),
-                                                      r'''$.message''',
-                                                    ).toString()),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () =>
-                                                            Navigator.pop(
-                                                                alertDialogContext),
-                                                        child: Text('Ok'),
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                              setState(() {
-                                                FFAppState().token =
-                                                    getJsonField(
-                                                  (_model.toolCategoryAddItem
-                                                          ?.jsonBody ??
-                                                      ''),
-                                                  r'''$.jwtToken''',
-                                                ).toString();
-                                              });
-                                            }
-                                          } else {
-                                            await showDialog(
-                                              context: context,
-                                              builder: (alertDialogContext) {
-                                                return AlertDialog(
-                                                  title: Text('Error'),
-                                                  content: Text('請稍後再試一次'),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              alertDialogContext),
-                                                      child: Text('Ok'),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          }
-                                          _navigate();
-                                          setState(() {});
-                                        },
-                                        text: '加入購物車',
-                                        icon: Icon(
-                                          Icons.add_shopping_cart_outlined,
-                                          size: 15,
-                                        ),
-                                        options: FFButtonOptions(
-                                          width: 230,
-                                          height: 40,
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24, 0, 24, 0),
-                                          iconPadding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0, 0, 0, 0),
-                                          color: FlutterFlowTheme.of(context)
-                                              .primaryText,
-                                          textStyle: FlutterFlowTheme.of(
-                                                  context)
-                                              .titleSmall
-                                              .override(
-                                                fontFamily: 'Readex Pro',
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryBackground,
-                                              ),
-                                          elevation: 3,
-                                          borderSide: BorderSide(
-                                            color: Colors.transparent,
-                                            width: 1,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(48),
-                                        ),
-                                      ),
+                                      // Padding(
+                                      //   padding: const EdgeInsetsDirectional
+                                      //       .fromSTEB(0, 0, 22, 0),
+                                      //   child: Text(
+                                      //     '\$${widget.toolCategoryPrice?.toString()}',
+                                      //     style: FlutterFlowTheme.of(context)
+                                      //         .bodyMedium
+                                      //         .override(
+                                      //           fontFamily: 'Readex Pro',
+                                      //           color:
+                                      //               FlutterFlowTheme.of(context)
+                                      //                   .primary,
+                                      //           fontSize: 16,
+                                      //         ),
+                                      //   ),
+                                      // ),
+                                      // FFButtonWidget(
+                                      //   onPressed: () async {
+                                      //     Function() _navigate = () {};
+                                      //     _model.toolCategoryAddItem =
+                                      //         await ToolCartAddItemCall.call(
+                                      //       userId: currentUserData?.userId,
+                                      //       productId: widget.toolCategoryId,
+                                      //       tableName: 'toolCategory',
+                                      //       jwtToken: currentUserData?.jwtToken,
+                                      //       refreshToken:
+                                      //           currentUserData?.refreshToken,
+                                      //     );
+                                      //     if ((_model.toolCategoryAddItem
+                                      //             ?.succeeded ??
+                                      //         true)) {
+                                      //       // 有沒有success
+                                      //       // 如果有success代表他的登入有狀況
+                                      //       if (getJsonField(
+                                      //             (_model.toolCategoryAddItem
+                                      //                     ?.jsonBody ??
+                                      //                 ''),
+                                      //             r'''$.success''',
+                                      //           ) !=
+                                      //           null) {
+                                      //         FFAppState().success =
+                                      //             getJsonField(
+                                      //           (_model.toolCategoryAddItem
+                                      //                   ?.jsonBody ??
+                                      //               ''),
+                                      //           r'''$.success''',
+                                      //         );
+                                      //         if (FFAppState().success ==
+                                      //             false) {
+                                      //           await showDialog(
+                                      //             context: context,
+                                      //             builder:
+                                      //                 (alertDialogContext) {
+                                      //               return AlertDialog(
+                                      //                 title: Text('Message'),
+                                      //                 content:
+                                      //                     Text(getJsonField(
+                                      //                   (_model.toolCategoryAddItem
+                                      //                           ?.jsonBody ??
+                                      //                       ''),
+                                      //                   r'''$.message''',
+                                      //                 ).toString()),
+                                      //                 actions: [
+                                      //                   TextButton(
+                                      //                     onPressed: () =>
+                                      //                         Navigator.pop(
+                                      //                             alertDialogContext),
+                                      //                     child: Text('Ok'),
+                                      //                   ),
+                                      //                 ],
+                                      //               );
+                                      //             },
+                                      //           );
+                                      //           GoRouter.of(context)
+                                      //               .prepareAuthEvent();
+                                      //           await authManager.signOut();
+                                      //           GoRouter.of(context)
+                                      //               .clearRedirectLocation();
+                                      //           _navigate = () =>
+                                      //               context.goNamedAuth('login',
+                                      //                   context.mounted);
+                                      //         } else {
+                                      //           await showDialog(
+                                      //             context: context,
+                                      //             builder:
+                                      //                 (alertDialogContext) {
+                                      //               return AlertDialog(
+                                      //                 title: Text('Message'),
+                                      //                 content:
+                                      //                     Text(getJsonField(
+                                      //                   (_model.toolCategoryAddItem
+                                      //                           ?.jsonBody ??
+                                      //                       ''),
+                                      //                   r'''$.message''',
+                                      //                 ).toString()),
+                                      //                 actions: [
+                                      //                   TextButton(
+                                      //                     onPressed: () =>
+                                      //                         Navigator.pop(
+                                      //                             alertDialogContext),
+                                      //                     child: Text('Ok'),
+                                      //                   ),
+                                      //                 ],
+                                      //               );
+                                      //             },
+                                      //           );
+                                      //           setState(() {
+                                      //             FFAppState().token =
+                                      //                 getJsonField(
+                                      //               (_model.toolCategoryAddItem
+                                      //                       ?.jsonBody ??
+                                      //                   ''),
+                                      //               r'''$.jwtToken''',
+                                      //             ).toString();
+                                      //           });
+                                      //         }
+                                      //       } else {
+                                      //         await showDialog(
+                                      //           context: context,
+                                      //           builder: (alertDialogContext) {
+                                      //             return AlertDialog(
+                                      //               title: Text('Message'),
+                                      //               content: Text(getJsonField(
+                                      //                 (_model.toolCategoryAddItem
+                                      //                         ?.jsonBody ??
+                                      //                     ''),
+                                      //                 r'''$.message''',
+                                      //               ).toString()),
+                                      //               actions: [
+                                      //                 TextButton(
+                                      //                   onPressed: () =>
+                                      //                       Navigator.pop(
+                                      //                           alertDialogContext),
+                                      //                   child: Text('Ok'),
+                                      //                 ),
+                                      //               ],
+                                      //             );
+                                      //           },
+                                      //         );
+                                      //         setState(() {
+                                      //           FFAppState().token =
+                                      //               getJsonField(
+                                      //             (_model.toolCategoryAddItem
+                                      //                     ?.jsonBody ??
+                                      //                 ''),
+                                      //             r'''$.jwtToken''',
+                                      //           ).toString();
+                                      //         });
+                                      //       }
+                                      //     } else {
+                                      //       await showDialog(
+                                      //         context: context,
+                                      //         builder: (alertDialogContext) {
+                                      //           return AlertDialog(
+                                      //             title: Text('Error'),
+                                      //             content: Text('請稍後再試一次'),
+                                      //             actions: [
+                                      //               TextButton(
+                                      //                 onPressed: () =>
+                                      //                     Navigator.pop(
+                                      //                         alertDialogContext),
+                                      //                 child: Text('Ok'),
+                                      //               ),
+                                      //             ],
+                                      //           );
+                                      //         },
+                                      //       );
+                                      //     }
+                                      //     _navigate();
+                                      //     setState(() {});
+                                      //   },
+                                      //   text: '加入購物車',
+                                      //   icon: Icon(
+                                      //     Icons.add_shopping_cart_outlined,
+                                      //     size: 15,
+                                      //   ),
+                                      //   options: FFButtonOptions(
+                                      //     width: 230,
+                                      //     height: 40,
+                                      //     padding:
+                                      //         EdgeInsetsDirectional.fromSTEB(
+                                      //             24, 0, 24, 0),
+                                      //     iconPadding:
+                                      //         EdgeInsetsDirectional.fromSTEB(
+                                      //             0, 0, 0, 0),
+                                      //     color: FlutterFlowTheme.of(context)
+                                      //         .primaryText,
+                                      //     textStyle: FlutterFlowTheme.of(
+                                      //             context)
+                                      //         .titleSmall
+                                      //         .override(
+                                      //           fontFamily: 'Readex Pro',
+                                      //           color:
+                                      //               FlutterFlowTheme.of(context)
+                                      //                   .secondaryBackground,
+                                      //         ),
+                                      //     elevation: 3,
+                                      //     borderSide: BorderSide(
+                                      //       color: Colors.transparent,
+                                      //       width: 1,
+                                      //     ),
+                                      //     borderRadius:
+                                      //         BorderRadius.circular(48),
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                 ),
@@ -892,22 +892,22 @@ class _ToolPageWidgetState extends State<ToolPageWidget>
                 ),
               ),
               actions: [
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 10, 15, 0),
-                  child: FlutterFlowIconButton(
-                    borderRadius: 20,
-                    borderWidth: 1,
-                    buttonSize: 50,
-                    icon: Icon(
-                      Icons.shopping_cart_outlined,
-                      color: FlutterFlowTheme.of(context).primaryText,
-                      size: 35,
-                    ),
-                    onPressed: () async {
-                      context.pushNamed('ToolCart');
-                    },
-                  ),
-                ),
+                // Padding(
+                //   padding: EdgeInsetsDirectional.fromSTEB(0, 10, 15, 0),
+                //   child: FlutterFlowIconButton(
+                //     borderRadius: 20,
+                //     borderWidth: 1,
+                //     buttonSize: 50,
+                //     icon: Icon(
+                //       Icons.shopping_cart_outlined,
+                //       color: FlutterFlowTheme.of(context).primaryText,
+                //       size: 35,
+                //     ),
+                //     onPressed: () async {
+                //       context.pushNamed('ToolCart');
+                //     },
+                //   ),
+                // ),
               ],
               centerTitle: true,
               elevation: 2,
@@ -980,202 +980,202 @@ class _ToolPageWidgetState extends State<ToolPageWidget>
                                         ),
                                       ),
                                     ),
-                                    Align(
-                                      alignment:
-                                          AlignmentDirectional(1.00, 0.00),
-                                      child: FFButtonWidget(
-                                        onPressed: () async {
-                                          Function() _navigate = () {};
-                                          _model.toolCategoryAddItem =
-                                              await ToolCartAddItemCall.call(
-                                            userId: currentUserData?.userId,
-                                            productId: widget.toolCategoryId,
-                                            tableName: 'toolCategory',
-                                            jwtToken: currentUserData?.jwtToken,
-                                            refreshToken:
-                                                currentUserData?.refreshToken,
-                                          );
-                                          if ((_model.toolCategoryAddItem
-                                                  ?.succeeded ??
-                                              true)) {
-                                            // 有沒有success
-                                            // 如果有success代表他的登入有狀況
-                                            if (getJsonField(
-                                                  (_model.toolCategoryAddItem
-                                                          ?.jsonBody ??
-                                                      ''),
-                                                  r'''$.success''',
-                                                ) !=
-                                                null) {
-                                              FFAppState().success =
-                                                  getJsonField(
-                                                (_model.toolCategoryAddItem
-                                                        ?.jsonBody ??
-                                                    ''),
-                                                r'''$.success''',
-                                              );
-                                              if (FFAppState().success ==
-                                                  true) {
-                                                await showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (alertDialogContext) {
-                                                    return AlertDialog(
-                                                      title: Text('Message'),
-                                                      content:
-                                                          Text(getJsonField(
-                                                        (_model.toolCategoryAddItem
-                                                                ?.jsonBody ??
-                                                            ''),
-                                                        r'''$.message''',
-                                                      ).toString()),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () =>
-                                                              Navigator.pop(
-                                                                  alertDialogContext),
-                                                          child: Text('Ok'),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                                GoRouter.of(context)
-                                                    .prepareAuthEvent();
-                                                await authManager.signOut();
-                                                GoRouter.of(context)
-                                                    .clearRedirectLocation();
+                                    // Align(
+                                    //   alignment:
+                                    //       AlignmentDirectional(1.00, 0.00),
+                                    //   child: FFButtonWidget(
+                                    //     onPressed: () async {
+                                    //       Function() _navigate = () {};
+                                    //       _model.toolCategoryAddItem =
+                                    //           await ToolCartAddItemCall.call(
+                                    //         userId: currentUserData?.userId,
+                                    //         productId: widget.toolCategoryId,
+                                    //         tableName: 'toolCategory',
+                                    //         jwtToken: currentUserData?.jwtToken,
+                                    //         refreshToken:
+                                    //             currentUserData?.refreshToken,
+                                    //       );
+                                    //       if ((_model.toolCategoryAddItem
+                                    //               ?.succeeded ??
+                                    //           true)) {
+                                    //         // 有沒有success
+                                    //         // 如果有success代表他的登入有狀況
+                                    //         if (getJsonField(
+                                    //               (_model.toolCategoryAddItem
+                                    //                       ?.jsonBody ??
+                                    //                   ''),
+                                    //               r'''$.success''',
+                                    //             ) !=
+                                    //             null) {
+                                    //           FFAppState().success =
+                                    //               getJsonField(
+                                    //             (_model.toolCategoryAddItem
+                                    //                     ?.jsonBody ??
+                                    //                 ''),
+                                    //             r'''$.success''',
+                                    //           );
+                                    //           if (FFAppState().success ==
+                                    //               true) {
+                                    //             await showDialog(
+                                    //               context: context,
+                                    //               builder:
+                                    //                   (alertDialogContext) {
+                                    //                 return AlertDialog(
+                                    //                   title: Text('Message'),
+                                    //                   content:
+                                    //                       Text(getJsonField(
+                                    //                     (_model.toolCategoryAddItem
+                                    //                             ?.jsonBody ??
+                                    //                         ''),
+                                    //                     r'''$.message''',
+                                    //                   ).toString()),
+                                    //                   actions: [
+                                    //                     TextButton(
+                                    //                       onPressed: () =>
+                                    //                           Navigator.pop(
+                                    //                               alertDialogContext),
+                                    //                       child: Text('Ok'),
+                                    //                     ),
+                                    //                   ],
+                                    //                 );
+                                    //               },
+                                    //             );
+                                    //             GoRouter.of(context)
+                                    //                 .prepareAuthEvent();
+                                    //             await authManager.signOut();
+                                    //             GoRouter.of(context)
+                                    //                 .clearRedirectLocation();
 
-                                                _navigate = () =>
-                                                    context.goNamedAuth('login',
-                                                        context.mounted);
-                                              } else {
-                                                await showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (alertDialogContext) {
-                                                    return AlertDialog(
-                                                      title: Text('Message'),
-                                                      content:
-                                                          Text(getJsonField(
-                                                        (_model.toolCategoryAddItem
-                                                                ?.jsonBody ??
-                                                            ''),
-                                                        r'''$.message''',
-                                                      ).toString()),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () =>
-                                                              Navigator.pop(
-                                                                  alertDialogContext),
-                                                          child: Text('Ok'),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                                setState(() {
-                                                  FFAppState().token =
-                                                      getJsonField(
-                                                    (_model.toolCategoryAddItem
-                                                            ?.jsonBody ??
-                                                        ''),
-                                                    r'''$.jwtToken''',
-                                                  ).toString();
-                                                });
-                                              }
-                                            } else {
-                                              await showDialog(
-                                                context: context,
-                                                builder: (alertDialogContext) {
-                                                  return AlertDialog(
-                                                    title: Text('Message'),
-                                                    content: Text(getJsonField(
-                                                      (_model.toolCategoryAddItem
-                                                              ?.jsonBody ??
-                                                          ''),
-                                                      r'''$.message''',
-                                                    ).toString()),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () =>
-                                                            Navigator.pop(
-                                                                alertDialogContext),
-                                                        child: Text('Ok'),
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                              setState(() {
-                                                FFAppState().token =
-                                                    getJsonField(
-                                                  (_model.toolCategoryAddItem
-                                                          ?.jsonBody ??
-                                                      ''),
-                                                  r'''$.jwtToken''',
-                                                ).toString();
-                                              });
-                                            }
-                                          } else {
-                                            await showDialog(
-                                              context: context,
-                                              builder: (alertDialogContext) {
-                                                return AlertDialog(
-                                                  title: Text('Error'),
-                                                  content: Text('請稍後再試一次'),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              alertDialogContext),
-                                                      child: Text('Ok'),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          }
+                                    //             _navigate = () =>
+                                    //                 context.goNamedAuth('login',
+                                    //                     context.mounted);
+                                    //           } else {
+                                    //             await showDialog(
+                                    //               context: context,
+                                    //               builder:
+                                    //                   (alertDialogContext) {
+                                    //                 return AlertDialog(
+                                    //                   title: Text('Message'),
+                                    //                   content:
+                                    //                       Text(getJsonField(
+                                    //                     (_model.toolCategoryAddItem
+                                    //                             ?.jsonBody ??
+                                    //                         ''),
+                                    //                     r'''$.message''',
+                                    //                   ).toString()),
+                                    //                   actions: [
+                                    //                     TextButton(
+                                    //                       onPressed: () =>
+                                    //                           Navigator.pop(
+                                    //                               alertDialogContext),
+                                    //                       child: Text('Ok'),
+                                    //                     ),
+                                    //                   ],
+                                    //                 );
+                                    //               },
+                                    //             );
+                                    //             setState(() {
+                                    //               FFAppState().token =
+                                    //                   getJsonField(
+                                    //                 (_model.toolCategoryAddItem
+                                    //                         ?.jsonBody ??
+                                    //                     ''),
+                                    //                 r'''$.jwtToken''',
+                                    //               ).toString();
+                                    //             });
+                                    //           }
+                                    //         } else {
+                                    //           await showDialog(
+                                    //             context: context,
+                                    //             builder: (alertDialogContext) {
+                                    //               return AlertDialog(
+                                    //                 title: Text('Message'),
+                                    //                 content: Text(getJsonField(
+                                    //                   (_model.toolCategoryAddItem
+                                    //                           ?.jsonBody ??
+                                    //                       ''),
+                                    //                   r'''$.message''',
+                                    //                 ).toString()),
+                                    //                 actions: [
+                                    //                   TextButton(
+                                    //                     onPressed: () =>
+                                    //                         Navigator.pop(
+                                    //                             alertDialogContext),
+                                    //                     child: Text('Ok'),
+                                    //                   ),
+                                    //                 ],
+                                    //               );
+                                    //             },
+                                    //           );
+                                    //           setState(() {
+                                    //             FFAppState().token =
+                                    //                 getJsonField(
+                                    //               (_model.toolCategoryAddItem
+                                    //                       ?.jsonBody ??
+                                    //                   ''),
+                                    //               r'''$.jwtToken''',
+                                    //             ).toString();
+                                    //           });
+                                    //         }
+                                    //       } else {
+                                    //         await showDialog(
+                                    //           context: context,
+                                    //           builder: (alertDialogContext) {
+                                    //             return AlertDialog(
+                                    //               title: Text('Error'),
+                                    //               content: Text('請稍後再試一次'),
+                                    //               actions: [
+                                    //                 TextButton(
+                                    //                   onPressed: () =>
+                                    //                       Navigator.pop(
+                                    //                           alertDialogContext),
+                                    //                   child: Text('Ok'),
+                                    //                 ),
+                                    //               ],
+                                    //             );
+                                    //           },
+                                    //         );
+                                    //       }
 
-                                          _navigate();
+                                    //       _navigate();
 
-                                          setState(() {});
-                                        },
-                                        text: '加入購物車',
-                                        icon: Icon(
-                                          Icons.add_shopping_cart_outlined,
-                                          size: 15,
-                                        ),
-                                        options: FFButtonOptions(
-                                          width: 230,
-                                          height: 40,
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24, 0, 24, 0),
-                                          iconPadding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0, 0, 0, 0),
-                                          color: FlutterFlowTheme.of(context)
-                                              .primaryText,
-                                          textStyle: FlutterFlowTheme.of(
-                                                  context)
-                                              .titleSmall
-                                              .override(
-                                                fontFamily: 'Readex Pro',
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryBackground,
-                                              ),
-                                          elevation: 3,
-                                          borderSide: BorderSide(
-                                            color: Colors.transparent,
-                                            width: 1,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(48),
-                                        ),
-                                      ),
-                                    ),
+                                    //       setState(() {});
+                                    //     },
+                                    //     text: '加入購物車',
+                                    //     icon: Icon(
+                                    //       Icons.add_shopping_cart_outlined,
+                                    //       size: 15,
+                                    //     ),
+                                    //     options: FFButtonOptions(
+                                    //       width: 230,
+                                    //       height: 40,
+                                    //       padding:
+                                    //           EdgeInsetsDirectional.fromSTEB(
+                                    //               24, 0, 24, 0),
+                                    //       iconPadding:
+                                    //           EdgeInsetsDirectional.fromSTEB(
+                                    //               0, 0, 0, 0),
+                                    //       color: FlutterFlowTheme.of(context)
+                                    //           .primaryText,
+                                    //       textStyle: FlutterFlowTheme.of(
+                                    //               context)
+                                    //           .titleSmall
+                                    //           .override(
+                                    //             fontFamily: 'Readex Pro',
+                                    //             color:
+                                    //                 FlutterFlowTheme.of(context)
+                                    //                     .secondaryBackground,
+                                    //           ),
+                                    //       elevation: 3,
+                                    //       borderSide: BorderSide(
+                                    //         color: Colors.transparent,
+                                    //         width: 1,
+                                    //       ),
+                                    //       borderRadius:
+                                    //           BorderRadius.circular(48),
+                                    //     ),
+                                    //   ),
+                                    // ),
                                   ],
                                 ),
                                 Padding(

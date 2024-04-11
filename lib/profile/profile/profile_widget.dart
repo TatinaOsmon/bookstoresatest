@@ -117,29 +117,29 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                       ),
                     ),
                   ),
-                  Divider(
-                    height: 2.0,
-                    thickness: 1.0,
-                    indent: 24.0,
-                    endIndent: 24.0,
-                    color: FlutterFlowTheme.of(context).alternate,
-                  ),
-                  Align(
-                    alignment: const AlignmentDirectional(-1.00, 0.00),
-                    child: Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(
-                          16.0, 12.0, 16.0, 0.0),
-                      child: Text(
-                        '帳號管理',
-                        textAlign: TextAlign.start,
-                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Readex Pro',
-                              color: FlutterFlowTheme.of(context).secondaryText,
-                              fontSize: 12.0,
-                            ),
-                      ),
-                    ),
-                  ),
+                  // Divider(
+                  //   height: 2.0,
+                  //   thickness: 1.0,
+                  //   indent: 24.0,
+                  //   endIndent: 24.0,
+                  //   color: FlutterFlowTheme.of(context).alternate,
+                  // ),
+                  // Align(
+                  //   alignment: const AlignmentDirectional(-1.00, 0.00),
+                  //   child: Padding(
+                  //     padding: const EdgeInsetsDirectional.fromSTEB(
+                  //         16.0, 12.0, 16.0, 0.0),
+                  //     child: Text(
+                  //       '帳號管理',
+                  //       textAlign: TextAlign.start,
+                  //       style: FlutterFlowTheme.of(context).bodyMedium.override(
+                  //             fontFamily: 'Readex Pro',
+                  //             color: FlutterFlowTheme.of(context).secondaryText,
+                  //             fontSize: 12.0,
+                  //           ),
+                  //     ),
+                  //   ),
+                  // ),
                   Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(
                         16.0, 12.0, 16.0, 0.0),
@@ -171,30 +171,30 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                   Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(
                         16.0, 12.0, 16.0, 0.0),
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: FlutterFlowTheme.of(context).secondaryBackground,
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(
-                            8.0, 12.0, 8.0, 12.0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  12.0, 0.0, 0.0, 0.0),
-                              child: Text(
-                                '變更密碼',
-                                style: FlutterFlowTheme.of(context).bodyLarge,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    // child: Container(
+                    //   width: double.infinity,
+                    //   decoration: BoxDecoration(
+                    //     color: FlutterFlowTheme.of(context).secondaryBackground,
+                    //     borderRadius: BorderRadius.circular(12.0),
+                    //   ),
+                    //   child: Padding(
+                    //     padding: const EdgeInsetsDirectional.fromSTEB(
+                    //         8.0, 12.0, 8.0, 12.0),
+                    //     child: Row(
+                    //       mainAxisSize: MainAxisSize.max,
+                    //       children: [
+                    //         Padding(
+                    //           padding: const EdgeInsetsDirectional.fromSTEB(
+                    //               12.0, 0.0, 0.0, 0.0),
+                    //           child: Text(
+                    //             '變更密碼',
+                    //             style: FlutterFlowTheme.of(context).bodyLarge,
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                   ),
                   Divider(
                     height: 24.0,
@@ -334,19 +334,19 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                   ),
                   Align(
                     alignment: const AlignmentDirectional(-1.00, 0.00),
-                    child: Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(
-                          16.0, 12.0, 16.0, 0.0),
-                      child: Text(
-                        'app相關',
-                        textAlign: TextAlign.start,
-                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Readex Pro',
-                              color: FlutterFlowTheme.of(context).secondaryText,
-                              fontSize: 12.0,
-                            ),
-                      ),
-                    ),
+                    // child: Padding(
+                    //   padding: const EdgeInsetsDirectional.fromSTEB(
+                    //       16.0, 12.0, 16.0, 0.0),
+                    //   child: Text(
+                    //     'app相關',
+                    //     textAlign: TextAlign.start,
+                    //     style: FlutterFlowTheme.of(context).bodyMedium.override(
+                    //           fontFamily: 'Readex Pro',
+                    //           color: FlutterFlowTheme.of(context).secondaryText,
+                    //           fontSize: 12.0,
+                    //         ),
+                    //   ),
+                    // ),
                   ),
                   Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(
@@ -363,14 +363,14 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  12.0, 0.0, 0.0, 0.0),
-                              child: Text(
-                                '公告',
-                                style: FlutterFlowTheme.of(context).bodyLarge,
-                              ),
-                            ),
+                            // Padding(
+                            //   padding: const EdgeInsetsDirectional.fromSTEB(
+                            //       12.0, 0.0, 0.0, 0.0),
+                            //   child: Text(
+                            //     '公告',
+                            //     style: FlutterFlowTheme.of(context).bodyLarge,
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),
@@ -391,14 +391,14 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  12.0, 0.0, 0.0, 0.0),
-                              child: Text(
-                                '使用條款',
-                                style: FlutterFlowTheme.of(context).bodyLarge,
-                              ),
-                            ),
+                            // Padding(
+                            //   padding: const EdgeInsetsDirectional.fromSTEB(
+                            //       12.0, 0.0, 0.0, 0.0),
+                            //   child: Text(
+                            //     '使用條款',
+                            //     style: FlutterFlowTheme.of(context).bodyLarge,
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),
@@ -413,23 +413,23 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         color: FlutterFlowTheme.of(context).secondaryBackground,
                         borderRadius: BorderRadius.circular(12.0),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(
-                            8.0, 12.0, 8.0, 12.0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  12.0, 0.0, 0.0, 0.0),
-                              child: Text(
-                                '隱私權政策',
-                                style: FlutterFlowTheme.of(context).bodyLarge,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      // child: Padding(
+                      //   padding: const EdgeInsetsDirectional.fromSTEB(
+                      //       8.0, 12.0, 8.0, 12.0),
+                      //   child: Row(
+                      //     mainAxisSize: MainAxisSize.max,
+                      //     children: [
+                      //       Padding(
+                      //         padding: const EdgeInsetsDirectional.fromSTEB(
+                      //             12.0, 0.0, 0.0, 0.0),
+                      //         child: Text(
+                      //           '隱私權政策',
+                      //           style: FlutterFlowTheme.of(context).bodyLarge,
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                     ),
                   ),
                   Padding(

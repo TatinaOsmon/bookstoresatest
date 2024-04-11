@@ -187,7 +187,7 @@ class _Mp4PlayerState extends State<Mp4Player> {
 
   @override
   Widget build(BuildContext context) {
-    ableScreenshot();
+    disableScreenshot();
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: [

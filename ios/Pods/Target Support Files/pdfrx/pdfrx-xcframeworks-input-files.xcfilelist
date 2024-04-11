@@ -1,0 +1,2 @@
+${PODS_ROOT}/Target Support Files/pdfrx/pdfrx-xcframeworks.sh
+${PODS_ROOT}/../.symlinks/plugins/pdfrx/darwin/pdfium/.lib/pdfium-apple-v6/ios/pdfium.xcframework

@@ -1,0 +1,1 @@
+ /Users/hoolyhi/Documents/Hoolyhi\ projects/book_store/.dart_tool/flutter_build/70a509d87b5508530ef33264c5643236/native_assets.yaml: 

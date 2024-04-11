@@ -12,12 +12,15 @@ class PdfReaderWidget extends StatefulWidget {
   const PdfReaderWidget({
     super.key,
     required this.productId,
-    required this.file,
+    required this.filepath,
+    required this.password,
+    required this.username,
   });
 
   final int? productId;
-  final Uint8List file;
-
+  final String filepath;
+  final String? password;
+  final String username;
   @override
   _PdfReaderWidgetState createState() => _PdfReaderWidgetState();
 }
@@ -84,10 +87,12 @@ class _PdfReaderWidgetState extends State<PdfReaderWidget> {
                 // ),
                 Expanded(
                   child: custom_widgets.PdfView(
+                    userAccount: widget.username,
+                    password: widget.password,
                     width: MediaQuery.sizeOf(context).width,
                     height: MediaQuery.sizeOf(context).height,
                     productId: widget.productId!,
-                    file: widget.file,
+                    filepath: widget.filepath,
                     // userNname:currentUserData!.
                   ),
                 ),

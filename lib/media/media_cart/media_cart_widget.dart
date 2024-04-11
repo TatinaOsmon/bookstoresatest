@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:book_store/models/cartItem.dart';
 import 'package:book_store/repositery/itemsCartRepo.dart';
 
@@ -20,6 +22,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'media_cart_model.dart';
 export 'media_cart_model.dart';
+import 'package:async/async.dart';
 
 class MediaCartWidget extends StatefulWidget {
   MediaCartWidget({
@@ -33,6 +36,13 @@ class MediaCartWidget extends StatefulWidget {
 class _MediaCartWidgetState extends State<MediaCartWidget>
     with TickerProviderStateMixin {
   late MediaCartModel _model;
+
+//the MediaCart stores the cart items list of data from the backend
+  List<CartItem> mediaCart = [];
+  //asyncmemoizer allows the future to run only once
+  AsyncMemoizer<ApiCallResponse> asyncmemoizer = AsyncMemoizer();
+  var isLoading = true;
+  late List<CartItem> items;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -76,6 +86,16 @@ class _MediaCartWidgetState extends State<MediaCartWidget>
       ],
     ),
   };
+
+  void fetchCartItems() async {
+    var fetchedItems = await MediaCartFindAllCall.call(
+      userId: currentUserData?.userId,
+      jwtToken: currentUserData?.jwtToken,
+      refreshToken: currentUserData?.refreshToken,
+    );
+
+    if (fetchedItems.succeeded) {}
+  }
 
   @override
   void initState() {
@@ -279,336 +299,454 @@ class _MediaCartWidgetState extends State<MediaCartWidget>
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(30, 30, 30, 30),
-                  child: Consumer<ItemCartRepo>(
-                    builder: (context, itemscart, child) {
+                    padding:
+                        const EdgeInsetsDirectional.fromSTEB(30, 30, 30, 30),
+                    child: Builder(builder: (context) {
                       // Customize what your widget looks like when it's loading.
 
-                      final columnMediaCartFindAllResponse = itemscart.items;
-                      return Builder(
-                        builder: (context) {
-                          final List<CartItem> mediaCart =
-                              columnMediaCartFindAllResponse;
+                      // future builder used for fetching data from backend
+                      return FutureBuilder<ApiCallResponse>(
+                        // i used asyncmemoizer so that the future will only fetch once
+//you can do it without asyncmemoizer
+//it will fetch many times from the backend
 
-                          return SingleChildScrollView(
-                              child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: List.generate(mediaCart.length,
-                                (mediaCartIndex) {
-                              final mediaCartItem = mediaCart[mediaCartIndex];
-                              return Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    0, 0, 0, 22),
-                                child: Container(
-                                  width: MediaQuery.sizeOf(context).width,
-                                  decoration: BoxDecoration(
-                                    color: FlutterFlowTheme.of(context)
-                                        .primaryBackground,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsetsDirectional.fromSTEB(
-                                            22, 22, 22, 22),
-                                    child: Row(
+                        future: asyncmemoizer
+                            .runOnce(() => MediaCartFindAllCall.call(
+                                  userId: currentUserData?.userId,
+                                  jwtToken: currentUserData?.jwtToken,
+                                  refreshToken: currentUserData?.refreshToken,
+                                ))
+                            .then((value) {
+                          setState(() {});
+                          return value;
+                        }),
+
+                        builder: (context, snapshot) {
+                          // Customize what your widget looks like when it's loading.
+                          return snapshot.hasData == false
+                              ? const Center(child: CircularProgressIndicator())
+                              : SingleChildScrollView(child: Builder(
+                                  builder: (context) {
+                                    //i created a list to store the data from the backend(it is in json, so i have to serialize it)
+                                    log(snapshot.data!.jsonBody.toString());
+                                    List jsonDataCartList =
+                                        snapshot.data!.jsonBody['MediaCart'];
+                                    //i serialized it here, by creating a list with cartitem object
+                                    mediaCart = List.generate(
+                                        jsonDataCartList.length,
+                                        (index) => CartItem(
+                                            id: jsonDataCartList[index]['id'],
+                                            name: jsonDataCartList[index]
+                                                    ['name'] ??
+                                                'not specified',
+                                            price: jsonDataCartList[index]
+                                                    ['price'] ??
+                                                0,
+                                            title: jsonDataCartList[index]
+                                                    ['title'] ??
+                                                'not specified',
+                                            category: jsonDataCartList[index]
+                                                    ['category'] ??
+                                                'not specified',
+                                            pic: jsonDataCartList[index]
+                                                    ['pic'] ??
+                                                'not specified',
+                                            index: jsonDataCartList[index]
+                                                ['index']));
+
+                                    return SingleChildScrollView(
+                                        child: Column(
                                       mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Padding(
+                                      children: List.generate(mediaCart.length,
+                                          (mediaCartIndex) {
+                                        final mediaCartItem =
+                                            mediaCart[mediaCartIndex];
+                                        return Padding(
                                           padding: const EdgeInsetsDirectional
-                                              .fromSTEB(0, 0, 22, 0),
-                                          child: Icon(
-                                            Icons.video_collection_outlined,
-                                            color: FlutterFlowTheme.of(context)
-                                                .primaryText,
-                                            size: 85,
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.max,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsetsDirectional
-                                                        .fromSTEB(0, 0, 0, 7),
-                                                child: Text(
-                                                  mediaCartItem.title,
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            'Readex Pro',
-                                                        fontSize: 16,
-                                                      ),
-                                                ),
-                                              ),
-                                              Text(
-                                                functions.formatPrice(
-                                                    mediaCartItem.price),
-                                                style: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily: 'Readex Pro',
+                                              .fromSTEB(0, 0, 0, 22),
+                                          child: Container(
+                                            width: MediaQuery.sizeOf(context)
+                                                .width,
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primaryBackground,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(22, 22, 22, 22),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.max,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            0, 0, 22, 0),
+                                                    child: Icon(
+                                                      Icons
+                                                          .video_collection_outlined,
                                                       color:
                                                           FlutterFlowTheme.of(
                                                                   context)
-                                                              .primary,
-                                                      fontSize: 16,
+                                                              .primaryText,
+                                                      size: 85,
                                                     ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsetsDirectional
-                                              .fromSTEB(22, 0, 0, 0),
-                                          child: FlutterFlowIconButton(
-                                            borderColor:
-                                                FlutterFlowTheme.of(context)
-                                                    .primaryText,
-                                            borderRadius: 20,
-                                            borderWidth: 3,
-                                            buttonSize: 40,
-                                            icon: FaIcon(
-                                              FontAwesomeIcons.trashAlt,
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .primaryText,
-                                              size: 24,
-                                            ),
-                                            onPressed: () async {
-                                              Provider.of<ItemCartRepo>(context,
-                                                      listen: false)
-                                                  .removeItem(mediaCartIndex);
-                                              setState(() {});
-                                              Function() _navigate = () {};
-                                              _model.removeItem =
-                                                  await MediaCartRemoveItemCall
-                                                      .call(
-                                                userId: currentUserData?.userId,
-                                                index: mediaCartIndex,
-                                                refreshToken: currentUserData
-                                                    ?.refreshToken,
-                                                jwtToken:
-                                                    currentUserData?.jwtToken,
-                                              );
-                                              if ((_model
-                                                      .removeItem?.succeeded ??
-                                                  true)) {
-                                                // 有沒有success
-                                                // 如果有success代表他的登入有狀況
-                                                if (getJsonField(
-                                                      (_model.removeItem
-                                                              ?.jsonBody ??
-                                                          ''),
-                                                      r'''$.success''',
-                                                    ) !=
-                                                    null) {
-                                                  FFAppState().success =
-                                                      getJsonField(
-                                                    (_model.removeItem
-                                                            ?.jsonBody ??
-                                                        ''),
-                                                    r'''$.success''',
-                                                  );
-                                                  if (FFAppState().success ==
-                                                      true) {
-                                                    await showDialog(
-                                                      context: context,
-                                                      builder:
-                                                          (alertDialogContext) {
-                                                        return AlertDialog(
-                                                          title: const Text(
-                                                              'Message'),
-                                                          content:
-                                                              Text(getJsonField(
-                                                            (_model.removeItem
-                                                                    ?.jsonBody ??
-                                                                ''),
-                                                            r'''$.message''',
-                                                          ).toString()),
-                                                          actions: [
-                                                            TextButton(
-                                                              onPressed: () =>
-                                                                  Navigator.pop(
-                                                                      alertDialogContext),
-                                                              child: const Text(
-                                                                  'Ok'),
-                                                            ),
-                                                          ],
-                                                        );
-                                                      },
-                                                    );
-                                                    GoRouter.of(context)
-                                                        .prepareAuthEvent();
-                                                    await authManager.signOut();
-                                                    GoRouter.of(context)
-                                                        .clearRedirectLocation();
-
-                                                    _navigate = () =>
-                                                        context.goNamedAuth(
-                                                            'login',
-                                                            context.mounted);
-                                                  } else {
-                                                    await showDialog(
-                                                      context: context,
-                                                      builder:
-                                                          (alertDialogContext) {
-                                                        return AlertDialog(
-                                                          title: const Text(
-                                                              'Message'),
-                                                          content:
-                                                              Text(getJsonField(
-                                                            (_model.removeItem
-                                                                    ?.jsonBody ??
-                                                                ''),
-                                                            r'''$.message''',
-                                                          ).toString()),
-                                                          actions: [
-                                                            TextButton(
-                                                              onPressed: () =>
-                                                                  Navigator.pop(
-                                                                      alertDialogContext),
-                                                              child: const Text(
-                                                                  'Ok'),
-                                                            ),
-                                                          ],
-                                                        );
-                                                      },
-                                                    );
-                                                    setState(() {
-                                                      FFAppState().token =
-                                                          getJsonField(
-                                                        (_model.removeItem
-                                                                ?.jsonBody ??
-                                                            ''),
-                                                        r'''$.jwtToken''',
-                                                      ).toString();
-                                                    });
-                                                    _model.afterRemove2 =
-                                                        await MediaCartFindAllCall
-                                                            .call(
-                                                      userId: currentUserData
-                                                          ?.userId,
-                                                      jwtToken: currentUserData
-                                                          ?.jwtToken,
-                                                      refreshToken:
-                                                          currentUserData
-                                                              ?.refreshToken,
-                                                    );
-                                                    setState(() {
-                                                      _model.priceList =
-                                                          MediaCartFindAllCall
-                                                                  .priceList(
-                                                        (_model.afterRemove2
-                                                                ?.jsonBody ??
-                                                            ''),
-                                                      )!
-                                                              .toList()
-                                                              .cast<int>();
-                                                    });
-                                                  }
-                                                } else {
-                                                  await showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return AlertDialog(
-                                                        title: Text('Message'),
-                                                        content: Text('已移除物品'),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                            child: Text('Ok'),
+                                                  ),
+                                                  Expanded(
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                  0, 0, 0, 7),
+                                                          child: Text(
+                                                            mediaCartItem.title,
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .bodyMedium
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Readex Pro',
+                                                                  fontSize: 16,
+                                                                ),
                                                           ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-
-                                                  setState(() {
-                                                    FFAppState().token =
-                                                        getJsonField(
-                                                      (_model.removeItem
-                                                              ?.jsonBody ??
-                                                          ''),
-                                                      r'''$.jwtToken''',
-                                                    ).toString();
-                                                  });
-                                                  _model.afterRemove =
-                                                      await MediaCartFindAllCall
-                                                          .call(
-                                                    userId:
-                                                        currentUserData?.userId,
-                                                    jwtToken: currentUserData
-                                                        ?.jwtToken,
-                                                    refreshToken:
-                                                        currentUserData
-                                                            ?.refreshToken,
-                                                  );
-
-                                                  setState(() {
-                                                    _model.priceList =
-                                                        MediaCartFindAllCall
-                                                                .priceList(
-                                                      (_model.afterRemove
-                                                              ?.jsonBody ??
-                                                          ''),
-                                                    )!
-                                                            .toList()
-                                                            .cast<int>();
-                                                  });
-                                                }
-                                              } else {
-                                                await showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (alertDialogContext) {
-                                                    return AlertDialog(
-                                                      title:
-                                                          const Text('Error'),
-                                                      content:
-                                                          const Text('請稍後再試一次'),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () =>
-                                                              Navigator.pop(
-                                                                  alertDialogContext),
-                                                          child:
-                                                              const Text('Ok'),
+                                                        ),
+                                                        Text(
+                                                          functions.formatPrice(
+                                                              mediaCartItem
+                                                                  .price),
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyMedium
+                                                              .override(
+                                                                fontFamily:
+                                                                    'Readex Pro',
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .primary,
+                                                                fontSize: 16,
+                                                              ),
                                                         ),
                                                       ],
-                                                    );
-                                                  },
-                                                );
-                                              }
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            22, 0, 0, 0),
+                                                    child:
+                                                        FlutterFlowIconButton(
+                                                      borderColor:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .primaryText,
+                                                      borderRadius: 20,
+                                                      borderWidth: 3,
+                                                      buttonSize: 40,
+                                                      icon: FaIcon(
+                                                        FontAwesomeIcons
+                                                            .trashAlt,
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .primaryText,
+                                                        size: 24,
+                                                      ),
+                                                      onPressed: () async {
+                                                        // Provider.of<ItemCartRepo>(context,
+                                                        //         listen: false)
+                                                        //     .removeItem(mediaCartIndex);
+                                                        // setState(() {});
+                                                        Function() _navigate =
+                                                            () {};
+                                                        log(mediaCart[
+                                                                mediaCartIndex]
+                                                            .index
+                                                            .toString());
+                                                        _model.removeItem =
+                                                            await MediaCartRemoveItemCall
+                                                                .call(
+                                                          userId:
+                                                              currentUserData
+                                                                  ?.userId,
+                                                          //index: MediaCartIndex,
+                                                          index: mediaCart[
+                                                                  mediaCartIndex]
+                                                              .index,
+                                                          refreshToken:
+                                                              currentUserData
+                                                                  ?.refreshToken,
+                                                          jwtToken:
+                                                              currentUserData
+                                                                  ?.jwtToken,
+                                                        ).then((value) {
+                                                          if (value
+                                                                  .statusCode ==
+                                                              200) {
+                                                            setState(() {
+                                                              mediaCart.removeAt(
+                                                                  mediaCartIndex);
+                                                              snapshot
+                                                                  .data!
+                                                                  .jsonBody[
+                                                                      'MediaCart']
+                                                                  .removeAt(
+                                                                      mediaCartIndex);
+                                                            });
+                                                          }
+                                                          print(
+                                                              'statuscode ${value.statusCode}');
+                                                          return null;
+                                                        });
+                                                        if ((_model.removeItem
+                                                                ?.succeeded ??
+                                                            true)) {
+                                                          // 有沒有success
+                                                          // 如果有success代表他的登入有狀況
+                                                          if (getJsonField(
+                                                                (_model.removeItem
+                                                                        ?.jsonBody ??
+                                                                    ''),
+                                                                r'''$.success''',
+                                                              ) !=
+                                                              null) {
+                                                            FFAppState()
+                                                                    .success =
+                                                                getJsonField(
+                                                              (_model.removeItem
+                                                                      ?.jsonBody ??
+                                                                  ''),
+                                                              r'''$.success''',
+                                                            );
+                                                            if (FFAppState()
+                                                                    .success ==
+                                                                true) {
+                                                              await showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (alertDialogContext) {
+                                                                  return AlertDialog(
+                                                                    title: const Text(
+                                                                        'Message'),
+                                                                    content: Text(
+                                                                        getJsonField(
+                                                                      (_model.removeItem
+                                                                              ?.jsonBody ??
+                                                                          ''),
+                                                                      r'''$.message''',
+                                                                    ).toString()),
+                                                                    actions: [
+                                                                      TextButton(
+                                                                        onPressed:
+                                                                            () =>
+                                                                                Navigator.pop(alertDialogContext),
+                                                                        child: const Text(
+                                                                            'Ok'),
+                                                                      ),
+                                                                    ],
+                                                                  );
+                                                                },
+                                                              );
+                                                              GoRouter.of(
+                                                                      context)
+                                                                  .prepareAuthEvent();
+                                                              await authManager
+                                                                  .signOut();
+                                                              GoRouter.of(
+                                                                      context)
+                                                                  .clearRedirectLocation();
 
-                                              setState(() {});
-                                            },
+                                                              _navigate = () =>
+                                                                  context.goNamedAuth(
+                                                                      'login',
+                                                                      context
+                                                                          .mounted);
+                                                            } else {
+                                                              await showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (alertDialogContext) {
+                                                                  return AlertDialog(
+                                                                    title: const Text(
+                                                                        'Message'),
+                                                                    content: Text(
+                                                                        getJsonField(
+                                                                      (_model.removeItem
+                                                                              ?.jsonBody ??
+                                                                          ''),
+                                                                      r'''$.message''',
+                                                                    ).toString()),
+                                                                    actions: [
+                                                                      TextButton(
+                                                                        onPressed:
+                                                                            () =>
+                                                                                Navigator.pop(alertDialogContext),
+                                                                        child: const Text(
+                                                                            'Ok'),
+                                                                      ),
+                                                                    ],
+                                                                  );
+                                                                },
+                                                              );
+                                                              setState(() {
+                                                                FFAppState()
+                                                                        .token =
+                                                                    getJsonField(
+                                                                  (_model.removeItem
+                                                                          ?.jsonBody ??
+                                                                      ''),
+                                                                  r'''$.jwtToken''',
+                                                                ).toString();
+                                                              });
+                                                              _model.afterRemove2 =
+                                                                  await MediaCartFindAllCall
+                                                                      .call(
+                                                                userId:
+                                                                    currentUserData
+                                                                        ?.userId,
+                                                                jwtToken:
+                                                                    currentUserData
+                                                                        ?.jwtToken,
+                                                                refreshToken:
+                                                                    currentUserData
+                                                                        ?.refreshToken,
+                                                              );
+                                                              setState(() {
+                                                                _model.priceList =
+                                                                    MediaCartFindAllCall
+                                                                            .priceList(
+                                                                  (_model.afterRemove2
+                                                                          ?.jsonBody ??
+                                                                      ''),
+                                                                )!
+                                                                        .toList()
+                                                                        .cast<
+                                                                            int>();
+                                                              });
+                                                            }
+                                                          } else {
+                                                            await showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return AlertDialog(
+                                                                  title: Text(
+                                                                      'Message'),
+                                                                  content:
+                                                                      const Text(
+                                                                          '已移除物品'),
+                                                                  actions: [
+                                                                    TextButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        Navigator.of(context)
+                                                                            .pop();
+                                                                      },
+                                                                      child: Text(
+                                                                          'Ok'),
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              },
+                                                            );
+
+                                                            setState(() {
+                                                              FFAppState()
+                                                                      .token =
+                                                                  getJsonField(
+                                                                (_model.removeItem
+                                                                        ?.jsonBody ??
+                                                                    ''),
+                                                                r'''$.jwtToken''',
+                                                              ).toString();
+                                                            });
+                                                            _model.afterRemove =
+                                                                await MediaCartFindAllCall
+                                                                    .call(
+                                                              userId:
+                                                                  currentUserData
+                                                                      ?.userId,
+                                                              jwtToken:
+                                                                  currentUserData
+                                                                      ?.jwtToken,
+                                                              refreshToken:
+                                                                  currentUserData
+                                                                      ?.refreshToken,
+                                                            );
+
+                                                            setState(() {
+                                                              _model.priceList =
+                                                                  MediaCartFindAllCall
+                                                                          .priceList(
+                                                                (_model.afterRemove
+                                                                        ?.jsonBody ??
+                                                                    ''),
+                                                              )!
+                                                                      .toList()
+                                                                      .cast<
+                                                                          int>();
+                                                            });
+                                                          }
+                                                        } else {
+                                                          await showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (alertDialogContext) {
+                                                              return AlertDialog(
+                                                                title:
+                                                                    const Text(
+                                                                        'Error'),
+                                                                content:
+                                                                    const Text(
+                                                                        '請稍後再試一次'),
+                                                                actions: [
+                                                                  TextButton(
+                                                                    onPressed: () =>
+                                                                        Navigator.pop(
+                                                                            alertDialogContext),
+                                                                    child:
+                                                                        const Text(
+                                                                            'Ok'),
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            },
+                                                          );
+                                                        }
+
+                                                        setState(() {});
+                                                      },
+                                                    ).animateOnPageLoad(
+                                                            animationsMap[
+                                                                'iconButtonOnPageLoadAnimation']!),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                           ).animateOnPageLoad(animationsMap[
-                                              'iconButtonOnPageLoadAnimation']!),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ).animateOnPageLoad(animationsMap[
-                                    'containerOnPageLoadAnimation']!),
-                              );
-                            }),
-                          ));
+                                              'containerOnPageLoadAnimation']!),
+                                        );
+                                      }),
+                                    ));
+                                  },
+                                ));
                         },
                       );
-                    },
-                  ),
-                ),
+                    })),
                 Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 75),
                   child: SingleChildScrollView(
@@ -624,16 +762,11 @@ class _MediaCartWidgetState extends State<MediaCartWidget>
                           child: Padding(
                             padding: const EdgeInsetsDirectional.fromSTEB(
                                 0, 7, 30, 10),
-                            child: Consumer<ItemCartRepo>(
-                              builder: (context, itemscart, child) {
+                            child: Builder(
+                              builder: (context) {
                                 // Customize what your widget looks like when it's loading.
 
-                                final columnMediaCartFindAllResponse =
-                                    itemscart.items;
                                 return Builder(builder: (context) {
-                                  final List<CartItem> mediaCart =
-                                      columnMediaCartFindAllResponse;
-
                                   return Text(
                                     '${functions.formatPrice(int.parse(functions.calcSum(mediaCart.map((e) => e.price).toList()).toString()))}',
                                     style: FlutterFlowTheme.of(context)

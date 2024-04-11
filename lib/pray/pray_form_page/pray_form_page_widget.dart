@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'pray_form_page_model.dart';
 export 'pray_form_page_model.dart';
+import 'package:intl/intl.dart';
 
 class PrayFormPageWidget extends StatefulWidget {
   const PrayFormPageWidget({super.key});
@@ -274,7 +275,7 @@ class _PrayFormPageWidgetState extends State<PrayFormPageWidget> {
                                   15.0, 0.0, 15.0, 0.0),
                               child: Text(
                                 dateTimeFormat(
-                                  'yMMMd',
+                                  'yyyy-MM-dd',
                                   _model.datePicked,
                                   // locale:
                                   //     FFLocalizations.of(context).languageCode,

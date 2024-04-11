@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:book_store/book/book_cart/book_cart_widget.dart';
 
 import '/auth/custom_auth/auth_util.dart';
@@ -51,7 +53,7 @@ class _OrderHistoryWidgetState extends State<OrderHistoryWidget>
       ],
     ),
   };
-
+  ScrollController scrollController = ScrollController();
   // @override
   // void initState() {
   //   super.initState();
@@ -218,126 +220,262 @@ class _OrderHistoryWidgetState extends State<OrderHistoryWidget>
             padding:
                 const EdgeInsetsDirectional.fromSTEB(30.0, 30.0, 30.0, 30.0),
             child: Container(
-              width: MediaQuery.sizeOf(context).width * 1.0,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              child: Padding(
-                padding:
-                    const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 75.0),
-                child: Builder(
-                  builder: (context) {
-                    final order = GetOrderCall.order(
-                          (_model.initial?.jsonBody ?? ''),
-                        )?.toList() ??
-                        [];
-                    return ListView.builder(
-                      padding: EdgeInsets.zero,
-                      // reverse: true,
-                      scrollDirection: Axis.vertical,
-                      itemCount: order.length,
-                      itemBuilder: (context, orderIndex) {
-                        final orderItem = order[orderIndex];
-                        return Builder(
-                          builder: (context) => Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                0.0, 0.0, 0.0, 15.0),
-                            child: InkWell(
-                              splashColor: Colors.transparent,
-                              focusColor: Colors.transparent,
-                              hoverColor: Colors.transparent,
-                              highlightColor: Colors.transparent,
-                              child: Container(
-                                width: MediaQuery.sizeOf(context).width * 1.0,
-                                decoration: BoxDecoration(
-                                  color: FlutterFlowTheme.of(context)
-                                      .primaryBackground,
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(
-                                      15.0, 15.0, 15.0, 15.0),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
+                width: MediaQuery.sizeOf(context).width * 1.0,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        0.0, 0.0, 0.0, 75.0),
+                    child: Scrollbar(
+                      interactive: true,
+                      thumbVisibility: true,
+                      thickness: 15,
+                      controller: scrollController,
+                      child: Builder(
+                        builder: (context) {
+                          final List order = GetOrderCall.order(
+                                (_model.initial?.jsonBody ?? ''),
+                              )?.toList() ??
+                              [];
+
+                          return ListView.builder(
+                            controller: scrollController,
+                            padding: EdgeInsets.zero,
+                            // reverse: true,
+                            scrollDirection: Axis.vertical,
+                            itemCount: order.length,
+                            itemBuilder: (context, orderIndex) {
+                              //the backend sorts the item list based on date of creation
+                              //so we have to reverse it to make the last first
+                              //final orderItem = order[orderIndex];
+                              final orderItem =
+                                  order.reversed.toList()[orderIndex];
+                              log('new number${order[0]}');
+                              return Builder(
+                                builder: (context) {
+                                  return Padding(
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 0.0, 0.0, 15.0),
+                                    child: InkWell(
+                                      splashColor: Colors.transparent,
+                                      focusColor: Colors.transparent,
+                                      hoverColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      child: Container(
+                                        width:
+                                            MediaQuery.sizeOf(context).width *
+                                                1.0,
+                                        decoration: BoxDecoration(
+                                          color: FlutterFlowTheme.of(context)
+                                              .primaryBackground,
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
                                         child: Padding(
                                           padding: const EdgeInsetsDirectional
-                                              .fromSTEB(0.0, 0.0, 15.0, 0.0),
-                                          child: Column(
+                                              .fromSTEB(15.0, 15.0, 15.0, 15.0),
+                                          child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              // Padding(
-                                              //   padding:
-                                              //       const EdgeInsetsDirectional
-                                              //           .fromSTEB(
-                                              //           0.0, 0.0, 0.0, 15.0),
-                                              //   child: RichText(
-                                              //     text: TextSpan(
-                                              //       children: const [
-                                              //         TextSpan(
-                                              //           text: 'Order #',
-                                              //           style: TextStyle(),
-                                              //         )
-                                              //       ],
-                                              //       style: FlutterFlowTheme.of(
-                                              //               context)
-                                              //           .bodyLarge,
-                                              //     ),
-                                              //     textScaler: TextScaler.linear(
-                                              //         MediaQuery.of(context)
-                                              //             .textScaleFactor),
-                                              //   ),
-                                              // ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsetsDirectional
-                                                        .fromSTEB(
-                                                        0.0, 4.0, 0.0, 0.0),
-                                                child: Text(
-                                                  getJsonField(
-                                                    orderItem,
-                                                    r'''$.orderTime''',
-                                                  ).toString(),
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .labelMedium,
+                                              Expanded(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          0.0, 0.0, 15.0, 0.0),
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      // Padding(
+                                                      //   padding:
+                                                      //       const EdgeInsetsDirectional
+                                                      //           .fromSTEB(
+                                                      //           0.0, 0.0, 0.0, 15.0),
+                                                      //   child: RichText(
+                                                      //     text: TextSpan(
+                                                      //       children: const [
+                                                      //         TextSpan(
+                                                      //           text: 'Order #',
+                                                      //           style: TextStyle(),
+                                                      //         )
+                                                      //       ],
+                                                      //       style: FlutterFlowTheme.of(
+                                                      //               context)
+                                                      //           .bodyLarge,
+                                                      //     ),
+                                                      //     textScaler: TextScaler.linear(
+                                                      //         MediaQuery.of(context)
+                                                      //             .textScaleFactor),
+                                                      //   ),
+                                                      // ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(0.0,
+                                                                4.0, 0.0, 0.0),
+                                                        child: Text(
+                                                          getJsonField(
+                                                            orderItem,
+                                                            r'''$.orderTime''',
+                                                          ).toString(),
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .labelMedium,
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(0.0,
+                                                                10.0, 0.0, 0.0),
+                                                        child: Builder(
+                                                          builder: (context) {
+                                                            final good =
+                                                                getJsonField(
+                                                              orderItem,
+                                                              r'''$.goods''',
+                                                            ).toList();
+                                                            return ListView
+                                                                .builder(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .zero,
+                                                              shrinkWrap: true,
+                                                              scrollDirection:
+                                                                  Axis.vertical,
+                                                              itemCount:
+                                                                  good.length,
+                                                              // itemCount:
+                                                              //     Provider.of<lastProvider>(context, listen: false)
+                                                              //         .lastCount
+                                                              //         .length,
+                                                              itemBuilder:
+                                                                  (context,
+                                                                      goodIndex) {
+                                                                final goodItem =
+                                                                    good[
+                                                                        goodIndex];
+                                                                return RichText(
+                                                                  text:
+                                                                      TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            '◆  ',
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .bodyMedium
+                                                                            .override(
+                                                                              fontFamily: 'Readex Pro',
+                                                                              color: FlutterFlowTheme.of(context).primary,
+                                                                              fontSize: 12.0,
+                                                                              fontWeight: FontWeight.bold,
+                                                                            ),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text: goodItem
+                                                                            .toString(),
+                                                                        style:
+                                                                            const TextStyle(),
+                                                                      )
+                                                                    ],
+                                                                    style: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyMedium,
+                                                                  ),
+                                                                  textScaler: TextScaler.linear(
+                                                                      MediaQuery.of(
+                                                                              context)
+                                                                          .textScaleFactor),
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsetsDirectional
-                                                        .fromSTEB(
-                                                        0.0, 10.0, 0.0, 0.0),
-                                                child: Builder(
-                                                  builder: (context) {
-                                                    final good = getJsonField(
-                                                      orderItem,
-                                                      r'''$.goods''',
-                                                    ).toList();
-                                                    return ListView.builder(
-                                                      padding: EdgeInsets.zero,
-                                                      shrinkWrap: true,
-                                                      scrollDirection:
-                                                          Axis.vertical,
-                                                      itemCount: good.length,
-                                                      // itemCount:
-                                                      //     Provider.of<lastProvider>(context, listen: false)
-                                                      //         .lastCount
-                                                      //         .length,
-                                                      itemBuilder:
-                                                          (context, goodIndex) {
-                                                        final goodItem =
-                                                            good[goodIndex];
-                                                        return RichText(
-                                                          text: TextSpan(
-                                                            children: [
-                                                              TextSpan(
-                                                                text: '◆  ',
+                                              Column(
+                                                mainAxisSize: MainAxisSize.max,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.end,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(0.0, 0.0,
+                                                            0.0, 12.0),
+                                                    child: Text(
+                                                      '${functions.formatPrice(getJsonField(
+                                                        orderItem,
+                                                        r'''$.sum''',
+                                                      ))}',
+                                                      textAlign: TextAlign.end,
+                                                      style:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .headlineSmall,
+                                                    ),
+                                                  ),
+                                                  if (valueOrDefault<bool>(
+                                                    functions.newCustomFunction(
+                                                            getJsonField(
+                                                          orderItem,
+                                                          r'''$.paid''',
+                                                        )) ==
+                                                        false,
+                                                    true,
+                                                  ))
+                                                    Align(
+                                                      alignment:
+                                                          const AlignmentDirectional(
+                                                              1.00, 1.00),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(0.0,
+                                                                12.0, 0.0, 0.0),
+                                                        child: Container(
+                                                          height: 32.0,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .accent1,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12.0),
+                                                            border: Border.all(
+                                                              color: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .primary,
+                                                              width: 2.0,
+                                                            ),
+                                                          ),
+                                                          child: Align(
+                                                            alignment:
+                                                                const AlignmentDirectional(
+                                                                    0.00, 0.00),
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                      12.0,
+                                                                      0.0,
+                                                                      12.0,
+                                                                      0.0),
+                                                              child: Text(
+                                                                '尚未付款',
                                                                 style: FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMedium
@@ -348,202 +486,98 @@ class _OrderHistoryWidgetState extends State<OrderHistoryWidget>
                                                                               context)
                                                                           .primary,
                                                                       fontSize:
-                                                                          12.0,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
+                                                                          16.0,
                                                                     ),
                                                               ),
-                                                              TextSpan(
-                                                                text: goodItem
-                                                                    .toString(),
-                                                                style:
-                                                                    const TextStyle(),
-                                                              )
-                                                            ],
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMedium,
+                                                            ),
                                                           ),
-                                                          textScaler: TextScaler
-                                                              .linear(MediaQuery
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  if (valueOrDefault<bool>(
+                                                    functions.newCustomFunction(
+                                                            getJsonField(
+                                                          orderItem,
+                                                          r'''$.paid''',
+                                                        )) ==
+                                                        true,
+                                                    true,
+                                                  ))
+                                                    Align(
+                                                      alignment:
+                                                          const AlignmentDirectional(
+                                                              1.00, 1.00),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(0.0,
+                                                                12.0, 0.0, 0.0),
+                                                        child: Container(
+                                                          height: 32.0,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .accent2,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12.0),
+                                                            border: Border.all(
+                                                              color: FlutterFlowTheme
                                                                       .of(context)
-                                                                  .textScaleFactor),
-                                                        );
-                                                      },
-                                                    );
-                                                  },
-                                                ),
+                                                                  .secondary,
+                                                              width: 2.0,
+                                                            ),
+                                                          ),
+                                                          child: Align(
+                                                            alignment:
+                                                                const AlignmentDirectional(
+                                                                    0.00, 0.00),
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                      12.0,
+                                                                      0.0,
+                                                                      12.0,
+                                                                      0.0),
+                                                              child: Text(
+                                                                '已付款',
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .override(
+                                                                      fontFamily:
+                                                                          'Readex Pro',
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .secondary,
+                                                                      fontSize:
+                                                                          16.0,
+                                                                    ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                ],
                                               ),
                                             ],
                                           ),
                                         ),
                                       ),
-                                      Column(
-                                        mainAxisSize: MainAxisSize.max,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsetsDirectional
-                                                .fromSTEB(0.0, 0.0, 0.0, 12.0),
-                                            child: Text(
-                                              '${functions.formatPrice(getJsonField(
-                                                orderItem,
-                                                r'''$.sum''',
-                                              ))}',
-                                              textAlign: TextAlign.end,
-                                              style:
-                                                  FlutterFlowTheme.of(context)
-                                                      .headlineSmall,
-                                            ),
-                                          ),
-                                          if (valueOrDefault<bool>(
-                                            functions.newCustomFunction(
-                                                    getJsonField(
-                                                  orderItem,
-                                                  r'''$.paid''',
-                                                )) ==
-                                                false,
-                                            true,
-                                          ))
-                                            Align(
-                                              alignment:
-                                                  const AlignmentDirectional(
-                                                      1.00, 1.00),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsetsDirectional
-                                                        .fromSTEB(
-                                                        0.0, 12.0, 0.0, 0.0),
-                                                child: Container(
-                                                  height: 32.0,
-                                                  decoration: BoxDecoration(
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .accent1,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12.0),
-                                                    border: Border.all(
-                                                      color:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .primary,
-                                                      width: 2.0,
-                                                    ),
-                                                  ),
-                                                  child: Align(
-                                                    alignment:
-                                                        const AlignmentDirectional(
-                                                            0.00, 0.00),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsetsDirectional
-                                                              .fromSTEB(12.0,
-                                                              0.0, 12.0, 0.0),
-                                                      child: Text(
-                                                        '尚未付款',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMedium
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Readex Pro',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primary,
-                                                                  fontSize:
-                                                                      16.0,
-                                                                ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          if (valueOrDefault<bool>(
-                                            functions.newCustomFunction(
-                                                    getJsonField(
-                                                  orderItem,
-                                                  r'''$.paid''',
-                                                )) ==
-                                                true,
-                                            true,
-                                          ))
-                                            Align(
-                                              alignment:
-                                                  const AlignmentDirectional(
-                                                      1.00, 1.00),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsetsDirectional
-                                                        .fromSTEB(
-                                                        0.0, 12.0, 0.0, 0.0),
-                                                child: Container(
-                                                  height: 32.0,
-                                                  decoration: BoxDecoration(
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .accent2,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12.0),
-                                                    border: Border.all(
-                                                      color:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .secondary,
-                                                      width: 2.0,
-                                                    ),
-                                                  ),
-                                                  child: Align(
-                                                    alignment:
-                                                        const AlignmentDirectional(
-                                                            0.00, 0.00),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsetsDirectional
-                                                              .fromSTEB(12.0,
-                                                              0.0, 12.0, 0.0),
-                                                      child: Text(
-                                                        '已付款',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMedium
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Readex Pro',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .secondary,
-                                                                  fontSize:
-                                                                      16.0,
-                                                                ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ).animateOnPageLoad(
-                                animationsMap['containerOnPageLoadAnimation']!),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-            ),
+                                    ).animateOnPageLoad(animationsMap[
+                                        'containerOnPageLoadAnimation']!),
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ))),
           ),
         ),
       ),

@@ -1,5 +1,5 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:book_store/media/mp4_page/mp4_page_model.dart';
 import 'package:connectivity_wrapper/connectivity_wrapper.dart';
@@ -60,7 +60,35 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
   //     throw Exception('Failed to load data');
   //   }
   // }
+  bool hasPushedtoScreentwo = false;
+  List<CartItem> mp4Cart = [];
+  fetchCartData({required bool shouldRun}) async {
+    if (shouldRun = true) {
+      var response = await MediaCartFindAllCall.call(
+        userId: currentUserData?.userId,
+        jwtToken: currentUserData?.jwtToken,
+        refreshToken: currentUserData?.refreshToken,
+      );
 
+      List jsoncartFetchedData = response.jsonBody['MediaCart'];
+      mp4Cart = jsoncartFetchedData
+          .map((map) => CartItem(
+              id: map['id'] ?? 0,
+              name: map['name'] ?? "",
+              price: map['price'] ?? 0,
+              title: map['title'] ?? '',
+              category: map['category'] ?? '',
+              pic: map['pic'] ?? '',
+              index: map['index'] ?? 0))
+          .toList();
+      log(response.jsonBody.toString());
+      log(jsoncartFetchedData.toString());
+      setState(() {});
+    }
+  }
+
+//when getting data from the backend, make exceptions or consider
+//values can become null
   late Mp4PageModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -128,6 +156,7 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
   @override
   void initState() {
     super.initState();
+    fetchCartData(shouldRun: hasPushedtoScreentwo);
     // fetchMp4();
     _model = createModel(context, () => Mp4PageModel());
   }
@@ -141,6 +170,7 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
 
   @override
   Widget build(BuildContext context) {
+    fetchCartData(shouldRun: hasPushedtoScreentwo);
     if (isiOS) {
       SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(
@@ -376,13 +406,10 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                             Align(
                                                 alignment: AlignmentDirectional(
                                                     1.00, 1.00),
-                                                child: Consumer<ItemCartRepo>(
-                                                    builder: (context, cartItem,
-                                                        widget) {
+                                                child: Builder(
+                                                    builder: (contextt) {
                                                   return FFButtonWidget(
                                                     onPressed: () async {
-                                                      print(cartItem
-                                                          .items.length);
                                                       _model.addItem =
                                                           await MediaCartAddItemCall
                                                               .call(
@@ -402,7 +429,32 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                         refreshToken:
                                                             currentUserData
                                                                 ?.refreshToken,
-                                                      );
+                                                      ).then((value) {
+                                                        mp4Cart.add(CartItem(
+                                                            id:
+                                                                mp4Item[
+                                                                        'id'] ??
+                                                                    0,
+                                                            name:
+                                                                mp4Item[
+                                                                        'name'] ??
+                                                                    "",
+                                                            price: mp4Item[
+                                                                    'price'] ??
+                                                                0,
+                                                            title: mp4Item[
+                                                                    'title'] ??
+                                                                '',
+                                                            category: mp4Item[
+                                                                    'category'] ??
+                                                                '',
+                                                            pic: mp4Item[
+                                                                    'pic'] ??
+                                                                '',
+                                                            index: mp4Item[
+                                                                    'index'] ??
+                                                                0));
+                                                      });
                                                       if ((_model.addItem
                                                               ?.succeeded ??
                                                           true)) {
@@ -534,8 +586,7 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                           },
                                                         );
                                                       }
-                                                      bool isInCart = cartItem
-                                                          .items
+                                                      bool isInCart = mp4Cart
                                                           .any((element) =>
                                                               element.id ==
                                                               getJsonField(
@@ -593,7 +644,7 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                           },
                                                         );
 
-                                                        print(cartItem.items
+                                                        print(mp4Cart
                                                             .any((element) =>
                                                                 element.title ==
                                                                 getJsonField(
@@ -601,7 +652,7 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                                   r'''$.title''',
                                                                 )));
 
-                                                        if (cartItem.items.any(
+                                                        if (mp4Cart.any(
                                                                 (element) =>
                                                                     element
                                                                         .title ==
@@ -610,38 +661,12 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                                       r'''$.title''',
                                                                     )) ==
                                                             false) {
-                                                          Provider.of<ItemCartRepo>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .addItem(CartItem(
-                                                            name: getJsonField(
-                                                              mp4Item,
-                                                              r'''$.content''',
-                                                            ).toString(),
-                                                            id: getJsonField(
-                                                              mp4Item,
-                                                              r'''$.title''',
-                                                            ),
-                                                            price: getJsonField(
-                                                              mp4Item,
-                                                              r'''$.price''',
-                                                            ),
-                                                            title: getJsonField(
-                                                              mp4Item,
-                                                              r'''$.title''',
-                                                            ).toString(),
-                                                            category: '',
-                                                            pic: '',
-                                                            index: getJsonField(
-                                                                mp4Item,
-                                                                r'''$.index'''),
-                                                          ));
                                                         } else {}
 
                                                         setState(() {});
                                                       }
                                                     },
-                                                    text: cartItem.items.any(
+                                                    text: mp4Cart.any(
                                                       (element) =>
                                                           element.title ==
                                                           getJsonField(
@@ -667,7 +692,7 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                           const EdgeInsetsDirectional
                                                               .fromSTEB(0.0,
                                                               0.0, 0.0, 0.0),
-                                                      color: cartItem.items.any(
+                                                      color: mp4Cart.any(
                                                         (element) =>
                                                             element.title ==
                                                             getJsonField(
@@ -855,6 +880,8 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                       size: 35.0,
                     ),
                     onPressed: () async {
+                      hasPushedtoScreentwo = true;
+                      mp4Cart.clear();
                       context.pushNamed('MediaCart');
                     },
                   ),
@@ -1020,13 +1047,11 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                             Align(
                                                 alignment: AlignmentDirectional(
                                                     1.00, 1.00),
-                                                child: Consumer<ItemCartRepo>(
-                                                    builder: (context, cartItem,
-                                                        widget) {
+                                                child:
+                                                    Builder(builder: (context) {
                                                   return FFButtonWidget(
                                                     onPressed: () async {
-                                                      print(cartItem
-                                                          .items.length);
+                                                      print(mp4Cart.length);
                                                       _model.addItem =
                                                           await MediaCartAddItemCall
                                                               .call(
@@ -1178,10 +1203,9 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                           },
                                                         );
                                                       }
-                                                      bool isInCart = cartItem
-                                                          .items
+                                                      bool isInCart = mp4Cart
                                                           .any((element) =>
-                                                              element.id ==
+                                                              element.title ==
                                                               getJsonField(
                                                                 mp4Item,
                                                                 r'''$.title''',
@@ -1195,7 +1219,7 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                               title: Text(
                                                                   'Message'),
                                                               content: Text(
-                                                                  '這個商品已存在購物車 '),
+                                                                  '這個商品已存在購物車  '),
                                                               actions: [
                                                                 TextButton(
                                                                   onPressed:
@@ -1237,7 +1261,7 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                           },
                                                         );
 
-                                                        print(cartItem.items
+                                                        print(mp4Cart
                                                             .any((element) =>
                                                                 element.title ==
                                                                 getJsonField(
@@ -1245,7 +1269,7 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                                   r'''$.title''',
                                                                 )));
 
-                                                        if (cartItem.items.any(
+                                                        if (mp4Cart.any(
                                                                 (element) =>
                                                                     element
                                                                         .title ==
@@ -1254,38 +1278,12 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                                       r'''$.title''',
                                                                     )) ==
                                                             false) {
-                                                          Provider.of<ItemCartRepo>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .addItem(CartItem(
-                                                            name: getJsonField(
-                                                              mp4Item,
-                                                              r'''$.content''',
-                                                            ).toString(),
-                                                            id: getJsonField(
-                                                              mp4Item,
-                                                              r'''$.title''',
-                                                            ),
-                                                            price: getJsonField(
-                                                              mp4Item,
-                                                              r'''$.price''',
-                                                            ),
-                                                            title: getJsonField(
-                                                              mp4Item,
-                                                              r'''$.title''',
-                                                            ).toString(),
-                                                            category: '',
-                                                            pic: '',
-                                                            index: getJsonField(
-                                                                mp4Item,
-                                                                r'''$.index'''),
-                                                          ));
                                                         } else {}
 
                                                         setState(() {});
                                                       }
                                                     },
-                                                    text: cartItem.items.any(
+                                                    text: mp4Cart.any(
                                                       (element) =>
                                                           element.title ==
                                                           getJsonField(
@@ -1311,7 +1309,7 @@ class Mp4PageWidgetState extends State<Mp4PageWidget>
                                                           const EdgeInsetsDirectional
                                                               .fromSTEB(0.0,
                                                               0.0, 0.0, 0.0),
-                                                      color: cartItem.items.any(
+                                                      color: mp4Cart.any(
                                                         (element) =>
                                                             element.title ==
                                                             getJsonField(

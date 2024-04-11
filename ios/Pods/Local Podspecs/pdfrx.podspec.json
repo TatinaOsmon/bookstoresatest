@@ -1,0 +1,50 @@
+{
+  "name": "pdfrx",
+  "version": "0.0.1",
+  "summary": "Yet another PDF renderer for Flutter using PDFium.",
+  "description": "Yet another PDF renderer for Flutter using PDFium.",
+  "homepage": "https://github.com/espresso3389/pdfrx",
+  "license": {
+    "type": "BSD",
+    "file": "../LICENSE"
+  },
+  "authors": {
+    "Takashi Kawasaki": "espresso3389@gmail.com"
+  },
+  "source": {
+    "path": "."
+  },
+  "source_files": "Classes/**/*",
+  "platforms": {
+    "ios": "12.0",
+    "osx": "10.11"
+  },
+  "ios": {
+    "dependencies": {
+      "Flutter": [
+
+      ]
+    },
+    "private_header_files": "pdfium/.lib/pdfium-apple-v6/ios/pdfium.xcframework/ios-arm64/Headers/*.h",
+    "vendored_frameworks": "pdfium/.lib/pdfium-apple-v6/ios/pdfium.xcframework",
+    "pod_target_xcconfig": {
+      "DEFINES_MODULE": "YES",
+      "EXCLUDED_ARCHS[sdk=iphonesimulator*]": "i386"
+    }
+  },
+  "osx": {
+    "dependencies": {
+      "FlutterMacOS": [
+
+      ]
+    },
+    "private_header_files": "pdfium/.lib/pdfium-apple-v6/macos/pdfium.xcframework/macos-arm64_x86_64/Headers/*.h",
+    "vendored_frameworks": "pdfium/.lib/pdfium-apple-v6/macos/pdfium.xcframework",
+    "pod_target_xcconfig": {
+      "DEFINES_MODULE": "YES"
+    }
+  },
+  "prepare_command": "mkdir -p pdfium/.lib/pdfium-apple-v6\ncd pdfium/.lib/pdfium-apple-v6\ncurl -Lo ios.tgz https://github.com/espresso3389/pdfrx/releases/download/pdfium-apple-v6/pdfium-ios.tgz && tar xzf ios.tgz && rm ios.tgz\ncurl -Lo macos.tgz https://github.com/espresso3389/pdfrx/releases/download/pdfium-apple-v6/pdfium-macos.tgz && tar xzf macos.tgz && rm macos.tgz",
+  "swift_versions": "5.0",
+  "swift_version": "5.0"
+}

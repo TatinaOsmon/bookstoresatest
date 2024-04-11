@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:book_store/models/cartItem.dart';
 import 'package:book_store/repositery/itemsCartRepo.dart';
 import 'package:book_store/tool/tool_cart/tool_cart_model.dart';
 import 'package:book_store/tool/tool_checkout/tool_checkout_widget.dart';
@@ -17,6 +20,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:async/async.dart';
 
 import 'package:provider/provider.dart';
 
@@ -32,6 +36,11 @@ class ToolCartWidget extends StatefulWidget {
 class _ToolCartWidgetState extends State<ToolCartWidget>
     with TickerProviderStateMixin {
   late ToolCartModel _model;
+  //asyncmemoizer allows the future to run only once
+  AsyncMemoizer<ApiCallResponse> asyncmemoizer = AsyncMemoizer();
+  var isLoading = true;
+  //giving it a name to call it easily
+  List<CartItem> toolCart = [];
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -219,6 +228,10 @@ class _ToolCartWidgetState extends State<ToolCartWidget>
 
   @override
   Widget build(BuildContext context) {
+    log('Th${functions.calcSum(
+      toolCart.map((e) => e.price).toList(),
+    )}');
+
     if (isiOS) {
       SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(
@@ -229,7 +242,6 @@ class _ToolCartWidgetState extends State<ToolCartWidget>
     }
 
     context.watch<FFAppState>();
-
     return GestureDetector(
       onTap: () => _model.unfocusNode.canRequestFocus
           ? FocusScope.of(context).requestFocus(_model.unfocusNode)
@@ -316,11 +328,15 @@ class _ToolCartWidgetState extends State<ToolCartWidget>
                     padding:
                         const EdgeInsetsDirectional.fromSTEB(30, 30, 30, 30),
                     child: FutureBuilder<ApiCallResponse>(
-                      future: ToolCartFindAllCall.call(
-                        userId: currentUserData?.userId,
-                        jwtToken: currentUserData?.jwtToken,
-                        refreshToken: currentUserData?.refreshToken,
-                      ),
+                      future:
+                          asyncmemoizer.runOnce(() => ToolCartFindAllCall.call(
+                                userId: currentUserData?.userId,
+                                jwtToken: currentUserData?.jwtToken,
+                                refreshToken: currentUserData?.refreshToken,
+                              ))
+                            ..then((value) {
+                              setState(() {});
+                            }),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
                         if (!snapshot.hasData) {
@@ -336,13 +352,26 @@ class _ToolCartWidgetState extends State<ToolCartWidget>
                             ),
                           );
                         }
-                        final columnToolCartFindAllResponse = snapshot.data!;
+
+                        log(snapshot.data!.jsonBody.toString());
+                        final List columnToolCartFindAllResponse =
+                            snapshot.data!.jsonBody['ToolCart'];
+                        log(snapshot.data!.jsonBody.toString());
                         return Builder(
                           builder: (context) {
-                            final toolCart = ToolCartFindAllCall.toolCart(
-                                  columnToolCartFindAllResponse.jsonBody,
-                                )?.toList() ??
-                                [];
+                            //if the connectionstate of the fetching of the data is done,it will not
+
+                            toolCart = columnToolCartFindAllResponse
+                                .map((e) => CartItem(
+                                    id: e['id'],
+                                    name: e['name'] ?? 'not specified',
+                                    price: e['price'] ?? 0,
+                                    title: e['title'] ?? 'not specified',
+                                    category: e['category'] ?? 'not specified',
+                                    pic: e['pic'] ?? 'not specified',
+                                    index: e['index']))
+                                .toList();
+
                             return Column(
                               mainAxisSize: MainAxisSize.max,
                               children: List.generate(toolCart.length,
@@ -372,10 +401,7 @@ class _ToolCartWidgetState extends State<ToolCartWidget>
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                               child: Image.network(
-                                                getJsonField(
-                                                  toolCartItem,
-                                                  r'''$.pic''',
-                                                ),
+                                                toolCartItem.pic,
                                                 width: 109,
                                                 height: 106,
                                                 fit: BoxFit.cover,
@@ -393,10 +419,7 @@ class _ToolCartWidgetState extends State<ToolCartWidget>
                                                       const EdgeInsetsDirectional
                                                           .fromSTEB(0, 0, 0, 7),
                                                   child: Text(
-                                                    getJsonField(
-                                                      toolCartItem,
-                                                      r'''$.title''',
-                                                    ).toString(),
+                                                    toolCartItem.title,
                                                     style: FlutterFlowTheme.of(
                                                             context)
                                                         .bodyMedium
@@ -408,11 +431,9 @@ class _ToolCartWidgetState extends State<ToolCartWidget>
                                                   ),
                                                 ),
                                                 Text(
-                                                  functions
-                                                      .formatPrice(getJsonField(
-                                                    toolCartItem,
-                                                    r'''$.price''',
-                                                  )),
+                                                  functions.formatPrice(
+                                                    toolCartItem.price,
+                                                  ),
                                                   style: FlutterFlowTheme.of(
                                                           context)
                                                       .bodyMedium
@@ -447,10 +468,13 @@ class _ToolCartWidgetState extends State<ToolCartWidget>
                                                 size: 24,
                                               ),
                                               onPressed: () async {
-                                                Provider.of<ItemCartRepo>(
-                                                        context,
-                                                        listen: false)
-                                                    .removeItem(toolCartIndex);
+                                                setState(() {
+                                                  toolCart
+                                                      .removeAt(toolCartIndex);
+                                                });
+                                                snapshot
+                                                    .data!.jsonBody['ToolCart']
+                                                    .removeAt(toolCartIndex);
                                                 Function() _navigate = () {};
 
                                                 _model.removeItem =
@@ -458,16 +482,14 @@ class _ToolCartWidgetState extends State<ToolCartWidget>
                                                         .call(
                                                   userId:
                                                       currentUserData?.userId,
-                                                  index: getJsonField(
-                                                    toolCartItem,
-                                                    r'''$.index''',
-                                                  ),
+                                                  index: toolCartItem.index,
                                                   refreshToken: currentUserData
                                                       ?.refreshToken,
                                                   jwtToken:
                                                       currentUserData?.jwtToken,
-                                                  toolId: '',
+                                                  // toolId: '',
                                                 );
+
                                                 if ((_model.removeItem
                                                         ?.succeeded ??
                                                     true)) {
@@ -673,8 +695,6 @@ class _ToolCartWidgetState extends State<ToolCartWidget>
                                                     },
                                                   );
                                                 }
-
-                                                setState(() {});
                                               },
                                             ).animateOnPageLoad(animationsMap[
                                                 'iconButtonOnPageLoadAnimation']!),
@@ -709,7 +729,10 @@ class _ToolCartWidgetState extends State<ToolCartWidget>
                               padding: const EdgeInsetsDirectional.fromSTEB(
                                   0, 7, 30, 10),
                               child: Text(
-                                '總價\$${functions.calcSum(_model.priceList.toList()).toString()}',
+                                functions.formatPrice(int.parse(functions
+                                    .calcSum(
+                                        toolCart.map((e) => e.price).toList())
+                                    .toString())),
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(

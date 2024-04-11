@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:book_store/flutter_flow/flutter_flow_util.dart';
 
 bool? newCustomFunction(dynamic purchased) {
@@ -14,11 +16,16 @@ bool? newCustomFunction(dynamic purchased) {
 }
 
 int? calcSum(List<int>? price) {
-  int? totalPrice = 0;
+  if (price == null) {
+    return 0; // Handle null list
+  }
 
-  price?.forEach((bookPrice) {
-    totalPrice = (totalPrice ?? 0) + bookPrice;
-  });
+  int totalPrice = 0; // Initialize to 0
+
+  for (int bookPrice in price) {
+    log(bookPrice.toString());
+    totalPrice += bookPrice; // Use += for simpler summation
+  }
 
   return totalPrice;
 }

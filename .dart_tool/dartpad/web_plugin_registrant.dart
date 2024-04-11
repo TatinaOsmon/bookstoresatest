@@ -12,6 +12,7 @@ import 'package:device_info_plus/src/device_info_plus_web.dart';
 import 'package:file_saver/file_saver_web.dart';
 import 'package:flutter_secure_storage_web/flutter_secure_storage_web.dart';
 import 'package:package_info_plus/src/package_info_plus_web.dart';
+import 'package:permission_handler_html/permission_handler_html.dart';
 import 'package:shared_preferences_web/shared_preferences_web.dart';
 import 'package:syncfusion_pdfviewer_web/pdfviewer_web.dart';
 import 'package:url_launcher_web/url_launcher_web.dart';
@@ -27,6 +28,7 @@ void registerPlugins([final Registrar? pluginRegistrar]) {
   FileSaverWeb.registerWith(registrar);
   FlutterSecureStorageWeb.registerWith(registrar);
   PackageInfoPlusWebPlugin.registerWith(registrar);
+  WebPermissionHandler.registerWith(registrar);
   SharedPreferencesPlugin.registerWith(registrar);
   SyncfusionFlutterPdfViewerPlugin.registerWith(registrar);
   UrlLauncherPlugin.registerWith(registrar);

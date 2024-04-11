@@ -1,8 +1,10 @@
+import 'dart:developer';
+
 import 'package:book_store/book/book_cart/book_cart_model.dart';
 import 'package:book_store/book/book_checkout/book_checkout_widget.dart';
 import 'package:book_store/models/cartItem.dart';
 import 'package:book_store/repositery/itemsCartRepo.dart';
-import 'package:async/async.dart';
+
 import '/auth/custom_auth/auth_util.dart';
 import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/flutter_flow_animations.dart';
@@ -18,7 +20,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
+import 'package:async/async.dart';
 import 'package:provider/provider.dart';
 
 class BookCartWidget extends StatefulWidget {
@@ -33,11 +35,14 @@ class BookCartWidget extends StatefulWidget {
 class _BookCartWidgetState extends State<BookCartWidget>
     with TickerProviderStateMixin {
   late BookCartModel _model;
-  var isLoading = true;
-  late List<CartItem> items;
-  AsyncMemoizer<ApiCallResponse> asyncMemoizer = AsyncMemoizer();
-  final scaffoldKey = GlobalKey<ScaffoldState>();
+  //the bookcart stores the cart items list of data from the backend
   List<CartItem> bookCart = [];
+  //asyncmemoizer allows the future to run only once
+  AsyncMemoizer<ApiCallResponse> asyncmemoizer = AsyncMemoizer();
+  var isLoading = true;
+
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+
   final animationsMap = {
     'containerOnPageLoadAnimation': AnimationInfo(
       trigger: AnimationTrigger.onPageLoad,
@@ -295,30 +300,35 @@ class _BookCartWidgetState extends State<BookCartWidget>
                   padding: const EdgeInsetsDirectional.fromSTEB(30, 30, 30, 30),
                   child: Consumer<ItemCartRepo>(
                     builder: (context, itemscart, child) {
-                      // Customize what your widget looks like when it's loading.
-
-                      final columnBookCartFindAllResponse = itemscart.items;
                       return FutureBuilder<ApiCallResponse>(
-                        future: asyncMemoizer
+                        // i used asyncmemoizer so that the future will only fetch once
+//you can do it without asyncmemoizer
+//it will fetch many times from the backend
+
+                        future: asyncmemoizer
                             .runOnce(() => BookCartFindAllCall.call(
                                   userId: currentUserData?.userId,
                                   jwtToken: currentUserData?.jwtToken,
                                   refreshToken: currentUserData?.refreshToken,
-                                )),
+                                ))
+                          ..then((value) {
+                            setState(() {});
+                          }),
+
                         builder: (context, snapshot) {
                           // Customize what your widget looks like when it's loading.
-
-                          return !snapshot.hasData
+                          return snapshot.hasData == false
                               ? const Center(child: CircularProgressIndicator())
                               : SingleChildScrollView(
                                   child: Builder(builder: (context) {
+                                  //i created a list to store the data from the backend(it is in json, so i have to serialize it)
                                   List jsonDataCartList =
                                       snapshot.data!.jsonBody['Bookcart'];
+                                  //i serialized it here, by creating a list with cartitem object
                                   bookCart = List.generate(
                                       jsonDataCartList.length,
                                       (index) => CartItem(
-                                          id: jsonDataCartList[index]['id'] ??
-                                              0,
+                                          id: jsonDataCartList[index]['id'],
                                           name: jsonDataCartList[index]
                                                   ['name'] ??
                                               'not specified',
@@ -334,22 +344,13 @@ class _BookCartWidgetState extends State<BookCartWidget>
                                           pic: jsonDataCartList[index]['pic'] ??
                                               'not specified',
                                           index: jsonDataCartList[index]
-                                                  ['index'] ??
-                                              0));
-
-                                  Provider.of<OrderCountProvider>(context)
-                                      .orderCount = bookCart;
-                                  Provider.of<OrderCountProvider>(context)
-                                      .orderCountNotifier();
+                                              ['index']));
 
                                   return Column(
                                     mainAxisSize: MainAxisSize.max,
-                                    children: List.generate(
-                                        Provider.of<OrderCountProvider>(context)
-                                            .orderCount
-                                            .length, (bookCartIndex) {
-                                      final bookCartItem =
-                                          bookCart[bookCartIndex];
+                                    children:
+                                        List.generate(jsonDataCartList.length,
+                                            (bookCartIndex) {
                                       return Padding(
                                         padding: const EdgeInsetsDirectional
                                             .fromSTEB(0, 0, 0, 22),
@@ -385,7 +386,8 @@ class _BookCartWidgetState extends State<BookCartWidget>
                                                         BorderRadius.circular(
                                                             8.0),
                                                     child: Image.network(
-                                                      bookCartItem.pic,
+                                                      bookCart[bookCartIndex]
+                                                          .pic,
                                                       width: size.width > 300
                                                           ? size.width / 6
                                                           : 50,
@@ -413,7 +415,9 @@ class _BookCartWidgetState extends State<BookCartWidget>
                                                                 .fromSTEB(
                                                                 0, 0, 0, 7),
                                                         child: Text(
-                                                          bookCartItem.title,
+                                                          bookCart[
+                                                                  bookCartIndex]
+                                                              .title,
                                                           style: FlutterFlowTheme
                                                                   .of(context)
                                                               .bodyMedium
@@ -426,7 +430,9 @@ class _BookCartWidgetState extends State<BookCartWidget>
                                                       ),
                                                       Text(
                                                         functions.formatPrice(
-                                                            bookCartItem.price),
+                                                            bookCart[
+                                                                    bookCartIndex]
+                                                                .price),
                                                         style:
                                                             FlutterFlowTheme.of(
                                                                     context)
@@ -465,49 +471,45 @@ class _BookCartWidgetState extends State<BookCartWidget>
                                                       size: 24,
                                                     ),
                                                     onPressed: () async {
-                                                      setState(() {
-                                                        bookCart.removeAt(
-                                                            bookCartIndex);
-                                                      });
-
-                                                      var serverItemIndex =
-                                                          (Provider.of<ItemCartRepo>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                                  .getItem(
-                                                                      bookCartIndex))
-                                                              .index;
-
-                                                      Provider.of<ItemCartRepo>(
-                                                              context,
-                                                              listen: false)
-                                                          .removeItem(
-                                                              bookCartIndex);
-                                                      print(Provider.of<
-                                                                  ItemCartRepo>(
-                                                              context,
-                                                              listen: false)
-                                                          .items
-                                                          .length);
-
-                                                      setState(() {});
                                                       Function() _navigate =
                                                           () {};
+                                                      log(bookCart[
+                                                              bookCartIndex]
+                                                          .index
+                                                          .toString());
                                                       _model.removeItem =
                                                           await BookCartRemoveItemCall
                                                               .call(
                                                         userId: currentUserData
                                                             ?.userId,
                                                         //index: bookCartIndex,
-                                                        index: bookCartItem.id,
+                                                        index: bookCart[
+                                                                bookCartIndex]
+                                                            .index,
                                                         refreshToken:
                                                             currentUserData
                                                                 ?.refreshToken,
                                                         jwtToken:
                                                             currentUserData
                                                                 ?.jwtToken,
-                                                      );
+                                                      ).then((value) {
+                                                        if (value.statusCode ==
+                                                            200) {
+                                                          setState(() {
+                                                            bookCart.removeAt(
+                                                                bookCartIndex);
+                                                            snapshot
+                                                                .data!
+                                                                .jsonBody[
+                                                                    'Bookcart']
+                                                                .removeAt(
+                                                                    bookCartIndex);
+                                                          });
+                                                        }
+                                                        print(
+                                                            'statuscode ${value.statusCode}');
+                                                        return null;
+                                                      });
                                                       if ((_model.removeItem
                                                               ?.succeeded ??
                                                           true)) {
@@ -640,8 +642,9 @@ class _BookCartWidgetState extends State<BookCartWidget>
                                                               return AlertDialog(
                                                                 title: Text(
                                                                     'Message'),
-                                                                content: Text(
-                                                                    '已移除物品'),
+                                                                content:
+                                                                    const Text(
+                                                                        '已移除物品'),
                                                                 actions: [
                                                                   TextButton(
                                                                     onPressed:
@@ -758,14 +761,13 @@ class _BookCartWidgetState extends State<BookCartWidget>
                               builder: (context, itemscart, child) {
                                 // Customize what your widget looks like when it's loading.
 
-                                final columnBookCartFindAllResponse =
-                                    itemscart.items;
                                 return Builder(builder: (context) {
-                                  final List<CartItem> bookCart =
-                                      columnBookCartFindAllResponse;
-
                                   return Text(
-                                    '${functions.formatPrice(int.parse(functions.calcSum(bookCart.map((e) => e.price).toList()).toString()))}',
+                                    functions.formatPrice(int.parse(functions
+                                        .calcSum(bookCart
+                                            .map((e) => e.price)
+                                            .toList())
+                                        .toString())),
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(

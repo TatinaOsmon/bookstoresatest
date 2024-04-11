@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:connectivity_wrapper/connectivity_wrapper.dart';
 import 'package:flutter/material.dart';
@@ -123,11 +124,51 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
       ],
     ),
   };
+  List<CartItem> mp3Cart = [];
+
+  ///[hasPushedtoScreentwo] checks if the screen has been pushed to
+  /// cart screen, it is [false] (so we use it to fetch the cart)
+  /// because we are still on this screen,
+  ///when we push to mediacartscreen, it is set to [true]. if it is true,
+  ///we clear the fetched cart and we fetch another updated mp3cart items list
+  bool hasPushedtoScreentwo = false;
+  Future<void> fetchMp3Cart({required bool shouldRun}) async {
+    if (shouldRun == true) {
+      await MediaCartFindAllCall.call(
+        userId: currentUserData?.userId,
+        jwtToken: currentUserData?.jwtToken,
+        refreshToken: currentUserData?.refreshToken,
+      ).then((data) {
+        // cartItems = data.jsonBody;
+        List jsonDataCartList = data.jsonBody['MediaCart'];
+        mp3Cart = List.generate(
+            jsonDataCartList.length,
+            (index) => CartItem(
+                id: jsonDataCartList[index]['id'],
+                name: jsonDataCartList[index]['name'] ?? 'not specified',
+                price: jsonDataCartList[index]['price'] ?? 0,
+                title: jsonDataCartList[index]['title'] ?? 'not specified',
+                category:
+                    jsonDataCartList[index]['category'] ?? 'not specified',
+                pic: jsonDataCartList[index]['pic'] ?? 'not specified',
+                index: jsonDataCartList[index]['index']));
+
+        log('Status Code: ${data.jsonBody}');
+      }).onError((error, stackTrace) {
+        log('Status Code: ${error.toString()}');
+        return null;
+      });
+
+      // here the data is stored in the cart
+
+      if (mounted) setState(() {});
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    // fetchMp3();
+    fetchMp3Cart(shouldRun: true);
     _model = createModel(context, () => Mp3PageModel());
   }
 
@@ -140,6 +181,8 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
 
   @override
   Widget build(BuildContext context) {
+    log('this is car${mp3Cart.length}');
+    fetchMp3Cart(shouldRun: hasPushedtoScreentwo);
     if (isiOS) {
       SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(
@@ -210,6 +253,8 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                       size: 35.0,
                     ),
                     onPressed: () async {
+                      hasPushedtoScreentwo = true;
+                      mp3Cart.clear();
                       context.pushNamed('MediaCart');
                     },
                   ),
@@ -256,7 +301,7 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                       return GridView.builder(
                           padding: EdgeInsets.zero,
                           gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
+                              const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
                             crossAxisSpacing: 15.0,
                             mainAxisSpacing: 15.0,
@@ -269,8 +314,8 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                             final mp3Item = mp3[mp3Index];
 
                             return Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                  0, 0, 0, 15),
                               child: Container(
                                 width: MediaQuery.sizeOf(context).width,
                                 decoration: BoxDecoration(
@@ -279,7 +324,7 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       15, 15, 15, 15),
                                   child: Column(
                                     mainAxisAlignment:
@@ -291,9 +336,8 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                         children: [
                                           //we will change image here
                                           Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0, 0, 15, 0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(0, 0, 15, 0),
                                             child: Icon(
                                               Icons.queue_music,
                                               color:
@@ -305,7 +349,7 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                           Container(
                                             width: MediaQuery.sizeOf(context)
                                                 .width,
-                                            decoration: BoxDecoration(),
+                                            decoration: const BoxDecoration(),
                                             child: Container(
                                               width: MediaQuery.sizeOf(context)
                                                   .width,
@@ -316,9 +360,9 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                 children: [
                                                   Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(
-                                                                0, 0, 0, 7),
+                                                            0, 0, 0, 7),
                                                     child: Text(
                                                       getJsonField(
                                                         mp3Item,
@@ -373,183 +417,32 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                             true,
                                           ))
                                             Align(
-                                                alignment: AlignmentDirectional(
-                                                    1.00, 1.00),
-                                                child: Consumer<ItemCartRepo>(
-                                                    builder: (context, cartItem,
-                                                        widget) {
+                                                alignment:
+                                                    const AlignmentDirectional(
+                                                        1.00, 1.00),
+                                                child:
+                                                    Builder(builder: (context) {
                                                   return FFButtonWidget(
                                                     onPressed: () async {
-                                                      print(cartItem
-                                                          .items.length);
-                                                      _model.addItem =
-                                                          await MediaCartAddItemCall
-                                                              .call(
-                                                        userId: currentUserData
-                                                            ?.userId,
-                                                        productId: getJsonField(
-                                                          mp3Item,
-                                                          r'''$.productId''',
-                                                        ),
-                                                        tableName: getJsonField(
-                                                          mp3Item,
-                                                          r'''$.tableName''',
-                                                        ).toString(),
-                                                        jwtToken:
-                                                            currentUserData
-                                                                ?.jwtToken,
-                                                        refreshToken:
-                                                            currentUserData
-                                                                ?.refreshToken,
+                                                      bool isInCart =
+                                                          mp3Cart.any(
+                                                        (element) =>
+                                                            element.title ==
+                                                            getJsonField(
+                                                              mp3Item,
+                                                              r'''$.title''',
+                                                            ).toString(),
                                                       );
-                                                      if ((_model.addItem
-                                                              ?.succeeded ??
-                                                          true)) {
-                                                        // 有沒有success
-                                                        // 如果有success代表他的登入有狀況
-                                                        if (getJsonField(
-                                                              (_model.addItem
-                                                                      ?.jsonBody ??
-                                                                  ''),
-                                                              r'''$.success''',
-                                                            ) !=
-                                                            null) {
-                                                          FFAppState().success =
-                                                              getJsonField(
-                                                            (_model.addItem
-                                                                    ?.jsonBody ??
-                                                                ''),
-                                                            r'''$.success''',
-                                                          );
-                                                          if (FFAppState()
-                                                                  .success ==
-                                                              true) {
-                                                            await showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (alertDialogContext) {
-                                                                return AlertDialog(
-                                                                  title: Text(
-                                                                      'Message'),
-                                                                  content: Text(
-                                                                      getJsonField(
-                                                                    (_model.addItem
-                                                                            ?.jsonBody ??
-                                                                        ''),
-                                                                    r'''$.message''',
-                                                                  ).toString()),
-                                                                  actions: [
-                                                                    TextButton(
-                                                                      onPressed:
-                                                                          () =>
-                                                                              Navigator.pop(alertDialogContext),
-                                                                      child: Text(
-                                                                          'Ok'),
-                                                                    ),
-                                                                  ],
-                                                                );
-                                                              },
-                                                            );
-                                                            GoRouter.of(context)
-                                                                .prepareAuthEvent();
-                                                            await authManager
-                                                                .signOut();
-                                                            GoRouter.of(context)
-                                                                .clearRedirectLocation();
-
-                                                            context.goNamedAuth(
-                                                                'login',
-                                                                context
-                                                                    .mounted);
-                                                          } else {
-                                                            await showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (alertDialogContext) {
-                                                                return AlertDialog(
-                                                                  title: Text(
-                                                                      'Message'),
-                                                                  content: Text(
-                                                                      getJsonField(
-                                                                    (_model.addItem
-                                                                            ?.jsonBody ??
-                                                                        ''),
-                                                                    r'''$.message''',
-                                                                  ).toString()),
-                                                                  actions: [
-                                                                    TextButton(
-                                                                      onPressed:
-                                                                          () =>
-                                                                              Navigator.pop(alertDialogContext),
-                                                                      child: Text(
-                                                                          'Ok'),
-                                                                    ),
-                                                                  ],
-                                                                );
-                                                              },
-                                                            );
-                                                            setState(() {
-                                                              FFAppState()
-                                                                      .token =
-                                                                  getJsonField(
-                                                                (_model.addItem
-                                                                        ?.jsonBody ??
-                                                                    ''),
-                                                                r'''$.jwtToken''',
-                                                              ).toString();
-                                                            });
-                                                          }
-                                                        } else {
-                                                          setState(() {
-                                                            FFAppState().token =
-                                                                getJsonField(
-                                                              (_model.addItem
-                                                                      ?.jsonBody ??
-                                                                  ''),
-                                                              r'''$.jwtToken''',
-                                                            ).toString();
-                                                          });
-                                                        }
-                                                      } else {
-                                                        await showDialog(
-                                                          context: context,
-                                                          builder:
-                                                              (alertDialogContext) {
-                                                            return AlertDialog(
-                                                              title:
-                                                                  Text('Error'),
-                                                              content: Text(
-                                                                  '請稍後再試一次'),
-                                                              actions: [
-                                                                TextButton(
-                                                                  onPressed: () =>
-                                                                      Navigator.pop(
-                                                                          alertDialogContext),
-                                                                  child: Text(
-                                                                      'Ok'),
-                                                                ),
-                                                              ],
-                                                            );
-                                                          },
-                                                        );
-                                                      }
-                                                      bool isInCart = cartItem
-                                                          .items
-                                                          .any((element) =>
-                                                              element.id ==
-                                                              getJsonField(
-                                                                mp3Item,
-                                                                r'''$.title''',
-                                                              ));
+                                                      log('is in cart $isInCart');
                                                       if (isInCart) {
                                                         showDialog(
                                                           context: context,
                                                           builder: (BuildContext
                                                               context) {
                                                             return AlertDialog(
-                                                              title: Text(
+                                                              title: const Text(
                                                                   'Message'),
-                                                              content: Text(
+                                                              content: const Text(
                                                                   '這個商品已存在購物車 '),
                                                               actions: [
                                                                 TextButton(
@@ -559,23 +452,143 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                                             context)
                                                                         .pop();
                                                                   },
-                                                                  child: Text(
-                                                                      'Ok'),
+                                                                  child:
+                                                                      const Text(
+                                                                          'Ok'),
                                                                 ),
                                                               ],
                                                             );
                                                           },
                                                         );
                                                       } else {
+                                                        print(mp3Cart.length);
+                                                        _model.addItem =
+                                                            await MediaCartAddItemCall
+                                                                .call(
+                                                          userId:
+                                                              currentUserData
+                                                                  ?.userId,
+                                                          productId:
+                                                              getJsonField(
+                                                            mp3Item,
+                                                            r'''$.productId''',
+                                                          ),
+                                                          tableName:
+                                                              getJsonField(
+                                                            mp3Item,
+                                                            r'''$.tableName''',
+                                                          ).toString(),
+                                                          jwtToken:
+                                                              currentUserData
+                                                                  ?.jwtToken,
+                                                          refreshToken:
+                                                              currentUserData
+                                                                  ?.refreshToken,
+                                                        );
+                                                        if ((_model.addItem
+                                                                ?.succeeded ??
+                                                            true)) {
+                                                          // 有沒有success
+                                                          // 如果有success代表他的登入有狀況
+                                                          if (getJsonField(
+                                                                (_model.addItem
+                                                                        ?.jsonBody ??
+                                                                    ''),
+                                                                r'''$.success''',
+                                                              ) !=
+                                                              null) {
+                                                            FFAppState()
+                                                                    .success =
+                                                                getJsonField(
+                                                              (_model.addItem
+                                                                      ?.jsonBody ??
+                                                                  ''),
+                                                              r'''$.success''',
+                                                            );
+                                                            if (FFAppState()
+                                                                    .success ==
+                                                                true) {
+                                                              await showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (alertDialogContext) {
+                                                                  return AlertDialog(
+                                                                    title: const Text(
+                                                                        'Message'),
+                                                                    content: Text(
+                                                                        getJsonField(
+                                                                      (_model.addItem
+                                                                              ?.jsonBody ??
+                                                                          ''),
+                                                                      r'''$.message''',
+                                                                    ).toString()),
+                                                                    actions: [
+                                                                      TextButton(
+                                                                        onPressed:
+                                                                            () =>
+                                                                                Navigator.pop(alertDialogContext),
+                                                                        child: const Text(
+                                                                            'Ok'),
+                                                                      ),
+                                                                    ],
+                                                                  );
+                                                                },
+                                                              );
+                                                              GoRouter.of(
+                                                                      context)
+                                                                  .prepareAuthEvent();
+                                                              await authManager
+                                                                  .signOut();
+                                                              GoRouter.of(
+                                                                      context)
+                                                                  .clearRedirectLocation();
+
+                                                              context.goNamedAuth(
+                                                                  'login',
+                                                                  context
+                                                                      .mounted);
+                                                            } else {
+                                                              await showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (alertDialogContext) {
+                                                                  return AlertDialog(
+                                                                    title: const Text(
+                                                                        'Message'),
+                                                                    content: Text(
+                                                                        getJsonField(
+                                                                      (_model.addItem
+                                                                              ?.jsonBody ??
+                                                                          ''),
+                                                                      r'''$.message''',
+                                                                    ).toString()),
+                                                                    actions: [
+                                                                      TextButton(
+                                                                        onPressed:
+                                                                            () =>
+                                                                                Navigator.pop(alertDialogContext),
+                                                                        child: const Text(
+                                                                            'Ok'),
+                                                                      ),
+                                                                    ],
+                                                                  );
+                                                                },
+                                                              );
+                                                            }
+                                                          }
+                                                        }
                                                         showDialog(
                                                           context: context,
                                                           builder: (BuildContext
                                                               context) {
                                                             return AlertDialog(
-                                                              title: Text(
+                                                              title: const Text(
                                                                   'Message'),
-                                                              content: Text(
-                                                                  '商品已成功添加'),
+                                                              content:
+                                                                  const Text(
+                                                                      '商品已成功添加'),
                                                               actions: [
                                                                 TextButton(
                                                                   onPressed:
@@ -584,42 +597,24 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                                             context)
                                                                         .pop();
                                                                   },
-                                                                  child: Text(
-                                                                      'Ok'),
+                                                                  child:
+                                                                      const Text(
+                                                                          'Ok'),
                                                                 ),
                                                               ],
                                                             );
                                                           },
                                                         );
 
-                                                        print(cartItem.items
-                                                            .any((element) =>
-                                                                element.title ==
-                                                                getJsonField(
-                                                                  mp3Item,
-                                                                  r'''$.title''',
-                                                                )));
-
-                                                        if (cartItem.items.any(
-                                                                (element) =>
-                                                                    element
-                                                                        .title ==
-                                                                    getJsonField(
-                                                                      mp3Item,
-                                                                      r'''$.title''',
-                                                                    )) ==
-                                                            false) {
-                                                          Provider.of<ItemCartRepo>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .addItem(CartItem(
+                                                        setState(() {
+                                                          mp3Cart.add(CartItem(
                                                             name: getJsonField(
                                                               mp3Item,
                                                               r'''$.content''',
                                                             ).toString(),
                                                             id: getJsonField(
                                                               mp3Item,
-                                                              r'''$.title''',
+                                                              r'''$.id''',
                                                             ),
                                                             price: getJsonField(
                                                               mp3Item,
@@ -630,17 +625,18 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                               r'''$.title''',
                                                             ).toString(),
                                                             category: '',
-                                                            pic: '',
+                                                            pic: getJsonField(
+                                                              mp3Item,
+                                                              r'''$.pic''',
+                                                            ).toString(),
                                                             index: getJsonField(
                                                                 mp3Item,
                                                                 r'''$.index'''),
                                                           ));
-                                                        } else {}
-
-                                                        setState(() {});
+                                                        });
                                                       }
                                                     },
-                                                    text: cartItem.items.any(
+                                                    text: mp3Cart.any(
                                                       (element) =>
                                                           element.title ==
                                                           getJsonField(
@@ -666,7 +662,7 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                           const EdgeInsetsDirectional
                                                               .fromSTEB(0.0,
                                                               0.0, 0.0, 0.0),
-                                                      color: cartItem.items.any(
+                                                      color: mp3Cart.any(
                                                         (element) =>
                                                             element.title ==
                                                             getJsonField(
@@ -714,8 +710,9 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                             true,
                                           ))
                                             Align(
-                                              alignment: AlignmentDirectional(
-                                                  1.00, 1.00),
+                                              alignment:
+                                                  const AlignmentDirectional(
+                                                      1.00, 1.00),
                                               child: FFButtonWidget(
                                                 onPressed: () async {
                                                   context.pushNamed(
@@ -740,17 +737,19 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                   );
                                                 },
                                                 text: '播放',
-                                                icon: Icon(
+                                                icon: const Icon(
                                                   Icons.play_arrow,
                                                   size: 15,
                                                 ),
                                                 options: FFButtonOptions(
                                                   width: 230,
                                                   height: 40,
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(24, 0, 24, 0),
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          24, 0, 24, 0),
                                                   iconPadding:
-                                                      EdgeInsetsDirectional
+                                                      const EdgeInsetsDirectional
                                                           .fromSTEB(0, 0, 0, 0),
                                                   color: FlutterFlowTheme.of(
                                                           context)
@@ -767,7 +766,7 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                                 .info,
                                                       ),
                                                   elevation: 3,
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Colors.transparent,
                                                     width: 1,
                                                   ),
@@ -805,12 +804,12 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
           key: scaffoldKey,
           backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
           appBar: PreferredSize(
-            preferredSize: Size.fromHeight(65),
+            preferredSize: const Size.fromHeight(65),
             child: AppBar(
               backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
               automaticallyImplyLeading: false,
               leading: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(15, 10, 0, 0),
+                padding: const EdgeInsetsDirectional.fromSTEB(15, 10, 0, 0),
                 child: FlutterFlowIconButton(
                   borderColor: Colors.transparent,
                   borderRadius: 30,
@@ -827,7 +826,7 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                 ),
               ),
               title: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
                 child: Text(
                   widget.title ?? '',
                   textAlign: TextAlign.center,
@@ -841,7 +840,7 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
               ),
               actions: [
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 10, 15, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 15, 0),
                   child: FlutterFlowIconButton(
                     borderRadius: 20,
                     buttonSize: 50,
@@ -851,6 +850,8 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                       size: 35,
                     ),
                     onPressed: () async {
+                      hasPushedtoScreentwo = true;
+                      mp3Cart.clear();
                       context.pushNamed('MediaCart');
                     },
                   ),
@@ -863,7 +864,7 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
           body: SafeArea(
             top: true,
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(15, 15, 15, 110),
+              padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 110),
               child: FutureBuilder<ApiCallResponse>(
                 future: MpThreeFindAllCall.call(
                   id: widget.categoryId,
@@ -895,7 +896,7 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                       return GridView.builder(
                           padding: EdgeInsets.zero,
                           gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
+                              const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
                             crossAxisSpacing: 15.0,
                             mainAxisSpacing: 15.0,
@@ -911,8 +912,8 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                             // print(
                             //     'this is sort id mp3 ${mp3Categories[mp3Index]['sort']}}');
                             return Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                  0, 0, 0, 15),
                               child: Container(
                                 width: MediaQuery.sizeOf(context).width,
                                 decoration: BoxDecoration(
@@ -921,7 +922,7 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       15, 15, 15, 15),
                                   child: Column(
                                     mainAxisAlignment:
@@ -933,9 +934,8 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                         children: [
                                           //we will change image here
                                           Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0, 0, 15, 0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(0, 0, 15, 0),
                                             child: Icon(
                                               Icons.queue_music,
                                               color:
@@ -947,7 +947,7 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                           Container(
                                             width: MediaQuery.sizeOf(context)
                                                 .width,
-                                            decoration: BoxDecoration(),
+                                            decoration: const BoxDecoration(),
                                             child: Container(
                                               width: MediaQuery.sizeOf(context)
                                                   .width,
@@ -958,9 +958,9 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                 children: [
                                                   Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(
-                                                                0, 0, 0, 7),
+                                                            0, 0, 0, 7),
                                                     child: Text(
                                                       getJsonField(
                                                         mp3Item,
@@ -1015,15 +1015,14 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                             true,
                                           ))
                                             Align(
-                                                alignment: AlignmentDirectional(
-                                                    1.00, 1.00),
-                                                child: Consumer<ItemCartRepo>(
-                                                    builder: (context, cartItem,
-                                                        widget) {
+                                                alignment:
+                                                    const AlignmentDirectional(
+                                                        1.00, 1.00),
+                                                child:
+                                                    Builder(builder: (context) {
                                                   return FFButtonWidget(
                                                     onPressed: () async {
-                                                      print(cartItem
-                                                          .items.length);
+                                                      print(mp3Cart.length);
                                                       _model.addItem =
                                                           await MediaCartAddItemCall
                                                               .call(
@@ -1071,7 +1070,7 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                               builder:
                                                                   (alertDialogContext) {
                                                                 return AlertDialog(
-                                                                  title: Text(
+                                                                  title: const Text(
                                                                       'Message'),
                                                                   content: Text(
                                                                       getJsonField(
@@ -1085,7 +1084,7 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                                       onPressed:
                                                                           () =>
                                                                               Navigator.pop(alertDialogContext),
-                                                                      child: Text(
+                                                                      child: const Text(
                                                                           'Ok'),
                                                                     ),
                                                                   ],
@@ -1109,7 +1108,7 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                               builder:
                                                                   (alertDialogContext) {
                                                                 return AlertDialog(
-                                                                  title: Text(
+                                                                  title: const Text(
                                                                       'Message'),
                                                                   content: Text(
                                                                       getJsonField(
@@ -1123,7 +1122,7 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                                       onPressed:
                                                                           () =>
                                                                               Navigator.pop(alertDialogContext),
-                                                                      child: Text(
+                                                                      child: const Text(
                                                                           'Ok'),
                                                                     ),
                                                                   ],
@@ -1158,27 +1157,27 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                           builder:
                                                               (alertDialogContext) {
                                                             return AlertDialog(
-                                                              title:
-                                                                  Text('Error'),
-                                                              content: Text(
-                                                                  '請稍後再試一次'),
+                                                              title: const Text(
+                                                                  'Error'),
+                                                              content: const Text(
+                                                                  '請稍後再試一次internet no connection'),
                                                               actions: [
                                                                 TextButton(
                                                                   onPressed: () =>
                                                                       Navigator.pop(
                                                                           alertDialogContext),
-                                                                  child: Text(
-                                                                      'Ok'),
+                                                                  child:
+                                                                      const Text(
+                                                                          'Ok'),
                                                                 ),
                                                               ],
                                                             );
                                                           },
                                                         );
                                                       }
-                                                      bool isInCart = cartItem
-                                                          .items
+                                                      bool isInCart = mp3Cart
                                                           .any((element) =>
-                                                              element.id ==
+                                                              element.title ==
                                                               getJsonField(
                                                                 mp3Item,
                                                                 r'''$.title''',
@@ -1189,9 +1188,9 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                           builder: (BuildContext
                                                               context) {
                                                             return AlertDialog(
-                                                              title: Text(
+                                                              title: const Text(
                                                                   'Message'),
-                                                              content: Text(
+                                                              content: const Text(
                                                                   '這個商品已存在購物車 '),
                                                               actions: [
                                                                 TextButton(
@@ -1201,8 +1200,9 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                                             context)
                                                                         .pop();
                                                                   },
-                                                                  child: Text(
-                                                                      'Ok'),
+                                                                  child:
+                                                                      const Text(
+                                                                          'Ok'),
                                                                 ),
                                                               ],
                                                             );
@@ -1214,10 +1214,10 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                           builder: (BuildContext
                                                               context) {
                                                             return AlertDialog(
-                                                              title: Text(
+                                                              title: const Text(
                                                                   'Message'),
-                                                              content: Text(
-                                                                  '商品已成功添加'),
+                                                              content: const Text(
+                                                                  '商品已成功添加 '),
                                                               actions: [
                                                                 TextButton(
                                                                   onPressed:
@@ -1226,15 +1226,16 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                                             context)
                                                                         .pop();
                                                                   },
-                                                                  child: Text(
-                                                                      'Ok'),
+                                                                  child:
+                                                                      const Text(
+                                                                          'Ok'),
                                                                 ),
                                                               ],
                                                             );
                                                           },
                                                         );
 
-                                                        print(cartItem.items
+                                                        print(mp3Cart
                                                             .any((element) =>
                                                                 element.title ==
                                                                 getJsonField(
@@ -1242,7 +1243,7 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                                   r'''$.title''',
                                                                 )));
 
-                                                        if (cartItem.items.any(
+                                                        if (mp3Cart.any(
                                                                 (element) =>
                                                                     element
                                                                         .title ==
@@ -1251,38 +1252,12 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                                       r'''$.title''',
                                                                     )) ==
                                                             false) {
-                                                          Provider.of<ItemCartRepo>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .addItem(CartItem(
-                                                            name: getJsonField(
-                                                              mp3Item,
-                                                              r'''$.content''',
-                                                            ).toString(),
-                                                            id: getJsonField(
-                                                              mp3Item,
-                                                              r'''$.title''',
-                                                            ),
-                                                            price: getJsonField(
-                                                              mp3Item,
-                                                              r'''$.price''',
-                                                            ),
-                                                            title: getJsonField(
-                                                              mp3Item,
-                                                              r'''$.title''',
-                                                            ).toString(),
-                                                            category: '',
-                                                            pic: '',
-                                                            index: getJsonField(
-                                                                mp3Item,
-                                                                r'''$.index'''),
-                                                          ));
                                                         } else {}
 
                                                         setState(() {});
                                                       }
                                                     },
-                                                    text: cartItem.items.any(
+                                                    text: mp3Cart.any(
                                                       (element) =>
                                                           element.title ==
                                                           getJsonField(
@@ -1308,13 +1283,13 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                           const EdgeInsetsDirectional
                                                               .fromSTEB(0.0,
                                                               0.0, 0.0, 0.0),
-                                                      color: cartItem.items.any(
+                                                      color: mp3Cart.any(
                                                         (element) =>
                                                             element.title ==
                                                             getJsonField(
                                                               mp3Item,
                                                               r'''$.title''',
-                                                            ).toString(),
+                                                            ),
                                                       )
                                                           ? FlutterFlowTheme.of(
                                                                   context)
@@ -1356,8 +1331,9 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                             true,
                                           ))
                                             Align(
-                                              alignment: AlignmentDirectional(
-                                                  1.00, 1.00),
+                                              alignment:
+                                                  const AlignmentDirectional(
+                                                      1.00, 1.00),
                                               child: FFButtonWidget(
                                                 onPressed: () async {
                                                   context.pushNamed(
@@ -1382,17 +1358,19 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                   );
                                                 },
                                                 text: '播放',
-                                                icon: Icon(
+                                                icon: const Icon(
                                                   Icons.play_arrow,
                                                   size: 15,
                                                 ),
                                                 options: FFButtonOptions(
                                                   width: 230,
                                                   height: 40,
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(24, 0, 24, 0),
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          24, 0, 24, 0),
                                                   iconPadding:
-                                                      EdgeInsetsDirectional
+                                                      const EdgeInsetsDirectional
                                                           .fromSTEB(0, 0, 0, 0),
                                                   color: FlutterFlowTheme.of(
                                                           context)
@@ -1409,7 +1387,7 @@ class _Mp3PageWidgetState extends State<Mp3PageWidget>
                                                                 .info,
                                                       ),
                                                   elevation: 3,
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Colors.transparent,
                                                     width: 1,
                                                   ),

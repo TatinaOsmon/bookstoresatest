@@ -84,6 +84,21 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>pdfrx.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>permission_handler_apple-permission_handler_apple_privacy.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>permission_handler_apple.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>shared_preferences_ios.xcscheme</key>
 		<dict>
 			<key>isShown</key>

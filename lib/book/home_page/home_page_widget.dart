@@ -1,14 +1,9 @@
 import 'dart:convert';
-import 'dart:ui';
-
-import 'package:book_store/book/book_cart/book_cart_model.dart';
+import 'dart:developer';
 import 'package:book_store/models/cartItem.dart';
-import 'package:book_store/repositery/itemsCartRepo.dart';
 import 'package:connectivity_wrapper/connectivity_wrapper.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
-
 import '/auth/custom_auth/auth_util.dart';
 import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/flutter_flow_animations.dart';
@@ -36,6 +31,42 @@ class _HomePageWidgetState extends State<HomePageWidget>
     with TickerProviderStateMixin {
   List<dynamic> bookCategory = [];
   // /this is the sort method
+
+  List<CartItem> cartItems = [];
+  //fetchcart gets the data from the backend which helps as a temporary list, to store and check added items
+  fetchCart({required bool shouldRun}) async {
+    print('Status Code: $cartItems');
+    setState(() async {
+      if (shouldRun == true) {
+        await BookCartFindAllCall.call(
+          userId: currentUserData?.userId,
+          jwtToken: currentUserData?.jwtToken,
+          refreshToken: currentUserData?.refreshToken,
+        ).then((data) {
+          // cartItems = data.jsonBody;
+          List jsonDataCartList = data.jsonBody['Bookcart'];
+          cartItems = List.generate(
+              jsonDataCartList.length,
+              (index) => CartItem(
+                  id: jsonDataCartList[index]['id'],
+                  name: jsonDataCartList[index]['name'] ?? 'not specified',
+                  price: jsonDataCartList[index]['price'] ?? 0,
+                  title: jsonDataCartList[index]['title'] ?? 'not specified',
+                  category:
+                      jsonDataCartList[index]['category'] ?? 'not specified',
+                  pic: jsonDataCartList[index]['pic'] ?? 'not specified',
+                  index: jsonDataCartList[index]['index']));
+
+          print('Status Code: ${data.jsonBody}');
+        }).onError((error, stackTrace) {
+          print('Status Code: ${error.toString()}');
+          return null;
+        });
+        setState(() {});
+      }
+    });
+  }
+
   Future<void> fetchCategories() async {
     final response = await http
         .get(Uri.parse('https://ebookapi.shingonzo.com/bookCategory/findAll'));
@@ -120,6 +151,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
   void initState() {
     super.initState();
     _model = createModel(context, () => HomePageModel());
+    fetchCart(shouldRun: true);
     fetchCategories();
   }
 
@@ -127,11 +159,16 @@ class _HomePageWidgetState extends State<HomePageWidget>
   void dispose() {
     _model.dispose();
     // _cartModel.dispose();
+    cartItems.clear();
     super.dispose();
   }
 
+  //if it has pushed we clear the temporary cartItems list so it get reobtain when revisited
+  bool hasPushedtoScreentwo = false;
   @override
   Widget build(BuildContext context) {
+    fetchCart(shouldRun: hasPushedtoScreentwo);
+    log(cartItems.length.toString());
     _model = createModel(context, () => HomePageModel());
     if (isiOS) {
       SystemChrome.setSystemUIOverlayStyle(
@@ -185,6 +222,8 @@ class _HomePageWidgetState extends State<HomePageWidget>
                     size: 35.0,
                   ),
                   onPressed: () async {
+                    hasPushedtoScreentwo = true;
+                    cartItems.clear();
                     context.pushNamed('BookCart');
                   },
                 ),
@@ -533,12 +572,10 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                             alignment:
                                                 const AlignmentDirectional(
                                                     1.00, 1.00),
-                                            child: Consumer<ItemCartRepo>(
-                                                builder: (context, cartItem,
-                                                    widget) {
-                                              bool isInCart = cartItem.items
-                                                  .any((element) =>
-                                                      element.id ==
+                                            child: Builder(builder: (context) {
+                                              bool isInCart = cartItems.any(
+                                                  (element) =>
+                                                      element.title ==
                                                       getJsonField(
                                                           bookCategoryItem,
                                                           r'''$.title'''));
@@ -546,6 +583,32 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                 onPressed: () async {
                                                   if (await ConnectivityWrapper
                                                       .instance.isConnected) {
+                                                    cartItems.add(CartItem(
+                                                      name: getJsonField(
+                                                        bookCategoryItem,
+                                                        r'''$.content''',
+                                                      ).toString(),
+                                                      id: getJsonField(
+                                                        bookCategoryItem,
+                                                        r'''$.id''',
+                                                      ),
+                                                      price: getJsonField(
+                                                        bookCategoryItem,
+                                                        r'''$.price''',
+                                                      ),
+                                                      title: getJsonField(
+                                                        bookCategoryItem,
+                                                        r'''$.title''',
+                                                      ).toString(),
+                                                      category: '',
+                                                      pic: getJsonField(
+                                                        bookCategoryItem,
+                                                        r'''$.pic''',
+                                                      ).toString(),
+                                                      index: getJsonField(
+                                                          bookCategoryItem,
+                                                          r'''$.index'''),
+                                                    ));
                                                     _model.addItem =
                                                         await BookCartAddItemCall
                                                             .call(
@@ -725,35 +788,35 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                         },
                                                       );
 
-                                                      Provider.of<ItemCartRepo>(
-                                                              context,
-                                                              listen: false)
-                                                          .addItem(CartItem(
-                                                        name: getJsonField(
-                                                          bookCategoryItem,
-                                                          r'''$.content''',
-                                                        ).toString(),
-                                                        id: getJsonField(
-                                                          bookCategoryItem,
-                                                          r'''$.id''',
-                                                        ),
-                                                        price: getJsonField(
-                                                          bookCategoryItem,
-                                                          r'''$.price''',
-                                                        ),
-                                                        title: getJsonField(
-                                                          bookCategoryItem,
-                                                          r'''$.title''',
-                                                        ).toString(),
-                                                        category: '',
-                                                        pic: getJsonField(
-                                                          bookCategoryItem,
-                                                          r'''$.pic''',
-                                                        ).toString(),
-                                                        index: getJsonField(
-                                                            bookCategoryItem,
-                                                            r'''$.index'''),
-                                                      ));
+                                                      // Provider.of<ItemCartRepo>(
+                                                      //         context,
+                                                      //         listen: false)
+                                                      //     .addItem(CartItem(
+                                                      //   name: getJsonField(
+                                                      //     bookCategoryItem,
+                                                      //     r'''$.content''',
+                                                      //   ).toString(),
+                                                      //   id: getJsonField(
+                                                      //     bookCategoryItem,
+                                                      //     r'''$.id''',
+                                                      //   ),
+                                                      //   price: getJsonField(
+                                                      //     bookCategoryItem,
+                                                      //     r'''$.price''',
+                                                      //   ),
+                                                      //   title: getJsonField(
+                                                      //     bookCategoryItem,
+                                                      //     r'''$.title''',
+                                                      //   ).toString(),
+                                                      //   category: '',
+                                                      //   pic: getJsonField(
+                                                      //     bookCategoryItem,
+                                                      //     r'''$.pic''',
+                                                      //   ).toString(),
+                                                      //   index: getJsonField(
+                                                      //       bookCategoryItem,
+                                                      //       r'''$.index'''),
+                                                      // ));
                                                     }
 
                                                     setState(() {});
@@ -781,18 +844,11 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                     );
                                                   }
 
-                                                  print(cartItem.items.length);
+                                                  print(cartItems.length);
                                                 },
-                                                text: cartItem.items
-                                                            .any((element) =>
-                                                                element.id ==
-                                                                getJsonField(
-                                                                  bookCategoryItem,
-                                                                  r'''$.title''',
-                                                                )) ==
-                                                        false
-                                                    ? '加入購物車'
-                                                    : '已在購物車中',
+                                                text: isInCart
+                                                    ? '已在購物車中'
+                                                    : '加入購物車',
                                                 icon: const Icon(
                                                   Icons
                                                       .add_shopping_cart_outlined,

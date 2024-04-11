@@ -1,3 +1,4 @@
+import 'package:book_store/book/book_intro/book_intro_widget.dart';
 import 'package:book_store/commonViewModel.dart/book_version_viewModel.dart';
 
 import '/auth/custom_auth/auth_util.dart';
@@ -167,7 +168,7 @@ class _BookPageWidgetState extends State<BookPageWidget>
                 padding:
                     const EdgeInsetsDirectional.fromSTEB(0.0, 15.0, 0.0, 0.0),
                 child: Text(
-                  '書籍',
+                  '書籍.',
                   textAlign: TextAlign.center,
                   style: FlutterFlowTheme.of(context).headlineMedium.override(
                         fontFamily: 'Outfit',
@@ -561,12 +562,12 @@ class _BookPageWidgetState extends State<BookPageWidget>
                                                         children: [
                                                           Padding(
                                                             padding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
-                                                                        0.0,
-                                                                        0.0,
-                                                                        15.0,
-                                                                        0.0),
+                                                                    0.0,
+                                                                    0.0,
+                                                                    15.0,
+                                                                    0.0),
                                                             child: ClipRRect(
                                                               borderRadius:
                                                                   BorderRadius
@@ -824,69 +825,84 @@ class _BookPageWidgetState extends State<BookPageWidget>
                                                                                   true,
                                                                               true,
                                                                             ))
-                                                                              FFButtonWidget(
-                                                                                onPressed: () async {
-                                                                                  context.pushNamed(
-                                                                                    'BookIntro',
-                                                                                    queryParameters: {
-                                                                                      'bookTitle': serializeParam(
-                                                                                        getJsonField(
-                                                                                          bookItem,
-                                                                                          r'''$.title''',
-                                                                                        ).toString(),
-                                                                                        ParamType.String,
+                                                                              FutureBuilder(
+                                                                                  future: checkIfDownloaded('${getJsonField(
+                                                                                    bookItem,
+                                                                                    r'''$.title''',
+                                                                                  ).toString()}.pdf'),
+                                                                                  builder: (context, isDownloadedSnapshot) {
+                                                                                    return FFButtonWidget(
+                                                                                      onPressed: () async {
+                                                                                        context
+                                                                                            .pushNamed(
+                                                                                          'BookIntro',
+                                                                                          queryParameters: {
+                                                                                            'bookTitle': serializeParam(
+                                                                                              getJsonField(
+                                                                                                bookItem,
+                                                                                                r'''$.title''',
+                                                                                              ).toString(),
+                                                                                              ParamType.String,
+                                                                                            ),
+                                                                                            'bookContent': serializeParam(
+                                                                                              getJsonField(
+                                                                                                bookItem,
+                                                                                                r'''$.content''',
+                                                                                              ).toString(),
+                                                                                              ParamType.String,
+                                                                                            ),
+                                                                                            'bookCategoryPic': serializeParam(
+                                                                                              widget.bookCategoryPic,
+                                                                                              ParamType.String,
+                                                                                            ),
+                                                                                            'productId': serializeParam(
+                                                                                              getJsonField(
+                                                                                                bookItem,
+                                                                                                r'''$.productId''',
+                                                                                              ),
+                                                                                              ParamType.int,
+                                                                                            ),
+                                                                                            'bookPic': serializeParam(
+                                                                                              getJsonField(
+                                                                                                bookItem,
+                                                                                                r'''$.pic''',
+                                                                                              ),
+                                                                                              ParamType.String,
+                                                                                            ),
+                                                                                          }.withoutNulls,
+                                                                                        )
+                                                                                            .then((value) {
+                                                                                          setState(() {});
+                                                                                        });
+                                                                                      },
+                                                                                      text: '閱讀',
+                                                                                      icon: const Icon(
+                                                                                        Icons.menu_book,
+                                                                                        size: 15.0,
                                                                                       ),
-                                                                                      'bookContent': serializeParam(
-                                                                                        getJsonField(
-                                                                                          bookItem,
-                                                                                          r'''$.content''',
-                                                                                        ).toString(),
-                                                                                        ParamType.String,
-                                                                                      ),
-                                                                                      'bookCategoryPic': serializeParam(
-                                                                                        widget.bookCategoryPic,
-                                                                                        ParamType.String,
-                                                                                      ),
-                                                                                      'productId': serializeParam(
-                                                                                        getJsonField(
-                                                                                          bookItem,
-                                                                                          r'''$.productId''',
+                                                                                      options: FFButtonOptions(
+                                                                                        width: 230.0,
+                                                                                        height: 40.0,
+                                                                                        padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                                                                                        iconPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                                                                        color: isDownloadedSnapshot.hasData == false
+                                                                                            ? FlutterFlowTheme.of(context).secondary
+                                                                                            : isDownloadedSnapshot.data!.keys.first
+                                                                                                ? Colors.blueAccent
+                                                                                                : FlutterFlowTheme.of(context).secondary,
+                                                                                        textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                                                                                              fontFamily: 'Readex Pro',
+                                                                                              color: FlutterFlowTheme.of(context).info,
+                                                                                            ),
+                                                                                        elevation: 3.0,
+                                                                                        borderSide: const BorderSide(
+                                                                                          color: Colors.transparent,
+                                                                                          width: 1.0,
                                                                                         ),
-                                                                                        ParamType.int,
+                                                                                        borderRadius: BorderRadius.circular(48.0),
                                                                                       ),
-                                                                                      'bookPic': serializeParam(
-                                                                                        getJsonField(
-                                                                                          bookItem,
-                                                                                          r'''$.pic''',
-                                                                                        ),
-                                                                                        ParamType.String,
-                                                                                      ),
-                                                                                    }.withoutNulls,
-                                                                                  );
-                                                                                },
-                                                                                text: '閱讀',
-                                                                                icon: const Icon(
-                                                                                  Icons.menu_book,
-                                                                                  size: 15.0,
-                                                                                ),
-                                                                                options: FFButtonOptions(
-                                                                                  width: 230.0,
-                                                                                  height: 40.0,
-                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
-                                                                                  iconPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                                                                  color: FlutterFlowTheme.of(context).secondary,
-                                                                                  textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                                                                        fontFamily: 'Readex Pro',
-                                                                                        color: FlutterFlowTheme.of(context).info,
-                                                                                      ),
-                                                                                  elevation: 3.0,
-                                                                                  borderSide: const BorderSide(
-                                                                                    color: Colors.transparent,
-                                                                                    width: 1.0,
-                                                                                  ),
-                                                                                  borderRadius: BorderRadius.circular(48.0),
-                                                                                ),
-                                                                              ).animateOnPageLoad(animationsMap['buttonOnPageLoadAnimation2']!),
+                                                                                    ).animateOnPageLoad(animationsMap['buttonOnPageLoadAnimation2']!);
+                                                                                  }),
                                                                           ],
                                                                         ),
                                                                       ],
@@ -968,12 +984,12 @@ class _BookPageWidgetState extends State<BookPageWidget>
           key: scaffoldKey,
           backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
           appBar: PreferredSize(
-            preferredSize: Size.fromHeight(65),
+            preferredSize: const Size.fromHeight(65),
             child: AppBar(
               backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
               automaticallyImplyLeading: false,
               leading: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(15, 10, 0, 0),
+                padding: const EdgeInsetsDirectional.fromSTEB(15, 10, 0, 0),
                 child: FlutterFlowIconButton(
                   borderColor: Colors.transparent,
                   borderRadius: 30,
@@ -990,7 +1006,7 @@ class _BookPageWidgetState extends State<BookPageWidget>
                 ),
               ),
               title: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
                 child: Text(
                   '書籍',
                   textAlign: TextAlign.center,
@@ -1027,13 +1043,14 @@ class _BookPageWidgetState extends State<BookPageWidget>
           body: SafeArea(
             top: true,
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 95),
+              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 95),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(15, 15, 15, 15),
+                      padding:
+                          const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 15),
                       child: Container(
                         width: MediaQuery.sizeOf(context).width,
                         decoration: BoxDecoration(
@@ -1041,8 +1058,8 @@ class _BookPageWidgetState extends State<BookPageWidget>
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Padding(
-                          padding:
-                              EdgeInsetsDirectional.fromSTEB(15, 15, 15, 15),
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                              15, 15, 15, 15),
                           child: SingleChildScrollView(
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
@@ -1058,8 +1075,8 @@ class _BookPageWidgetState extends State<BookPageWidget>
                                   clipBehavior: Clip.none,
                                   children: [
                                     Align(
-                                      alignment:
-                                          AlignmentDirectional(-1.00, 0.00),
+                                      alignment: const AlignmentDirectional(
+                                          -1.00, 0.00),
                                       child: Text(
                                         valueOrDefault<String>(
                                           widget.bookCategoryTitle,
@@ -1076,12 +1093,11 @@ class _BookPageWidgetState extends State<BookPageWidget>
                                     ),
                                     if (widget.bookCategoryPurchased == false)
                                       Align(
-                                        alignment:
-                                            AlignmentDirectional(-1.00, 0.00),
+                                        alignment: const AlignmentDirectional(
+                                            -1.00, 0.00),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0, 0, 22, 0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(0, 0, 22, 0),
                                           child: Text(
                                             '\$${valueOrDefault<String>(
                                               widget.bookCategoryPrice
@@ -1100,215 +1116,214 @@ class _BookPageWidgetState extends State<BookPageWidget>
                                           ),
                                         ),
                                       ),
-                                    if (widget.bookCategoryPurchased == false)
-                                      Align(
-                                        alignment:
-                                            AlignmentDirectional(1.00, 0.00),
-                                        child: FFButtonWidget(
-                                          onPressed: () async {
-                                            _model.bookCategoryAddItem =
-                                                await BookCartAddItemCall.call(
-                                              userId: currentUserData?.userId,
-                                              productId: widget.bookCategoryId,
-                                              tableName: 'bookCategory',
-                                              jwtToken:
-                                                  currentAuthenticationToken,
-                                              refreshToken:
-                                                  currentUserData?.refreshToken,
-                                            );
-                                            if ((_model.bookCategoryAddItem
-                                                    ?.succeeded ??
-                                                true)) {
-                                              // 有沒有success
-                                              // 如果有success代表他的登入有狀況
-                                              if (getJsonField(
-                                                    (_model.bookCategoryAddItem
-                                                            ?.jsonBody ??
-                                                        ''),
-                                                    r'''$.success''',
-                                                  ) !=
-                                                  null) {
-                                                FFAppState().success =
-                                                    getJsonField(
-                                                  (_model.bookCategoryAddItem
-                                                          ?.jsonBody ??
-                                                      ''),
-                                                  r'''$.success''',
-                                                );
-                                                if (FFAppState().success ==
-                                                    true) {
-                                                  await showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (alertDialogContext) {
-                                                      return AlertDialog(
-                                                        title: Text('Message'),
-                                                        content: Text(
-                                                            BookCartAddItemCall
-                                                                .message(
-                                                          (_model.bookCategoryAddItem
-                                                                  ?.jsonBody ??
-                                                              ''),
-                                                        ).toString()),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () =>
-                                                                Navigator.pop(
-                                                                    alertDialogContext),
-                                                            child: Text('Ok'),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                  GoRouter.of(context)
-                                                      .prepareAuthEvent();
-                                                  await authManager.signOut();
-                                                  GoRouter.of(context)
-                                                      .clearRedirectLocation();
+                                    // if (widget.bookCategoryPurchased == false)
+                                    //   Align(
+                                    //     alignment:
+                                    //         AlignmentDirectional(1.00, 0.00),
+                                    //     child: FFButtonWidget(
+                                    //       onPressed: () async {
+                                    //         _model.bookCategoryAddItem =
+                                    //             await BookCartAddItemCall.call(
+                                    //           userId: currentUserData?.userId,
+                                    //           productId: widget.bookCategoryId,
+                                    //           tableName: 'bookCategory',
+                                    //           jwtToken:
+                                    //               currentAuthenticationToken,
+                                    //           refreshToken:
+                                    //               currentUserData?.refreshToken,
+                                    //         );
+                                    //         if ((_model.bookCategoryAddItem
+                                    //                 ?.succeeded ??
+                                    //             true)) {
+                                    //           // 有沒有success
+                                    //           // 如果有success代表他的登入有狀況
+                                    //           if (getJsonField(
+                                    //                 (_model.bookCategoryAddItem
+                                    //                         ?.jsonBody ??
+                                    //                     ''),
+                                    //                 r'''$.success''',
+                                    //               ) !=
+                                    //               null) {
+                                    //             FFAppState().success =
+                                    //                 getJsonField(
+                                    //               (_model.bookCategoryAddItem
+                                    //                       ?.jsonBody ??
+                                    //                   ''),
+                                    //               r'''$.success''',
+                                    //             );
+                                    //             if (FFAppState().success ==
+                                    //                 true) {
+                                    //               await showDialog(
+                                    //                 context: context,
+                                    //                 builder:
+                                    //                     (alertDialogContext) {
+                                    //                   return AlertDialog(
+                                    //                     title: Text('Message'),
+                                    //                     content: Text(
+                                    //                         BookCartAddItemCall
+                                    //                             .message(
+                                    //                       (_model.bookCategoryAddItem
+                                    //                               ?.jsonBody ??
+                                    //                           ''),
+                                    //                     ).toString()),
+                                    //                     actions: [
+                                    //                       TextButton(
+                                    //                         onPressed: () =>
+                                    //                             Navigator.pop(
+                                    //                                 alertDialogContext),
+                                    //                         child: Text('Ok'),
+                                    //                       ),
+                                    //                     ],
+                                    //                   );
+                                    //                 },
+                                    //               );
+                                    //               GoRouter.of(context)
+                                    //                   .prepareAuthEvent();
+                                    //               await authManager.signOut();
+                                    //               GoRouter.of(context)
+                                    //                   .clearRedirectLocation();
 
-                                                  context.pushNamedAuth(
-                                                      'login', context.mounted);
-                                                } else {
-                                                  await showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (alertDialogContext) {
-                                                      return AlertDialog(
-                                                        title: Text('Message'),
-                                                        content: Text(
-                                                            BookCartAddItemCall
-                                                                .message(
-                                                          (_model.bookCategoryAddItem
-                                                                  ?.jsonBody ??
-                                                              ''),
-                                                        ).toString()),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () =>
-                                                                Navigator.pop(
-                                                                    alertDialogContext),
-                                                            child: Text('Ok'),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                  setState(() {
-                                                    FFAppState().token =
-                                                        getJsonField(
-                                                      (_model.bookCategoryAddItem
-                                                              ?.jsonBody ??
-                                                          ''),
-                                                      r'''$.jwtToken''',
-                                                    ).toString();
-                                                  });
-                                                }
-                                              } else {
-                                                await showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (alertDialogContext) {
-                                                    return AlertDialog(
-                                                      title: Text('Message'),
-                                                      content: Text(
-                                                          BookCartAddItemCall
-                                                              .message(
-                                                        (_model.bookCategoryAddItem
-                                                                ?.jsonBody ??
-                                                            ''),
-                                                      ).toString()),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () =>
-                                                              Navigator.pop(
-                                                                  alertDialogContext),
-                                                          child: Text('Ok'),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                                setState(() {
-                                                  FFAppState().token =
-                                                      getJsonField(
-                                                    (_model.bookCategoryAddItem
-                                                            ?.jsonBody ??
-                                                        ''),
-                                                    r'''$.jwtToken''',
-                                                  ).toString();
-                                                });
-                                              }
-                                            } else {
-                                              await showDialog(
-                                                context: context,
-                                                builder: (alertDialogContext) {
-                                                  return AlertDialog(
-                                                    title: Text('Error'),
-                                                    content: Text('請稍後再試一次'),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () =>
-                                                            Navigator.pop(
-                                                                alertDialogContext),
-                                                        child: Text('Ok'),
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                            }
+                                    //               context.pushNamedAuth(
+                                    //                   'login', context.mounted);
+                                    //             } else {
+                                    //               await showDialog(
+                                    //                 context: context,
+                                    //                 builder:
+                                    //                     (alertDialogContext) {
+                                    //                   return AlertDialog(
+                                    //                     title: Text('Message'),
+                                    //                     content: Text(
+                                    //                         BookCartAddItemCall
+                                    //                             .message(
+                                    //                       (_model.bookCategoryAddItem
+                                    //                               ?.jsonBody ??
+                                    //                           ''),
+                                    //                     ).toString()),
+                                    //                     actions: [
+                                    //                       TextButton(
+                                    //                         onPressed: () =>
+                                    //                             Navigator.pop(
+                                    //                                 alertDialogContext),
+                                    //                         child: Text('Ok'),
+                                    //                       ),
+                                    //                     ],
+                                    //                   );
+                                    //                 },
+                                    //               );
+                                    //               setState(() {
+                                    //                 FFAppState().token =
+                                    //                     getJsonField(
+                                    //                   (_model.bookCategoryAddItem
+                                    //                           ?.jsonBody ??
+                                    //                       ''),
+                                    //                   r'''$.jwtToken''',
+                                    //                 ).toString();
+                                    //               });
+                                    //             }
+                                    //           } else {
+                                    //             await showDialog(
+                                    //               context: context,
+                                    //               builder:
+                                    //                   (alertDialogContext) {
+                                    //                 return AlertDialog(
+                                    //                   title: Text('Message'),
+                                    //                   content: Text(
+                                    //                       BookCartAddItemCall
+                                    //                           .message(
+                                    //                     (_model.bookCategoryAddItem
+                                    //                             ?.jsonBody ??
+                                    //                         ''),
+                                    //                   ).toString()),
+                                    //                   actions: [
+                                    //                     TextButton(
+                                    //                       onPressed: () =>
+                                    //                           Navigator.pop(
+                                    //                               alertDialogContext),
+                                    //                       child: Text('Ok'),
+                                    //                     ),
+                                    //                   ],
+                                    //                 );
+                                    //               },
+                                    //             );
+                                    //             setState(() {
+                                    //               FFAppState().token =
+                                    //                   getJsonField(
+                                    //                 (_model.bookCategoryAddItem
+                                    //                         ?.jsonBody ??
+                                    //                     ''),
+                                    //                 r'''$.jwtToken''',
+                                    //               ).toString();
+                                    //             });
+                                    //           }
+                                    //         } else {
+                                    //           await showDialog(
+                                    //             context: context,
+                                    //             builder: (alertDialogContext) {
+                                    //               return AlertDialog(
+                                    //                 title: Text('Error'),
+                                    //                 content: Text('請稍後再試一次'),
+                                    //                 actions: [
+                                    //                   TextButton(
+                                    //                     onPressed: () =>
+                                    //                         Navigator.pop(
+                                    //                             alertDialogContext),
+                                    //                     child: Text('Ok'),
+                                    //                   ),
+                                    //                 ],
+                                    //               );
+                                    //             },
+                                    //           );
+                                    //         }
 
-                                            setState(() {});
-                                          },
-                                          text: '加入購物車',
-                                          icon: Icon(
-                                            Icons.add_shopping_cart_outlined,
-                                            size: 15,
-                                          ),
-                                          options: FFButtonOptions(
-                                            width: 230,
-                                            height: 40,
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    24, 0, 24, 0),
-                                            iconPadding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0, 0, 0, 0),
-                                            color: FlutterFlowTheme.of(context)
-                                                .primaryText,
-                                            textStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .titleSmall
-                                                    .override(
-                                                      fontFamily: 'Readex Pro',
-                                                      color: FlutterFlowTheme
-                                                              .of(context)
-                                                          .secondaryBackground,
-                                                    ),
-                                            elevation: 3,
-                                            borderSide: BorderSide(
-                                              color: Colors.transparent,
-                                              width: 1,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(48),
-                                          ),
-                                        ),
-                                      ),
+                                    //         setState(() {});
+                                    //       },
+                                    //       text: '加入購物車,,,,',
+                                    //       // icon: Icon(
+                                    //       //   Icons.add_shopping_cart_outlined,
+                                    //       //   size: 15,
+                                    //       // ),
+                                    //       options: FFButtonOptions(
+                                    //         width: 230,
+                                    //         height: 40,
+                                    //         padding:
+                                    //             EdgeInsetsDirectional.fromSTEB(
+                                    //                 24, 0, 24, 0),
+                                    //         iconPadding:
+                                    //             EdgeInsetsDirectional.fromSTEB(
+                                    //                 0, 0, 0, 0),
+                                    //         color: FlutterFlowTheme.of(context)
+                                    //             .primaryText,
+                                    //         textStyle:
+                                    //             FlutterFlowTheme.of(context)
+                                    //                 .titleSmall
+                                    //                 .override(
+                                    //                   fontFamily: 'Readex Pro',
+                                    //                   color: FlutterFlowTheme
+                                    //                           .of(context)
+                                    //                       .secondaryBackground,
+                                    //                 ),
+                                    //         elevation: 3,
+                                    //         borderSide: BorderSide(
+                                    //           color: Colors.transparent,
+                                    //           width: 1,
+                                    //         ),
+                                    //         borderRadius:
+                                    //             BorderRadius.circular(48),
+                                    //       ),
+                                    //     ),
+                                    //),
                                   ],
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0, 0, 0, 15),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
                                       Expanded(
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0, 15, 0, 0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(0, 15, 0, 0),
                                           child: Text(
                                             valueOrDefault<String>(
                                               widget.bookCategoryContent,
@@ -1367,8 +1382,10 @@ class _BookPageWidgetState extends State<BookPageWidget>
                                                 final bookItem =
                                                     book[bookIndex];
                                                 return Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(0, 0, 0, 15),
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          0, 0, 0, 15),
                                                   child: Container(
                                                     width: MediaQuery.sizeOf(
                                                             context)
@@ -1383,9 +1400,9 @@ class _BookPageWidgetState extends State<BookPageWidget>
                                                     ),
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(15, 15,
-                                                                  15, 15),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                              15, 15, 15, 15),
                                                       child: Row(
                                                         mainAxisSize:
                                                             MainAxisSize.max,
@@ -1443,7 +1460,7 @@ class _BookPageWidgetState extends State<BookPageWidget>
                                                                               crossAxisAlignment: CrossAxisAlignment.start,
                                                                               children: [
                                                                                 Padding(
-                                                                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 7),
+                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 7),
                                                                                   child: Text(
                                                                                     getJsonField(
                                                                                       bookItem,
@@ -1515,14 +1532,14 @@ class _BookPageWidgetState extends State<BookPageWidget>
                                                                                           context: context,
                                                                                           builder: (alertDialogContext) {
                                                                                             return AlertDialog(
-                                                                                              title: Text('Message'),
+                                                                                              title: const Text('Message'),
                                                                                               content: Text(BookCartAddItemCall.message(
                                                                                                 (_model.addItem?.jsonBody ?? ''),
                                                                                               ).toString()),
                                                                                               actions: [
                                                                                                 TextButton(
                                                                                                   onPressed: () => Navigator.pop(alertDialogContext),
-                                                                                                  child: Text('Ok'),
+                                                                                                  child: const Text('Ok'),
                                                                                                 ),
                                                                                               ],
                                                                                             );
@@ -1538,14 +1555,14 @@ class _BookPageWidgetState extends State<BookPageWidget>
                                                                                           context: context,
                                                                                           builder: (alertDialogContext) {
                                                                                             return AlertDialog(
-                                                                                              title: Text('Message'),
+                                                                                              title: const Text('Message'),
                                                                                               content: Text(BookCartAddItemCall.message(
                                                                                                 (_model.addItem?.jsonBody ?? ''),
                                                                                               ).toString()),
                                                                                               actions: [
                                                                                                 TextButton(
                                                                                                   onPressed: () => Navigator.pop(alertDialogContext),
-                                                                                                  child: Text('Ok'),
+                                                                                                  child: const Text('Ok'),
                                                                                                 ),
                                                                                               ],
                                                                                             );
@@ -1563,14 +1580,14 @@ class _BookPageWidgetState extends State<BookPageWidget>
                                                                                         context: context,
                                                                                         builder: (alertDialogContext) {
                                                                                           return AlertDialog(
-                                                                                            title: Text('Message'),
+                                                                                            title: const Text('Message'),
                                                                                             content: Text(BookCartAddItemCall.message(
                                                                                               (_model.addItem?.jsonBody ?? ''),
                                                                                             ).toString()),
                                                                                             actions: [
                                                                                               TextButton(
                                                                                                 onPressed: () => Navigator.pop(alertDialogContext),
-                                                                                                child: Text('Ok'),
+                                                                                                child: const Text('Ok'),
                                                                                               ),
                                                                                             ],
                                                                                           );
@@ -1588,12 +1605,12 @@ class _BookPageWidgetState extends State<BookPageWidget>
                                                                                       context: context,
                                                                                       builder: (alertDialogContext) {
                                                                                         return AlertDialog(
-                                                                                          title: Text('Error'),
-                                                                                          content: Text('請稍後再試一次'),
+                                                                                          title: const Text('Error'),
+                                                                                          content: const Text('請稍後再試一次'),
                                                                                           actions: [
                                                                                             TextButton(
                                                                                               onPressed: () => Navigator.pop(alertDialogContext),
-                                                                                              child: Text('Ok'),
+                                                                                              child: const Text('Ok'),
                                                                                             ),
                                                                                           ],
                                                                                         );
@@ -1604,22 +1621,22 @@ class _BookPageWidgetState extends State<BookPageWidget>
                                                                                   setState(() {});
                                                                                 },
                                                                                 text: '加入購物車',
-                                                                                icon: Icon(
+                                                                                icon: const Icon(
                                                                                   Icons.add_shopping_cart_outlined,
                                                                                   size: 15,
                                                                                 ),
                                                                                 options: FFButtonOptions(
                                                                                   width: 190,
                                                                                   height: 40,
-                                                                                  padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                                                                                  iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+                                                                                  iconPadding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                                                                                   color: FlutterFlowTheme.of(context).primary,
                                                                                   textStyle: FlutterFlowTheme.of(context).titleSmall.override(
                                                                                         fontFamily: 'Readex Pro',
                                                                                         color: FlutterFlowTheme.of(context).info,
                                                                                       ),
                                                                                   elevation: 3,
-                                                                                  borderSide: BorderSide(
+                                                                                  borderSide: const BorderSide(
                                                                                     color: Colors.transparent,
                                                                                     width: 1,
                                                                                   ),
@@ -1634,77 +1651,93 @@ class _BookPageWidgetState extends State<BookPageWidget>
                                                                                   true,
                                                                               true,
                                                                             ))
-                                                                              FFButtonWidget(
-                                                                                onPressed: () async {
-                                                                                  context.pushNamed(
-                                                                                    'BookIntro',
-                                                                                    queryParameters: {
-                                                                                      'bookTitle': serializeParam(
-                                                                                        getJsonField(
-                                                                                          bookItem,
-                                                                                          r'''$.title''',
-                                                                                        ).toString(),
-                                                                                        ParamType.String,
+                                                                              FutureBuilder(
+                                                                                  future: checkIfDownloaded('${getJsonField(
+                                                                                    bookItem,
+                                                                                    r'''$.title''',
+                                                                                  ).toString()}.pdf'),
+                                                                                  builder: (context, isDownloadedSnapshot) {
+                                                                                    return FFButtonWidget(
+                                                                                      onPressed: () async {
+                                                                                        context
+                                                                                            .pushNamed(
+                                                                                          'BookIntro',
+                                                                                          queryParameters: {
+                                                                                            'bookTitle': serializeParam(
+                                                                                              getJsonField(
+                                                                                                bookItem,
+                                                                                                r'''$.title''',
+                                                                                              ).toString(),
+                                                                                              ParamType.String,
+                                                                                            ),
+                                                                                            'bookContent': serializeParam(
+                                                                                              getJsonField(
+                                                                                                bookItem,
+                                                                                                r'''$.content''',
+                                                                                              ).toString(),
+                                                                                              ParamType.String,
+                                                                                            ),
+                                                                                            'bookCategoryPic': serializeParam(
+                                                                                              widget.bookCategoryPic,
+                                                                                              ParamType.String,
+                                                                                            ),
+                                                                                            'productId': serializeParam(
+                                                                                              getJsonField(
+                                                                                                bookItem,
+                                                                                                r'''$.productId''',
+                                                                                              ),
+                                                                                              ParamType.int,
+                                                                                            ),
+                                                                                            'bookPic': serializeParam(
+                                                                                              getJsonField(
+                                                                                                bookItem,
+                                                                                                r'''$.pic''',
+                                                                                              ),
+                                                                                              ParamType.String,
+                                                                                            ),
+                                                                                          }.withoutNulls,
+                                                                                        )
+                                                                                            .then((value) {
+                                                                                          setState(() {});
+                                                                                        });
+                                                                                      },
+                                                                                      text: '閱讀',
+                                                                                      icon: const Icon(
+                                                                                        Icons.menu_book,
+                                                                                        size: 15,
                                                                                       ),
-                                                                                      'bookContent': serializeParam(
-                                                                                        getJsonField(
-                                                                                          bookItem,
-                                                                                          r'''$.content''',
-                                                                                        ).toString(),
-                                                                                        ParamType.String,
-                                                                                      ),
-                                                                                      'bookCategoryPic': serializeParam(
-                                                                                        widget.bookCategoryPic,
-                                                                                        ParamType.String,
-                                                                                      ),
-                                                                                      'productId': serializeParam(
-                                                                                        getJsonField(
-                                                                                          bookItem,
-                                                                                          r'''$.productId''',
+                                                                                      options: FFButtonOptions(
+                                                                                        width: 190,
+                                                                                        height: 40,
+                                                                                        padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+                                                                                        iconPadding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                                                                                        color: isDownloadedSnapshot.hasData == false
+                                                                                            ? FlutterFlowTheme.of(context).secondary
+                                                                                            : isDownloadedSnapshot.data!.keys.first
+                                                                                                ? Colors.blueAccent
+                                                                                                : FlutterFlowTheme.of(context).secondary,
+                                                                                        textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                                                                                              fontFamily: 'Readex Pro',
+                                                                                              color: FlutterFlowTheme.of(context).info,
+                                                                                            ),
+                                                                                        elevation: 3,
+                                                                                        borderSide: const BorderSide(
+                                                                                          color: Colors.transparent,
+                                                                                          width: 1,
                                                                                         ),
-                                                                                        ParamType.int,
+                                                                                        borderRadius: BorderRadius.circular(48),
                                                                                       ),
-                                                                                      'bookPic': serializeParam(
-                                                                                        getJsonField(
-                                                                                          bookItem,
-                                                                                          r'''$.pic''',
-                                                                                        ),
-                                                                                        ParamType.String,
-                                                                                      ),
-                                                                                    }.withoutNulls,
-                                                                                  );
-                                                                                },
-                                                                                text: '閱讀',
-                                                                                icon: Icon(
-                                                                                  Icons.menu_book,
-                                                                                  size: 15,
-                                                                                ),
-                                                                                options: FFButtonOptions(
-                                                                                  width: 190,
-                                                                                  height: 40,
-                                                                                  padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                                                                                  iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                                                                                  color: FlutterFlowTheme.of(context).secondary,
-                                                                                  textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                                                                        fontFamily: 'Readex Pro',
-                                                                                        color: FlutterFlowTheme.of(context).info,
-                                                                                      ),
-                                                                                  elevation: 3,
-                                                                                  borderSide: BorderSide(
-                                                                                    color: Colors.transparent,
-                                                                                    width: 1,
-                                                                                  ),
-                                                                                  borderRadius: BorderRadius.circular(48),
-                                                                                ),
-                                                                              ).animateOnPageLoad(animationsMap['buttonOnPageLoadAnimation2']!),
+                                                                                    ).animateOnPageLoad(animationsMap['buttonOnPageLoadAnimation2']!);
+                                                                                  }),
                                                                           ],
                                                                         ),
                                                                       ],
                                                                     ),
                                                                   ),
                                                                   Padding(
-                                                                    padding: EdgeInsetsDirectional
-                                                                        .fromSTEB(
+                                                                    padding:
+                                                                        const EdgeInsetsDirectional
+                                                                            .fromSTEB(
                                                                             0,
                                                                             10,
                                                                             0,

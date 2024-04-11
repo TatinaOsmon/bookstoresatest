@@ -549,7 +549,7 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                                                       15.0, 0.0, 15.0, 0.0),
                                               child: Text(
                                                 dateTimeFormat(
-                                                  'yMMMd',
+                                                  'yyyy-MM-dd',
                                                   _model.datePicked,
                                                   // locale: FFLocalizations.of(
                                                   //         context)

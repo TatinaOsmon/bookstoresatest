@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:book_store/book/book_cart/book_cart_widget.dart';
 import 'package:book_store/models/cartItem.dart';
 import 'package:book_store/repositery/itemsCartRepo.dart';
@@ -27,7 +29,7 @@ class MediaCheckoutWidget extends StatefulWidget {
 class _MediaCheckoutWidgetState extends State<MediaCheckoutWidget>
     with TickerProviderStateMixin {
   late MediaCheckoutModel _model;
-
+  List<CartItem> mediaCart = [];
   final animationsMap = {
     'columnOnPageLoadAnimation': AnimationInfo(
       trigger: AnimationTrigger.onPageLoad,
@@ -174,6 +176,8 @@ class _MediaCheckoutWidgetState extends State<MediaCheckoutWidget>
     super.dispose();
   }
 
+  List<CartItem> mediacart = [];
+
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
@@ -252,88 +256,128 @@ class _MediaCheckoutWidgetState extends State<MediaCheckoutWidget>
                 color: FlutterFlowTheme.of(context).alternate,
               ),
               Expanded(
-                child: Consumer<ItemCartRepo>(
-                    builder: (context, itemscart, child) {
+                child: Builder(builder: (context) {
                   // Customize what your widget looks like when it's loading.
 
-                  final columnMediaCartFindAllResponse = itemscart.items;
-                  return Builder(
-                    builder: (context) {
-                      final List<CartItem> mediaCart =
-                          columnMediaCartFindAllResponse;
-                      Provider.of<OrderCountProvider>(context, listen: false)
-                          .orderCount = mediaCart;
-                      Provider.of<OrderCountProvider>(context, listen: false)
-                          .orderCountNotifier();
+                  return FutureBuilder<ApiCallResponse>(
+                    // i used asyncmemoizer so that the future will only fetch once
+//you can do it without asyncmemoizer
+//it will fetch many times from the backend
 
-                      return SingleChildScrollView(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: List.generate(
-                              Provider.of<OrderCountProvider>(context,
-                                      listen: false)
-                                  .orderCount
-                                  .length, (mediaCartIndex) {
-                            final mediaCartItem = mediaCart[mediaCartIndex];
-                            return Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  0.0, 0.0, 0.0, 8.0),
-                              child: Container(
-                                width: double.infinity,
-                                height: 60.0,
-                                decoration: BoxDecoration(
-                                  color: FlutterFlowTheme.of(context)
-                                      .primaryBackground,
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(
-                                      12.0, 8.0, 12.0, 8.0),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Icon(
-                                        Icons.video_collection_outlined,
-                                        color: FlutterFlowTheme.of(context)
-                                            .primaryText,
-                                        size: 43.0,
-                                      ),
-                                      Expanded(
+                    future: MediaCartFindAllCall.call(
+                      userId: currentUserData?.userId,
+                      jwtToken: currentUserData?.jwtToken,
+                      refreshToken: currentUserData?.refreshToken,
+                    ).then((value) {
+                      setState(() {});
+                      return value;
+                    }),
+                    builder: (context, snapshot) {
+                      List<CartItem> columnMediaCartFindAllResponse = [];
+                      // Customize what your widget looks like when it's loading.
+                      return snapshot.hasData == false
+                          ? const Center(child: CircularProgressIndicator())
+                          : SingleChildScrollView(
+                              child: Builder(builder: (context) {
+                                log(snapshot.data!.jsonBody.toString());
+                                List jsonDataCartList =
+                                    snapshot.data!.jsonBody['MediaCart'];
+                                //i serialized it here, by creating a list with cartitem object
+                                mediaCart = List.generate(
+                                    jsonDataCartList.length,
+                                    (index) => CartItem(
+                                        id: jsonDataCartList[index]['id'],
+                                        name: jsonDataCartList[index]['name'] ??
+                                            'not specified',
+                                        price: jsonDataCartList[index]
+                                                ['price'] ??
+                                            0,
+                                        title: jsonDataCartList[index]
+                                                ['title'] ??
+                                            'not specified',
+                                        category: jsonDataCartList[index]
+                                                ['category'] ??
+                                            'not specified',
+                                        pic: jsonDataCartList[index]['pic'] ??
+                                            'not specified',
+                                        index: jsonDataCartList[index]
+                                            ['index']));
+                                return Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: List.generate(mediaCart.length,
+                                      (mediaCartIndex) {
+                                    final mediaCartItem =
+                                        mediaCart[mediaCartIndex];
+                                    return Padding(
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 0.0, 0.0, 8.0),
+                                      child: Container(
+                                        width: double.infinity,
+                                        height: 60.0,
+                                        decoration: BoxDecoration(
+                                          color: FlutterFlowTheme.of(context)
+                                              .primaryBackground,
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
                                         child: Padding(
                                           padding: const EdgeInsetsDirectional
-                                              .fromSTEB(12.0, 0.0, 0.0, 0.0),
-                                          child: Column(
+                                              .fromSTEB(12.0, 8.0, 12.0, 8.0),
+                                          child: Row(
                                             mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
                                             children: [
+                                              Icon(
+                                                Icons.video_collection_outlined,
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primaryText,
+                                                size: 43.0,
+                                              ),
+                                              Expanded(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          12.0, 0.0, 0.0, 0.0),
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        mediaCartItem.title,
+                                                        maxLines: 1,
+                                                        style:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyLarge,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
                                               Text(
-                                                mediaCartItem.title,
-                                                maxLines: 1,
+                                                '\$${mediaCartItem.price}',
+                                                textAlign: TextAlign.end,
                                                 style:
                                                     FlutterFlowTheme.of(context)
-                                                        .bodyLarge,
+                                                        .bodyMedium,
                                               ),
                                             ],
                                           ),
                                         ),
                                       ),
-                                      Text(
-                                        '\$${mediaCartItem.price}',
-                                        textAlign: TextAlign.end,
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                                    );
+                                  }),
+                                );
+                              }),
                             );
-                          }),
-                        ),
-                      );
                     },
                   );
                 }),
@@ -378,16 +422,10 @@ class _MediaCheckoutWidgetState extends State<MediaCheckoutWidget>
                             ),
                           ],
                         ),
-                        Consumer<ItemCartRepo>(
-                            builder: (context, itemscart, child) {
+                        Builder(builder: (context) {
                           // Customize what your widget looks like when it's loading.
 
-                          final columnMediaCartFindAllResponse =
-                              itemscart.items;
                           return Builder(builder: (context) {
-                            final List<CartItem> mediaCart =
-                                columnMediaCartFindAllResponse;
-
                             return Text(
                               '${functions.formatPrice(int.parse(functions.calcSum(mediaCart.map((e) => e.price).toList()).toString()))}',
                               style: FlutterFlowTheme.of(context)
@@ -420,9 +458,7 @@ class _MediaCheckoutWidgetState extends State<MediaCheckoutWidget>
                             builder: (alertDialogContext) {
                               return AlertDialog(
                                 title: const Text('Message'),
-                                content: Text(MediaCartCreateOrderCall.message(
-                                  (_model.createOrder?.jsonBody ?? ''),
-                                ).toString()),
+                                content: const Text('訂單內容為空'),
                                 actions: [
                                   TextButton(
                                     onPressed: () =>
@@ -431,6 +467,19 @@ class _MediaCheckoutWidgetState extends State<MediaCheckoutWidget>
                                   ),
                                 ],
                               );
+                              // return AlertDialog(
+                              //   title: const Text('Message'),
+                              //   content: Text(MediaCartCreateOrderCall.message(
+                              //     (_model.createOrder?.jsonBody ?? ''),
+                              //   ).toString()),
+                              //   actions: [
+                              //     TextButton(
+                              //       onPressed: () =>
+                              //           Navigator.pop(alertDialogContext),
+                              //       child: const Text('Ok'),
+                              //     ),
+                              //   ],
+                              // );
                             },
                           );
 

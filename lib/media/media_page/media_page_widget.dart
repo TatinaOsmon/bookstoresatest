@@ -236,8 +236,8 @@ class _MediaPageWidgetState extends State<MediaPageWidget>
                                                           FlutterFlowTheme.of(
                                                                   context)
                                                               .info,
-                                                      width: 145.0,
-                                                      height: 145.0,
+                                                      width: 130.0,
+                                                      height: 130.0,
                                                     ),
                                                   ),
                                                   Text(
@@ -323,8 +323,8 @@ class _MediaPageWidgetState extends State<MediaPageWidget>
                                                           FlutterFlowTheme.of(
                                                                   context)
                                                               .info,
-                                                      width: 145.0,
-                                                      height: 145.0,
+                                                      width: 130.0,
+                                                      height: 130.0,
                                                     ),
                                                   ),
                                                   Text(

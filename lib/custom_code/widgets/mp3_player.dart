@@ -196,138 +196,116 @@ class _Mp3ScreenState extends State<Mp3Player> {
 
   @override
   Widget build(BuildContext context) {
-    ableScreenshot();
+    disableScreenshot();
     return Column(
-      mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        Expanded(
-          child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-            child: Container(
-              width: MediaQuery.sizeOf(context).width,
-              height: 100 * MediaQuery.sizeOf(context).height / 100,
-              decoration: BoxDecoration(
-                color: FlutterFlowTheme.of(context).primaryBackground,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(0),
-                  bottomRight: Radius.circular(0),
-                  topLeft: Radius.circular(0),
-                  topRight: Radius.circular(8),
+        Container(
+          width: 300,
+          height: 300,
+          child: Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(200),
+                child: Image.asset(
+                  'assets/images/main.jpg',
+                  width: MediaQuery.sizeOf(context).width,
+                  height: MediaQuery.sizeOf(context).height * 1,
+                  fit: BoxFit.cover,
                 ),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 300,
-                    height: 300,
-                    child: Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(200),
-                          child: Image.asset(
-                            'assets/images/main.jpg',
-                            width: MediaQuery.sizeOf(context).width,
-                            height: MediaQuery.sizeOf(context).height * 1,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Align(
-                          alignment: const AlignmentDirectional(0.00, 0.00),
-                          child: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: FlutterFlowTheme.of(context)
-                                  .secondaryBackground,
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                          ),
-                        ),
-                      ],
+              Align(
+                alignment: const AlignmentDirectional(0.00, 0.00),
+                child: Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: FlutterFlowTheme.of(context).secondaryBackground,
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Column(
+          children: [
+            Slider.adaptive(
+              activeColor: Colors.black,
+              inactiveColor: Colors.red,
+              thumbColor: Colors.black,
+              min: 0,
+              max: duration.inSeconds.toDouble() < 1.0
+                  ? 1.0
+                  : duration.inSeconds.toDouble(),
+              value: position.inSeconds.toDouble(),
+              onChanged: (value) async {
+                final position = Duration(seconds: value.toInt());
+                await player.seek(position);
+                await player.resume();
+              },
+            ),
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 15),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      formatTime(position),
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
-                ],
+                    // IconButton(
+                    //   onPressed: () {},
+                    //   icon: const Icon(Icons.skip_previous, color: Colors.black),
+                    // ),
+                    FlutterFlowIconButton(
+                      borderRadius: 20,
+                      borderWidth: 0,
+                      buttonSize: 40,
+                      fillColor: const Color(0x76A9A9A9),
+                      icon: Icon(
+                        isPlaying ? Icons.pause : Icons.play_arrow,
+                        color: FlutterFlowTheme.of(context).info,
+                        size: 24,
+                      ),
+                      onPressed: () {
+                        // playMusic();
+                        if (isPlaying) {
+                          player.pause();
+                        } else {
+                          player.resume();
+                        }
+                        setState(() {
+                          isPlaying = !isPlaying;
+                        });
+                        print("按了一下");
+                      },
+                    ),
+                    // IconButton(
+                    //   onPressed: () {
+                    //     ableScreenshot();
+                    //     //  _controller.setPlaybackSpeed(2.0);
+                    //   },
+                    //   icon: const Icon(
+                    //     Icons.skip_next,
+                    //     color: Colors.black,
+                    //   ),
+                    // ),
+                    Text(
+                      formatTime(duration - position),
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ),
-        Slider.adaptive(
-          activeColor: Colors.black,
-          inactiveColor: Colors.red,
-          thumbColor: Colors.black,
-          min: 0,
-          max: duration.inSeconds.toDouble() < 1.0
-              ? 1.0
-              : duration.inSeconds.toDouble(),
-          value: position.inSeconds.toDouble(),
-          onChanged: (value) async {
-            final position = Duration(seconds: value.toInt());
-            await player.seek(position);
-            await player.resume();
-          },
-        ),
-        Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  formatTime(position),
-                  style: TextStyle(
-                    color: Colors.black,
-                  ),
-                ),
-                // IconButton(
-                //   onPressed: () {},
-                //   icon: const Icon(Icons.skip_previous, color: Colors.black),
-                // ),
-                FlutterFlowIconButton(
-                  borderRadius: 20,
-                  borderWidth: 0,
-                  buttonSize: 40,
-                  fillColor: const Color(0x76A9A9A9),
-                  icon: Icon(
-                    isPlaying ? Icons.pause : Icons.play_arrow,
-                    color: FlutterFlowTheme.of(context).info,
-                    size: 24,
-                  ),
-                  onPressed: () {
-                    // playMusic();
-                    if (isPlaying) {
-                      player.pause();
-                    } else {
-                      player.resume();
-                    }
-                    setState(() {
-                      isPlaying = !isPlaying;
-                    });
-                    print("按了一下");
-                  },
-                ),
-                // IconButton(
-                //   onPressed: () {
-                //     ableScreenshot();
-                //     //  _controller.setPlaybackSpeed(2.0);
-                //   },
-                //   icon: const Icon(
-                //     Icons.skip_next,
-                //     color: Colors.black,
-                //   ),
-                // ),
-                Text(
-                  formatTime(duration - position),
-                  style: TextStyle(
-                    color: Colors.black,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          ],
         ),
       ],
     );

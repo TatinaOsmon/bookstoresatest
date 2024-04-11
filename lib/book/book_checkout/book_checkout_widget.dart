@@ -175,6 +175,8 @@ class _BookCheckoutWidgetState extends State<BookCheckoutWidget>
     super.dispose();
   }
 
+  List<CartItem> bookCart = [];
+
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
@@ -258,7 +260,10 @@ class _BookCheckoutWidgetState extends State<BookCheckoutWidget>
                       userId: currentUserData?.userId,
                       jwtToken: currentUserData?.jwtToken,
                       refreshToken: currentUserData?.refreshToken,
-                    ),
+                    ).then((value) {
+                      setState(() {});
+                      return value;
+                    }),
                     builder: (context, snapshot) {
                       // Customize what your widget looks like when it's loading.
 
@@ -270,7 +275,7 @@ class _BookCheckoutWidgetState extends State<BookCheckoutWidget>
                                 log(snapshot.data!.bodyText.toString());
                                 List jsonDataCartList =
                                     snapshot.data!.jsonBody['Bookcart'];
-                                List<CartItem> bookCart = List.generate(
+                                bookCart = List.generate(
                                     jsonDataCartList.length,
                                     (index) => CartItem(
                                         id: jsonDataCartList[index]['id'] ?? 0,
@@ -404,17 +409,15 @@ class _BookCheckoutWidgetState extends State<BookCheckoutWidget>
                             ),
                           ],
                         ),
-                        Consumer<ItemCartRepo>(
-                            builder: (context, itemscart, child) {
+                        Builder(builder: (context) {
                           // Customize what your widget looks like when it's loading.
 
-                          final columnBookCartFindAllResponse = itemscart.items;
                           return Builder(builder: (context) {
-                            final List<CartItem> bookCart =
-                                columnBookCartFindAllResponse;
-
                             return Text(
-                              '${functions.formatPrice(int.parse(functions.calcSum(bookCart.map((e) => e.price).toList()).toString()))}',
+                              functions.formatPrice(int.parse(functions
+                                  .calcSum(
+                                      bookCart.map((e) => e.price).toList())
+                                  .toString())),
                               style: FlutterFlowTheme.of(context)
                                   .displaySmall
                                   .override(
@@ -450,9 +453,7 @@ class _BookCheckoutWidgetState extends State<BookCheckoutWidget>
                             builder: (alertDialogContext) {
                               return AlertDialog(
                                 title: const Text('Message'),
-                                content: Text(BookCartCreateOrderCall.message(
-                                  (_model.createOrder?.jsonBody ?? ''),
-                                ).toString()),
+                                content: const Text('訂單內容為空'),
                                 actions: [
                                   TextButton(
                                     onPressed: () =>

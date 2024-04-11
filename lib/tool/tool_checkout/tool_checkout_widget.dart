@@ -383,7 +383,7 @@ class _ToolCheckoutWidgetState extends State<ToolCheckoutWidget>
                         Text(
                           _model.priceList.isNotEmpty
                               ? '\$${functions.calcSum(_model.priceList.toList()).toString()}'
-                              : 'Item not added',
+                              : '',
                           style: FlutterFlowTheme.of(context)
                               .displaySmall
                               .override(
@@ -482,10 +482,7 @@ class _ToolCheckoutWidgetState extends State<ToolCheckoutWidget>
                               builder: (alertDialogContext) {
                                 return AlertDialog(
                                   title: const Text('Message'),
-                                  content: Text(getJsonField(
-                                    (_model.createOrder?.jsonBody ?? ''),
-                                    r'''$.message''',
-                                  ).toString()),
+                                  content: const Text('訂單內容為空'),
                                   actions: [
                                     TextButton(
                                       onPressed: () =>

@@ -125,34 +125,25 @@ class _Mp3PlayerWidgetState extends State<Mp3PlayerWidget> {
         ),
         body: SafeArea(
           top: true,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(
-                    25.0, 25.0, 25.0, 110.0),
-                child: Container(
-                  width: MediaQuery.sizeOf(context).width * 1.0,
-                  height: MediaQuery.sizeOf(context).width * 1.0,
-                  decoration: BoxDecoration(
-                    color: FlutterFlowTheme.of(context).secondaryBackground,
-                  ),
-                  child: SizedBox(
-                    width: MediaQuery.sizeOf(context).width * 1.0,
-                    height: MediaQuery.sizeOf(context).height * 1.0,
-                    child: custom_widgets.Mp3Player(
-                      width: MediaQuery.sizeOf(context).width * 1.0,
-                      height: MediaQuery.sizeOf(context).height * 1.0,
-                      productId: widget.productId!,
-                      tableName: 'mp3',
-                      userId: currentUserData!.userId,
-                      jwtToken: currentUserData!.jwtToken,
-                      refreshToken: currentUserData!.refreshToken,
-                    ),
-                  ),
-                ),
+          child: Container(
+            width: MediaQuery.sizeOf(context).width * 1.0,
+            height: MediaQuery.sizeOf(context).height / 1.1,
+            decoration: BoxDecoration(
+              color: FlutterFlowTheme.of(context).secondaryBackground,
+            ),
+            child: SizedBox(
+              width: MediaQuery.sizeOf(context).width * 1.0,
+              height: MediaQuery.sizeOf(context).height * 1.0,
+              child: custom_widgets.Mp3Player(
+                width: MediaQuery.sizeOf(context).width * 1.0,
+                height: MediaQuery.sizeOf(context).height * 1.0,
+                productId: widget.productId!,
+                tableName: 'mp3',
+                userId: currentUserData!.userId,
+                jwtToken: currentUserData!.jwtToken,
+                refreshToken: currentUserData!.refreshToken,
               ),
-            ],
+            ),
           ),
         ),
       ),
